@@ -1,17 +1,18 @@
 import React from 'react';
+import Register from '../StartDoing/register'
 
-import {StyleSheet} from 'react-native';
 
-const App = () => {
+
+
+const App =() => {
   return (
-    <>
+   
+     <Register/>
       
-    </>
+  
   );
 };
 
-const styles = StyleSheet.create({
-  
-});
+
 
 export default App;
