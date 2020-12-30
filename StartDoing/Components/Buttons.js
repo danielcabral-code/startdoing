@@ -1,4 +1,6 @@
 import React from 'react';
+import { useNavigation } from '@react-navigation/native';
+
 
 import {
   StyleSheet,
@@ -7,6 +9,8 @@ import {
   TouchableHighlight,
   TouchableWithoutFeedback,
 } from 'react-native';
+
+
 
 export const ButtonForgotPassword = () => {
   function onPressButton() {
@@ -24,31 +28,13 @@ export const ButtonForgotPassword = () => {
   );
 };
 
-export const ButtonLogin = () => {
-  function onPressButton() {
-    alert('You Pressed Me!');
-  }
 
+export const ButtonNoAccount = ({ navigate }) => {
+  const navigation = useNavigation();
   return (
     <>
-      <TouchableHighlight
-        style={styles.loginBtn}
-        onPress={onPressButton}
-        underlayColor="#F27A2999">
-        <Text style={styles.loginText}>LOGIN</Text>
-      </TouchableHighlight>
-    </>
-  );
-};
-
-export const ButtonNoAccount = () => {
-  function onPressButton() {
-    alert('You Pressed Me!');
-  }
-
-  return (
-    <>
-      <TouchableWithoutFeedback onPress={onPressButton}>
+      <TouchableWithoutFeedback
+        onPress={() => navigation.navigate('RegisterScreen')}>
         <View style={styles.noAccountBtn}>
           <Text style={styles.noAccountText}>
             DON'T HAVE AN ACCOUNT? CREATE ONE
@@ -85,29 +71,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 14,
-  },
-  loginBtn: {
-    marginTop: 24,
-    width: 300,
-    height: 50,
-    borderRadius: 10,
-    backgroundColor: '#F27A29',
-    justifyContent: 'center',
-    elevation: 6,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.27,
-    shadowRadius: 4.65,
-  },
-  loginText: {
-    alignSelf: 'center',
-    color: 'white',
-    fontFamily: 'OpenSans-Bold',
-    fontSize: 18,
-    textShadowRadius: 6,
   },
   noAccountBtn: {
     marginTop: 20,
