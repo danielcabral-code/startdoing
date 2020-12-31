@@ -191,7 +191,7 @@ function MoreInfo({ navigation, route }) {
       <View style={{ display: "flex", flexDirection: "row" }}>
         <TextInput
           style={{ width: 100, height: 40,color: "white", alignSelf: 'center', borderColor: 'gray', borderBottomWidth: 2, marginBottom: 20 }}
-          onChangeText={text => setHeight(convert(text).from('cm').to('m'))}
+          onChangeText={text => setHeight(convert(parseInt(text)).from('cm').to('m'))}
           keyboardType="number-pad"
           value={height}
         />
@@ -228,14 +228,10 @@ const register = () => {
 
   return (
 
-
-
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="RegisterScreen">
+      <Stack.Navigator >
         <Stack.Screen options={{ headerShown: false }} name="RegisterScreen" component={RegisterScreen} />
         <Stack.Screen options={{ headerShown: false }} name="MoreInfo" component={MoreInfo} />
       </Stack.Navigator>
-    </NavigationContainer>
 
 
 
