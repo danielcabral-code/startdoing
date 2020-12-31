@@ -8,7 +8,6 @@ import RegisterScreen from '../Pages/Register'
 
 import {
   ButtonForgotPassword,
-  ButtonLogin,
   ButtonNoAccount,
   ButtonGuest,
 } from '../Components/Buttons';

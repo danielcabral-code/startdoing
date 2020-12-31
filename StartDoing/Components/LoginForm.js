@@ -1,39 +1,50 @@
 import React, { useState } from 'react';
-
 import { StyleSheet, View, Text, TextInput, TouchableHighlight } from 'react-native';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  async function checkLoginInputs() {
+  async function appLogin() {
 
-    
-    await fetch('https://startdoing.herokuapp.com/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        "email": email,
-        "password": password,
+    try {
+      await fetch('https://startdoing.herokuapp.com/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "email": email,
+          "password": password,
+        })
+
       })
+        .then(response => response.json())
+        .then(result => {
 
-    })
-    .then(response => response.json())
-    .then(result => console.log(result.token))
-    .catch(error => console.log('erro'));
+          try {
 
-}
+            AsyncStorage.setItem("@token", result.token)
+
+          } catch (e) {
+            console.log(e);
+          }
+
+        })
 
 
+    } catch (error) {
+      console.log('erro')
+    }
+  }
 
   return (
     <>
       <View style={styles.inputView}>
         <Text style={styles.inputText}>EMAIL</Text>
         <TextInput style={styles.inputLine}
+          keyboardType="email-address"
           onChangeText={text => setEmail(text)}
           value={email} />
       </View>
@@ -41,11 +52,12 @@ export const LoginForm = () => {
         <Text style={styles.inputText}>PASSWORD</Text>
         <TextInput style={styles.inputLine}
           onChangeText={text => setPassword(text)}
+          secureTextEntry={true}
           value={password} />
       </View>
       <TouchableHighlight
         style={styles.loginBtn}
-        onPress={checkLoginInputs}
+        onPress={appLogin}
         underlayColor="#F27A2999">
         <Text style={styles.loginText}>LOGIN</Text>
       </TouchableHighlight>
