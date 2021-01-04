@@ -3,14 +3,14 @@ import React from 'react';
 import {StyleSheet, View, KeyboardAvoidingView} from 'react-native';
 
 import {LogoWithText} from '../Components/LogoWithText';
-import {TextInputEmail, TextInputPassword} from '../Components/TextInputs';
+import {TextInputEmail, TextInputPassword} from '../Components/Login/TextInputs';
 
 import {
   ButtonForgotPassword,
   ButtonLogin,
   ButtonNoAccount,
   ButtonGuest,
-} from '../Components/Buttons';
+} from '../Components/Login/Buttons';
 
 const Login = () => {
   return (
