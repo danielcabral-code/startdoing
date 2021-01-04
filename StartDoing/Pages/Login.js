@@ -1,8 +1,10 @@
 import React from 'react';
-
 import {StyleSheet, View, KeyboardAvoidingView} from 'react-native';
-
-import {LogoWithText} from '../Components/LogoWithText';
+import {LogoWithText} from '../Components/LogoWithText'
+import {LoginForm} from '../Components/LoginForm'
+import {NavigationContainer} from '@react-navigation/native'
+import {createStackNavigator} from '@react-navigation/stack'
+import RegisterScreen from '../Pages/Register'
 
 
 import {

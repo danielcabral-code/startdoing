@@ -21,7 +21,7 @@ import {LogoWithText} from '../Components/LogoWithText';
 const Stack = createStackNavigator();
 const Register = () => {
   return (
-    <NavigationContainer>
+   
       <Stack.Navigator initialRouteName="RegisterScreen">
         <Stack.Screen
           options={{headerShown: false}}
@@ -34,7 +34,7 @@ const Register = () => {
           component={MoreInfo}
         />
       </Stack.Navigator>
-    </NavigationContainer>
+   
   );
 };
 
