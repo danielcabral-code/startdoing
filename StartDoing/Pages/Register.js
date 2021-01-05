@@ -8,6 +8,7 @@ import {
   Text,
   TouchableHighlight,
   KeyboardAvoidingView,
+  Alert
 } from 'react-native';
 
 import { createStackNavigator } from '@react-navigation/stack';
@@ -19,6 +20,7 @@ import { LogoWithText } from '../Components/LogoWithText';
 
 const Stack = createStackNavigator();
 const Register = () => {
+
   return (
 
     <Stack.Navigator initialRouteName="RegisterScreen">
@@ -48,6 +50,8 @@ function RegisterScreen({ navigation }) {
   const [invalidEmailErrorShow, setInvalidEmailErrorShow] = useState(false);
   const [passwordErrorShow, setPasswordErrorShow] = useState(false);
   const [confirmPasswordErrorShow, setConfirmpasswordErrorShow] = useState(false);
+
+  
 
 
   validateEmail = (email) => {
@@ -117,6 +121,7 @@ function RegisterScreen({ navigation }) {
           />
           {emailErrorShow ? (<Text style={styles.textError}>Please enter your email</Text>) : null}
           {invalidEmailErrorShow ? (<Text style={styles.textError}>Please enter a valid email</Text>) : null}
+        
         </View>
         <View style={styles.inputView}>
           <Text style={styles.inputText}>PASSWORD</Text>
@@ -173,7 +178,6 @@ function MoreInfo({ navigation, route }) {
     return numreg.test(weight)
   }
   const checkMoreInfoInputs = () => {
-
 
     if (!birth) {
       setBirthErrorShow(true)
@@ -247,8 +251,15 @@ function MoreInfo({ navigation, route }) {
 
     }
     catch (error) {
-     alert("this email is already in use")
-     navigation.navigate('RegisterScreen');
+      Alert.alert(
+        "Error",
+        "This email is already in use! Please choose another",
+        [
+          { text: "OK", onPress: () => navigation.navigate("RegisterScreen") }
+        ],
+        { cancelable: false }
+      );
+    
     }
   }
 

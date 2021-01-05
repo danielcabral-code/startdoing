@@ -26,6 +26,7 @@ export const LoginForm = () => {
           try {
 
             AsyncStorage.setItem("@token", result.token)
+            console.log(result.token);
            
 
           } catch (e) {
