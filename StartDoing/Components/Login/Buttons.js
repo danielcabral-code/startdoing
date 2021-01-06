@@ -1,6 +1,4 @@
 import React from 'react';
-import { useNavigation } from '@react-navigation/native';
-
 
 import {
   StyleSheet,
@@ -10,7 +8,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 
-
+import {useNavigation} from '@react-navigation/native';
 
 export const ButtonForgotPassword = () => {
   function onPressButton() {
@@ -28,8 +26,7 @@ export const ButtonForgotPassword = () => {
   );
 };
 
-
-export const ButtonNoAccount = ({ navigate }) => {
+export const ButtonNoAccount = ({navigate}) => {
   const navigation = useNavigation();
   return (
     <>
@@ -74,7 +71,7 @@ const styles = StyleSheet.create({
   },
   noAccountBtn: {
     marginTop: 20,
-    width: 300,
+    width: '85%',
     height: 50,
     borderRadius: 10,
     backgroundColor: '#26282B',
@@ -91,7 +88,7 @@ const styles = StyleSheet.create({
   guestBtn: {
     marginTop: 20,
     marginBottom: 20,
-    width: 300,
+    width: '85%',
     height: 50,
     borderRadius: 10,
     backgroundColor: '#006DA8',
