@@ -12,14 +12,13 @@ import {
 
 
 
-export const ButtonForgotPassword = () => {
-  function onPressButton() {
-    alert('You Pressed Me!');
-  }
+export const ButtonForgotPassword = ({ navigate }) => {
+  const navigation = useNavigation();
+
 
   return (
     <>
-      <TouchableWithoutFeedback onPress={onPressButton}>
+      <TouchableWithoutFeedback onPress={()=>navigation.navigate('ResetPassword')}>
         <View style={styles.forgotPasswordBtn}>
           <Text style={styles.forgotPasswordText}>FORGOT PASSWORD?</Text>
         </View>

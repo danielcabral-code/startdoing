@@ -5,6 +5,7 @@ import {LoginForm} from '../Components/LoginForm'
 import {NavigationContainer} from '@react-navigation/native'
 import {createStackNavigator} from '@react-navigation/stack'
 import RegisterScreen from '../Pages/Register'
+import ResetPasswordScreen from '../Pages/ResetPassword'
 
 
 import {
@@ -37,6 +38,7 @@ const Login = () => {
         <Stack.Navigator initialRouteName="Login">
           <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
           <Stack.Screen options={{ headerShown: false }} name="RegisterScreen" component={RegisterScreen} />
+          <Stack.Screen options={{ headerShown: false }} name="ResetPassword" component={ResetPasswordScreen} />
         </Stack.Navigator>
       </NavigationContainer>
       
