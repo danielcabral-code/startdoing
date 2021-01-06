@@ -50,6 +50,7 @@ function RegisterScreen({ navigation }) {
   const [invalidEmailErrorShow, setInvalidEmailErrorShow] = useState(false);
   const [passwordErrorShow, setPasswordErrorShow] = useState(false);
   const [confirmPasswordErrorShow, setConfirmpasswordErrorShow] = useState(false);
+  const [emailInUse, setEmailInUse] = useState(false);
 
   
 
@@ -61,41 +62,84 @@ function RegisterScreen({ navigation }) {
 
   function checkRegisterInputs() {
 
+    let code = 0
+    
     if (!name || name.trim() === '') {
       setNameErrorShow(true)
       return;
     }
-    setNameErrorShow(false)
+    else {
+      setNameErrorShow(false)
+    }
+
     if (!email || email.trim() === '') {
       setEmailErrorShow(true)
       return;
     }
-    setEmailErrorShow(false)
+    else {
+      setEmailErrorShow(false)
+    }
+
     if (!validateEmail(email)) {
       setInvalidEmailErrorShow(true)
       return
     }
-    setInvalidEmailErrorShow(false)
+    else {
+      setInvalidEmailErrorShow(false)
+    }
+
     if (!password || password.trim() === '') {
       setPasswordErrorShow(true)
       return;
     }
-    setPasswordErrorShow(false)
+    else {
+      setPasswordErrorShow(false)
+    }
+
     if (!repeatPassword || repeatPassword.trim() === '') {
       setConfirmpasswordErrorShow(true)
       return;
     }
-    setConfirmpasswordErrorShow(false)
+    else {
+      setConfirmpasswordErrorShow(false)
+    }
+
     if (password !== repeatPassword) {
       setConfirmpasswordErrorShow(true)
       return;
-    } else {
-      navigation.navigate('MoreInfo', {
-        name: name,
-        email: email,
-        password: password,
-      });
     }
+
+  
+    fetch('https://startdoing.herokuapp.com/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "email": email,
+      })
+
+    })
+      .then(response => {
+
+       code = JSON.stringify(response.status)
+      
+       if (code == 406) {
+         setEmailInUse(true)
+         
+       }
+       else{
+        setEmailInUse(false)
+         navigation.navigate('MoreInfo', {
+          name: name,
+          email: email,
+          password: password,
+        });
+       }
+
+      })
+      .catch(error => console.log('error', error));
+    
   }
   return (
     <View style={styles.background}>
@@ -108,7 +152,7 @@ function RegisterScreen({ navigation }) {
             onChangeText={(text) => setName(text)}
             value={name}
           />
-          {nameErrorShow ? (<Text style={styles.textError}>Please enter your name</Text>) : null}
+          {nameErrorShow ? (<Text style={styles.textError}>Please enter your name!</Text>) : null}
 
         </View>
         <View style={styles.inputView}>
@@ -119,9 +163,9 @@ function RegisterScreen({ navigation }) {
             keyboardType="email-address"
             value={email}
           />
-          {emailErrorShow ? (<Text style={styles.textError}>Please enter your email</Text>) : null}
-          {invalidEmailErrorShow ? (<Text style={styles.textError}>Please enter a valid email</Text>) : null}
-        
+          {emailErrorShow ? (<Text style={styles.textError}>Please enter your email!</Text>) : null}
+          {invalidEmailErrorShow ? (<Text style={styles.textError}>Please enter a valid email!</Text>) : null}
+          {emailInUse ? (<Text style={styles.textError}>This email is already in use!</Text>) : null}
         </View>
         <View style={styles.inputView}>
           <Text style={styles.inputText}>PASSWORD</Text>
@@ -131,7 +175,7 @@ function RegisterScreen({ navigation }) {
             secureTextEntry={true}
             value={password}
           />
-          {passwordErrorShow ? (<Text style={styles.textError}>Please enter a password</Text>) : null}
+          {passwordErrorShow ? (<Text style={styles.textError}>Please enter a password!</Text>) : null}
         </View>
         <View style={styles.inputView}>
           <Text style={styles.inputText}>REPEAT PASSWORD</Text>
@@ -141,7 +185,7 @@ function RegisterScreen({ navigation }) {
             secureTextEntry={true}
             value={repeatPassword}
           />
-          {confirmPasswordErrorShow ? (<Text style={styles.textError}>Password must match</Text>) : null}
+          {confirmPasswordErrorShow ? (<Text style={styles.textError}>Password must match!</Text>) : null}
         </View>
         <TouchableHighlight
           style={styles.nextBtn}
@@ -183,28 +227,40 @@ function MoreInfo({ navigation, route }) {
       setBirthErrorShow(true)
       return;
     }
-    setBirthErrorShow(false)
+    else {
+      setBirthErrorShow(false)
+    }
+
 
     if (!height) {
       setHeigthErrorShow(true)
       return;
     }
-    setHeigthErrorShow(false)
+    else {
+      setHeigthErrorShow(false)
+    }
+
 
     if (!validateHeight(height)) {
-     setOnlyNumbersHeightErrorShow(true)
+      setOnlyNumbersHeightErrorShow(true)
       return;
     }
-    setOnlyNumbersHeightErrorShow(false)
+    else {
+      setOnlyNumbersHeightErrorShow(false)
+    }
+
 
     if (!weight) {
       setWeightErrorShow(true);
       return;
     }
-    setWeightErrorShow(false)
+    else {
+      setWeightErrorShow(false)
+    }
+
 
     if (!validateWeight(weight)) {
-     setOnlyNumbersWeightErrorShow(true)
+      setOnlyNumbersWeightErrorShow(true)
       return;
     }
 
@@ -251,15 +307,7 @@ function MoreInfo({ navigation, route }) {
 
     }
     catch (error) {
-      Alert.alert(
-        "Error",
-        "This email is already in use! Please choose another",
-        [
-          { text: "OK", onPress: () => navigation.navigate("RegisterScreen") }
-        ],
-        { cancelable: false }
-      );
-    
+      
     }
   }
 
