@@ -9,12 +9,13 @@ import {
   ButtonNoAccount,
   ButtonGuest,
 } from '../Components/Login/Buttons';
+import BottomNavigation from '../Pages/BottomNavigation/BottomNavigation'
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
 const Stack = createStackNavigator();
-const Login = () => {
+const LoginPage = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
@@ -27,6 +28,11 @@ const Login = () => {
           options={{headerShown: false}}
           name="RegisterScreen"
           component={RegisterScreen}
+        />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="BottomNavigation"
+          component={BottomNavigation}
         />
       </Stack.Navigator>
     </NavigationContainer>
@@ -80,4 +86,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+export default LoginPage;

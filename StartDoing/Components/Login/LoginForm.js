@@ -9,8 +9,11 @@ import {
 } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useNavigation} from '@react-navigation/native';
 
 export const LoginForm = () => {
+  const navigation = useNavigation();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailErrorShow, setEmailErrorShow] = useState(false);
@@ -18,7 +21,6 @@ export const LoginForm = () => {
   const [invalidCredentials, setInvalidCredentials] = useState(false);
 
   async function appLogin() {
-
     if (!email || email.trim() === '') {
       setEmailErrorShow(true);
       return;
@@ -49,14 +51,15 @@ export const LoginForm = () => {
           try {
             AsyncStorage.setItem('@token', result.token);
             console.log(result.token);
-            setInvalidCredentials(false)
+            setInvalidCredentials(false);
           } catch (e) {
             console.log(e);
           }
         });
     } catch (error) {
-      setInvalidCredentials(true)
+      setInvalidCredentials(true);
     }
+    navigation.navigate('BottomNavigation');
   }
 
   return (
@@ -69,9 +72,9 @@ export const LoginForm = () => {
           onChangeText={(text) => setEmail(text)}
           value={email}
         />
-         {emailErrorShow ? (
-            <Text style={styles.textError}>Please Enter Your Email.</Text>
-          ) : null}
+        {emailErrorShow ? (
+          <Text style={styles.textError}>Please Enter Your Email.</Text>
+        ) : null}
       </View>
       <View style={styles.inputView}>
         <Text style={styles.inputText}>PASSWORD</Text>
@@ -81,12 +84,12 @@ export const LoginForm = () => {
           secureTextEntry={true}
           value={password}
         />
-         {passwordErrorShow ? (
-            <Text style={styles.textError}>Please Enter a Password.</Text>
-          ) : null}
-          {invalidCredentials ? (
-            <Text style={styles.textError}>Wrong Email or Password.</Text>
-          ) : null}
+        {passwordErrorShow ? (
+          <Text style={styles.textError}>Please Enter a Password.</Text>
+        ) : null}
+        {invalidCredentials ? (
+          <Text style={styles.textError}>Wrong Email or Password.</Text>
+        ) : null}
       </View>
       <TouchableHighlight
         style={styles.loginBtn}
@@ -146,5 +149,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: 'red',
     marginTop: 10,
-  }
+  },
 });
