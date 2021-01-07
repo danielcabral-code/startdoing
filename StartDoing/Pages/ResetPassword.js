@@ -37,6 +37,7 @@ function ResetPasswordScreen({ navigation }) {
     const [repeatPassword, setRepeatPassword] = useState('');
     const [emailErrorShow, setEmailErrorShow] = useState(false);
     const [invalidEmailErrorShow, setInvalidEmailErrorShow] = useState(false);
+    const [unknownEmail, setUnknownEmail] = useState(false);
     const [passwordErrorShow, setPasswordErrorShow] = useState(false);
     const [confirmPasswordErrorShow, setConfirmpasswordErrorShow] = useState(false);
 
@@ -88,6 +89,50 @@ function ResetPasswordScreen({ navigation }) {
             return;
         }
 
+        fetch('https://startdoing.herokuapp.com/users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "email": email,
+            })
+
+        })
+            .then(response => {
+
+                code = JSON.stringify(response.status)
+
+                if (code == 406) {
+
+                    fetch(`https://startdoing.herokuapp.com/${email}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImVtYWlsIjoidGVzdGluZ0BlbWFpbC5jb20iLCJpZCI6IjVmZGQzYzZkOGE2YWNlMjg2MDE0MGUwYSIsIm5hbWUiOiJ0ZXN0aW5nIn0sImlhdCI6MTYwODU2MTUxMiwiZXhwIjoxNjE1NzYxNTEyfQ.6LFbFI4QXw7jZfy4INAloW_CAXijqZ2nKdhClUlpM9M"
+                        },
+                        body: JSON.stringify({
+                            "password": password,
+                        })
+
+                    })
+                        .then(response => {
+                            console.log(response.status);
+
+                        })
+                        .catch(error => console.log('error', error));
+
+                    
+                    navigation.navigate('Login');
+                }
+                else {
+                    setUnknownEmail(true)
+                }
+
+            })
+            .catch(error => console.log('error', error));
+
+
 
 
     }
@@ -106,6 +151,7 @@ function ResetPasswordScreen({ navigation }) {
                 />
                 {emailErrorShow ? (<Text style={styles.textError}>Please enter your email!</Text>) : null}
                 {invalidEmailErrorShow ? (<Text style={styles.textError}>Please enter a valid email!</Text>) : null}
+                {unknownEmail ? (<Text style={styles.textError}>This email does not exist!</Text>) : null}
             </View>
 
             <View style={styles.inputView}>
@@ -190,9 +236,10 @@ const styles = StyleSheet.create({
         textShadowRadius: 6,
     },
     textError: {
-        fontFamily: 'OpenSans-Bold',
+        fontFamily: 'OpenSans-Regular',
         fontSize: 12,
         color: 'red',
-      }
+        marginTop: 10,
+    },
 });
 export default ResetPassword;
