@@ -300,6 +300,7 @@ function MoreInfo({navigation, route}) {
     <>
       <ScrollView style={styles.background}>
         <View style={styles.bg2}>
+
           <Text style={styles.indicateValue}>INDICATE YOUR DATE OF BIRTH</Text>
           <TouchableHighlight
             style={styles.selectBtn}
@@ -307,6 +308,7 @@ function MoreInfo({navigation, route}) {
             underlayColor="#F27A2999">
             <Text style={styles.selectText}>SELECT DATE</Text>
           </TouchableHighlight>
+
           <DateTimePickerModal
             isVisible={isDatePickerVisible}
             mode="date"
@@ -317,6 +319,7 @@ function MoreInfo({navigation, route}) {
             <Text style={styles.textError}>Please Enter Your DOB.</Text>
           ) : null}
           <Text style={styles.pickedDate}>{showDate}</Text>
+
           <View style={styles.inputViewMeasurement}>
             <Text style={styles.inputText}>INDICATE YOUR HEIGHT IN CM</Text>
             <TextInput
@@ -332,6 +335,7 @@ function MoreInfo({navigation, route}) {
               <Text style={styles.textError}>Field Only Accepts Numbers.</Text>
             ) : null}
           </View>
+
           <View style={styles.inputViewMeasurement}>
             <Text style={styles.inputText}>INDICATE YOUR WEIGHT IN KG</Text>
             <TextInput
@@ -347,12 +351,14 @@ function MoreInfo({navigation, route}) {
               <Text style={styles.textError}>Field Only Accepts Numbers.</Text>
             ) : null}
           </View>
+
           <TouchableHighlight
             style={styles.createBtn}
             onPress={checkMoreInfoInputs}
             underlayColor="#F27A2999">
             <Text style={styles.createText}>CREATE ACCOUNT</Text>
           </TouchableHighlight>
+          
         </View>
       </ScrollView>
     </>

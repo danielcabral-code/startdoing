@@ -1,5 +1,4 @@
 import React from 'react';
-
 import {StyleSheet, View, ScrollView, Image, Text} from 'react-native';
 
 import {LoginForm} from '../Components/Login/LoginForm';
@@ -9,6 +8,7 @@ import {
   ButtonNoAccount,
   ButtonGuest,
 } from '../Components/Login/Buttons';
+import ResetPasswordScreen from '../Pages/ResetPassword';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -28,6 +28,11 @@ const Login = () => {
           name="RegisterScreen"
           component={RegisterScreen}
         />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="ResetPassword"
+          component={ResetPasswordScreen}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -41,10 +46,13 @@ function LoginScreen({navigation}) {
           source={require('../Images/LogoStartDoing.png')}
           style={styles.logo}></Image>
         <Text style={styles.logoName}>StartDoing</Text>
+
         <LoginForm />
+
         <View style={styles.forgotPasswordView}>
           <ButtonForgotPassword />
         </View>
+
         <ButtonNoAccount />
         <ButtonGuest />
       </View>

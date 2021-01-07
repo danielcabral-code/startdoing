@@ -62,6 +62,7 @@ export const LoginForm = () => {
   return (
     <>
       <View style={styles.inputView}>
+        
         <Text style={styles.inputText}>EMAIL</Text>
         <TextInput
           style={styles.inputLine}
@@ -73,6 +74,7 @@ export const LoginForm = () => {
             <Text style={styles.textError}>Please Enter Your Email.</Text>
           ) : null}
       </View>
+
       <View style={styles.inputView}>
         <Text style={styles.inputText}>PASSWORD</Text>
         <TextInput
@@ -88,6 +90,7 @@ export const LoginForm = () => {
             <Text style={styles.textError}>Wrong Email or Password.</Text>
           ) : null}
       </View>
+
       <TouchableHighlight
         style={styles.loginBtn}
         onPress={appLogin}
