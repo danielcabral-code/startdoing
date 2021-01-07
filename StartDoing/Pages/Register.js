@@ -11,7 +11,9 @@ import {
 } from 'react-native';
 
 import {createStackNavigator} from '@react-navigation/stack';
+import {useNavigation} from '@react-navigation/native';
 import 'react-native-gesture-handler';
+import {} from '../Components/Login/LoginForm';
 
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Moment from 'moment';
@@ -193,7 +195,9 @@ function RegisterScreen({navigation}) {
   );
 }
 
-function MoreInfo({navigation, route}) {
+function MoreInfo({route}) {
+  const navigation = useNavigation();
+
   const [height, setHeight] = useState('');
   const [birth, setBirth] = useState('');
   const [weight, setWeight] = useState('');
@@ -286,11 +290,13 @@ function MoreInfo({navigation, route}) {
           height: height,
           birth: birth,
           weight: weight,
-          photoUrl: 'https://firebasestorage.googleapis.com/v0/b/startdoing-bd1bc.appspot.com/o/person.jpg?alt=media&token=d201079f-9035-4f11-9421-58d1e9293359',
+          photoUrl:
+            'https://firebasestorage.googleapis.com/v0/b/startdoing-bd1bc.appspot.com/o/person.jpg?alt=media&token=d201079f-9035-4f11-9421-58d1e9293359',
         }),
       })
         .then((response) => response.json())
         .then((result) => console.log(result));
+      navigation.navigate('Login');
     } catch (error) {
       console.log(error);
     }
