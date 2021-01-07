@@ -1,43 +1,61 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableHighlight } from 'react-native';
+import React, {useState} from 'react';
+
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  TouchableHighlight,
+} from 'react-native';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [emailErrorShow, setEmailErrorShow] = useState(false);
+  const [passwordErrorShow, setPasswordErrorShow] = useState(false);
+  const [invalidCredentials, setInvalidCredentials] = useState(false);
 
   async function appLogin() {
+
+    if (!email || email.trim() === '') {
+      setEmailErrorShow(true);
+      return;
+    } else {
+      setEmailErrorShow(false);
+    }
+
+    if (!password || password.trim() === '') {
+      setPasswordErrorShow(true);
+      return;
+    } else {
+      setPasswordErrorShow(false);
+    }
 
     try {
       await fetch('https://startdoing.herokuapp.com/login', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          "email": email,
-          "password": password,
-        })
-
+          email: email,
+          password: password,
+        }),
       })
-        .then(response => response.json())
-        .then(result => {
-
+        .then((response) => response.json())
+        .then((result) => {
           try {
-
-            AsyncStorage.setItem("@token", result.token)
+            AsyncStorage.setItem('@token', result.token);
             console.log(result.token);
-           
-
+            setInvalidCredentials(false)
           } catch (e) {
             console.log(e);
           }
-
-        })
-
-
+        });
     } catch (error) {
-      console.log('erro')
+      setInvalidCredentials(true)
     }
   }
 
@@ -45,17 +63,30 @@ export const LoginForm = () => {
     <>
       <View style={styles.inputView}>
         <Text style={styles.inputText}>EMAIL</Text>
-        <TextInput style={styles.inputLine}
+        <TextInput
+          style={styles.inputLine}
           keyboardType="email-address"
-          onChangeText={text => setEmail(text)}
-          value={email} />
+          onChangeText={(text) => setEmail(text)}
+          value={email}
+        />
+         {emailErrorShow ? (
+            <Text style={styles.textError}>Please Enter Your Email.</Text>
+          ) : null}
       </View>
       <View style={styles.inputView}>
         <Text style={styles.inputText}>PASSWORD</Text>
-        <TextInput style={styles.inputLine}
-          onChangeText={text => setPassword(text)}
+        <TextInput
+          style={styles.inputLine}
+          onChangeText={(text) => setPassword(text)}
           secureTextEntry={true}
-          value={password} />
+          value={password}
+        />
+         {passwordErrorShow ? (
+            <Text style={styles.textError}>Please Enter a Password.</Text>
+          ) : null}
+          {invalidCredentials ? (
+            <Text style={styles.textError}>Wrong Email or Password.</Text>
+          ) : null}
       </View>
       <TouchableHighlight
         style={styles.loginBtn}
@@ -67,12 +98,11 @@ export const LoginForm = () => {
   );
 };
 
-
-
 const styles = StyleSheet.create({
   inputView: {
     alignSelf: 'center',
     marginTop: 16,
+    width: '85%',
   },
   inputText: {
     fontFamily: 'OpenSans-Bold',
@@ -80,7 +110,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   inputLine: {
-    width: 300,
+    width: '100%',
     height: 40,
     alignSelf: 'center',
     borderColor: 'white',
@@ -90,7 +120,7 @@ const styles = StyleSheet.create({
   },
   loginBtn: {
     marginTop: 24,
-    width: 300,
+    width: '85%',
     height: 50,
     borderRadius: 10,
     backgroundColor: '#F27A29',
@@ -110,5 +140,11 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-Bold',
     fontSize: 18,
     textShadowRadius: 6,
+  },
+  textError: {
+    fontFamily: 'OpenSans-Regular',
+    fontSize: 12,
+    color: 'red',
+    marginTop: 10,
   }
 });
