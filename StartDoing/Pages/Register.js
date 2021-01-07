@@ -286,12 +286,14 @@ function MoreInfo({navigation, route}) {
           height: height,
           birth: birth,
           weight: weight,
-          photoUrl: 'xskk',
+          photoUrl: 'https://firebasestorage.googleapis.com/v0/b/startdoing-bd1bc.appspot.com/o/person.jpg?alt=media&token=d201079f-9035-4f11-9421-58d1e9293359',
         }),
       })
         .then((response) => response.json())
         .then((result) => console.log(result));
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
