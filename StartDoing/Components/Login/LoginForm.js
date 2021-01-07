@@ -52,6 +52,7 @@ export const LoginForm = () => {
             AsyncStorage.setItem('@token', result.token);
             console.log(result.token);
             setInvalidCredentials(false);
+            navigation.navigate('BottomNavigation');
           } catch (e) {
             console.log(e);
           }
@@ -59,7 +60,7 @@ export const LoginForm = () => {
     } catch (error) {
       setInvalidCredentials(true);
     }
-    navigation.navigate('BottomNavigation');
+   
   }
 
   return (
