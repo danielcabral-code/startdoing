@@ -1,45 +1,102 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
-import {StyleSheet, Text} from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 
-import {createStackNavigator} from '@react-navigation/stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import 'react-native-gesture-handler';
-
-import {NavigationContainer} from '@react-navigation/native';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwt_decode from "jwt-decode";
 import HomeNoPlans from './HomeNoPlans';
 import HomeWithPlans from './HomeWithPlans';
-
 import Plans from './Plans';
 import Settings from './Settings';
 
 const Stack = createStackNavigator();
 const BottomNavigation = () => {
+
+
   return (
     <>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="BottomNavigation">
-          <Stack.Screen
-            options={{headerShown: false}}
-            name="BottomNavigation"
-            component={BottomNav}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+
+      <Stack.Navigator initialRouteName="BottomNavigation">
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="BottomNavigation"
+          component={BottomNav}
+        />
+      </Stack.Navigator>
+
     </>
   );
 };
 
-function BottomNav({navigation}) {
+function BottomNav({ navigation }) {
   const Tab = createBottomTabNavigator();
 
   function HomeScreen() {
-    return <HomeNoPlans />;
+    const [token, setToken] = useState('');
+    const [id, setId] = useState('');
+    const [plansExist, setPlansExist] = useState(false);
+    let decoded = ''
+
+
+    const getToken = async () => {
+
+      try {
+
+        setToken(await AsyncStorage.getItem('@token'))
+        if (token !== null) {
+
+          decoded = jwt_decode(token);
+
+          setId(decoded.data.id)
+  
+        }
+
+        fetch(`https://startdoing.herokuapp.com/user_plans/${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization:
+              `Bearer ${token}`,
+          },
+
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            console.log(result.length)
+            if (result.length == 0) {
+              setPlansExist(false)
+            }
+            else setPlansExist(true)
+
+          })
+
+          .catch((error) => console.log('error', error));
+
+
+      } catch (e) {
+
+      }
+
+    }
+
+    useEffect(() => {
+      getToken()
+
+    })
+
+    if (plansExist === true) {
+      return <HomeWithPlans />;
+    }
+    else return <HomeNoPlans />;
+  
   }
 
   function PlansScreen() {
+  
     return <Plans />;
   }
 
@@ -49,8 +106,8 @@ function BottomNav({navigation}) {
   return (
     <>
       <Tab.Navigator
-        screenOptions={({route}) => ({
-          tabBarIcon: ({focused, color, size}) => {
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
             let iconName;
             let iconNameHome;
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   StyleSheet,
@@ -11,8 +11,93 @@ import {
 } from 'react-native';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwt_decode from "jwt-decode";
 
 const Home = () => {
+
+  const [token, setToken] = useState('');
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [birth, setBirth] = useState('');
+  const [id, setId] = useState('');
+  const [photoUrl, setPhotoUrl] = useState('https://firebasestorage.googleapis.com/v0/b/startdoing-bd1bc.appspot.com/o/person.jpg?alt=media&token=d201079f-9035-4f11-9421-58d1e9293359')
+  const [planOne, setPlanOne] = useState('');
+  const [planTwo, setPlanTwo] = useState('');
+  const [stylePlanTwoNonExistent, setStylePlanTwoNonExistent] = useState(true)
+  const [stylePlanTwoExistent, setStylePlanTwoExistent] = useState(false)
+
+  let decoded = ''
+
+
+  const getToken = async () => {
+
+    try {
+
+      setToken(await AsyncStorage.getItem('@token'))
+      if (token !== null) {
+
+        decoded = jwt_decode(token);
+        console.log(decoded);
+
+        setEmail(decoded.data.email)
+        setName(decoded.data.name)
+        setId(decoded.data.id)
+        setBirth(decoded.data.birth)
+        setPhotoUrl(decoded.data.photoUrl)
+        console.log(email, name, id, birth,photoUrl);
+
+      }
+
+      fetch(`https://startdoing.herokuapp.com/user_plans/${id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization:
+            `Bearer ${token}`,
+        },
+
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          console.log(result.length)
+          console.log(result[0].plan_name)
+          
+        
+           
+    
+          if (result.length == 2) {
+            setStylePlanTwoNonExistent(false)
+            setStylePlanTwoExistent(true)
+            setPlanOne(result[0].plan_name)
+            setPlanTwo(result[1].plan_name)
+
+          }
+          else {
+            setStylePlanTwoNonExistent(true)
+            setStylePlanTwoExistent(false)
+            setPlanOne(result[0].plan_name)
+         
+          }
+
+        })
+
+
+
+
+        .catch((error) => console.log('error', error));
+
+
+    } catch (e) {
+
+    }
+
+  }
+
+  useEffect(() => {
+    getToken()
+
+  })
   function onPressButton() {
     alert('You Pressed Me!');
   }
@@ -25,25 +110,36 @@ const Home = () => {
             <View style={styles.profileImageBackground2}>
               <Image
                 style={styles.profileImage}
-                source={require('../../Images/Person.jpg')}></Image>
+                source={{uri:photoUrl}}></Image>
             </View>
           </View>
 
-          <Text style={styles.userName}>HI, {}!</Text>
+          <Text style={styles.userName}>HI, {name} { }!</Text>
 
           <TouchableHighlight
             style={styles.planBtn}
             onPress={onPressButton}
             underlayColor="#F27A2999">
-            <Text style={styles.planText}>PLAN1</Text>
+            <Text style={styles.planText}>{planOne}</Text>
           </TouchableHighlight>
 
-          <TouchableHighlight
-            style={styles.planBtn}
-            onPress={onPressButton}
-            underlayColor="#F27A2999">
-            <Text style={styles.planText}>PLAN2</Text>
-          </TouchableHighlight>
+          {stylePlanTwoNonExistent ? (
+            <TouchableHighlight
+              style={styles.unactiveBtn}
+              underlayColor="#F27A2999">
+              <Text style={styles.unactiveText}>CREATE MORE PLANS </Text>
+            </TouchableHighlight>
+          ) : null}
+
+          {stylePlanTwoExistent ? (
+            <TouchableHighlight
+              style={styles.planBtn}
+              onPress={onPressButton}
+              underlayColor="#F27A2999">
+              <Text style={styles.planText}>{planTwo}</Text>
+            </TouchableHighlight>
+          ) : null}
+
 
           <TouchableHighlight
             style={styles.suggestedBtn}
@@ -142,6 +238,20 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-Bold',
     fontSize: 20,
     textShadowRadius: 6,
+  },
+  unactiveBtn: {
+    marginTop: 40,
+    width: '85%',
+    height: 90.9,
+    borderRadius: 10,
+    backgroundColor: '#F27A2940',
+    justifyContent: 'center',
+  },
+  unactiveText: {
+    alignSelf: 'center',
+    color: '#FFFFFF40',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 14,
   },
 });
 
