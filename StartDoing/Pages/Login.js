@@ -10,7 +10,7 @@ import {
 } from '../Components/Login/Buttons';
 import ResetPasswordScreen from '../Pages/ResetPassword';
 import BottomNavigation from '../Pages/BottomNavigation/BottomNavigation'
-
+import UserPlan from '../Pages/UserPlan'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -38,6 +38,12 @@ const LoginPage = () => {
           options={{ headerShown: false }}
           name="BottomNavigation"
           component={BottomNavigation}
+        />
+
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="UserPlan"
+          component={UserPlan}
         />
       </Stack.Navigator>
     </NavigationContainer>

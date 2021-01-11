@@ -13,8 +13,10 @@ import {
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
+import { useNavigation } from '@react-navigation/native';
 
-const Home = () => {
+const Home = ({ navigate }) => {
+  const navigation = useNavigation();
 
   const [token, setToken] = useState('');
   const [email, setEmail] = useState('');
@@ -26,6 +28,8 @@ const Home = () => {
   const [planTwo, setPlanTwo] = useState('');
   const [stylePlanTwoNonExistent, setStylePlanTwoNonExistent] = useState(true)
   const [stylePlanTwoExistent, setStylePlanTwoExistent] = useState(false)
+  const [idPlanOne, setIdPlanOne] = useState('')
+  const [idPlanTwo, setIdPlanTwo] = useState('')
 
   let decoded = ''
 
@@ -45,7 +49,7 @@ const Home = () => {
         setId(decoded.data.id)
         setBirth(decoded.data.birth)
         setPhotoUrl(decoded.data.photoUrl)
-        console.log(email, name, id, birth,photoUrl);
+        console.log(email, name, id, birth, photoUrl);
 
       }
 
@@ -60,24 +64,24 @@ const Home = () => {
       })
         .then((response) => response.json())
         .then((result) => {
-          console.log(result.length)
-          console.log(result[0].plan_name)
-          
-        
-           
-    
+          console.log(result[0]._id)
+
+
           if (result.length == 2) {
             setStylePlanTwoNonExistent(false)
             setStylePlanTwoExistent(true)
             setPlanOne(result[0].plan_name)
+            setIdPlanOne(result[0]._id)
             setPlanTwo(result[1].plan_name)
+            setIdPlanTwo(result[1]._id)
 
           }
           else {
             setStylePlanTwoNonExistent(true)
             setStylePlanTwoExistent(false)
             setPlanOne(result[0].plan_name)
-         
+            setIdPlanOne(result[0]._id)
+
           }
 
         })
@@ -110,7 +114,7 @@ const Home = () => {
             <View style={styles.profileImageBackground2}>
               <Image
                 style={styles.profileImage}
-                source={{uri:photoUrl}}></Image>
+                source={{ uri: photoUrl }}></Image>
             </View>
           </View>
 
@@ -118,7 +122,10 @@ const Home = () => {
 
           <TouchableHighlight
             style={styles.planBtn}
-            onPress={onPressButton}
+            onPress={() => navigation.navigate('UserPlan', {
+              screen: 'UserPlan',
+              params: { id: idPlanOne }
+            })}
             underlayColor="#F27A2999">
             <Text style={styles.planText}>{planOne}</Text>
           </TouchableHighlight>
@@ -134,7 +141,10 @@ const Home = () => {
           {stylePlanTwoExistent ? (
             <TouchableHighlight
               style={styles.planBtn}
-              onPress={onPressButton}
+              onPress={() => navigation.navigate('UserPlan',{
+                screen: 'UserPlan',
+                params: { id: idPlanTwo }
+              })}
               underlayColor="#F27A2999">
               <Text style={styles.planText}>{planTwo}</Text>
             </TouchableHighlight>
@@ -142,13 +152,13 @@ const Home = () => {
 
 
           <TouchableHighlight
-            style={styles.suggestedBtn}
-            onPress={onPressButton}
-            underlayColor="#006DA899">
-            <Text style={styles.suggestedText}>SUGGESTED TRAINING</Text>
-          </TouchableHighlight>
+          style={styles.suggestedBtn}
+          onPress={onPressButton}
+          underlayColor="#006DA899">
+          <Text style={styles.suggestedText}>SUGGESTED TRAINING</Text>
+        </TouchableHighlight>
         </View>
-      </ScrollView>
+    </ScrollView>
     </>
   );
 };
