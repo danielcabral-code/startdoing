@@ -124,7 +124,7 @@ const Home = ({ navigate }) => {
             style={styles.planBtn}
             onPress={() => navigation.navigate('UserPlan', {
               screen: 'UserPlan',
-              params: { id: idPlanOne }
+              params: { id: idPlanOne, token:token }
             })}
             underlayColor="#F27A2999">
             <Text style={styles.planText}>{planOne}</Text>

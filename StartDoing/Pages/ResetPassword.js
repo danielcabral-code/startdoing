@@ -92,12 +92,10 @@ function ResetPasswordScreen({navigation}) {
         code = JSON.stringify(response.status);
 
         if (code == 406) {
-          fetch(`https://startdoing.herokuapp.com/${email}`, {
+          fetch(`https://startdoing.herokuapp.com/recoverpassword/${email}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
-              Authorization:
-                'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImVtYWlsIjoidGVzdGluZ0BlbWFpbC5jb20iLCJpZCI6IjVmZGQzYzZkOGE2YWNlMjg2MDE0MGUwYSIsIm5hbWUiOiJ0ZXN0aW5nIn0sImlhdCI6MTYwODU2MTUxMiwiZXhwIjoxNjE1NzYxNTEyfQ.6LFbFI4QXw7jZfy4INAloW_CAXijqZ2nKdhClUlpM9M',
             },
             body: JSON.stringify({
               password: password,
