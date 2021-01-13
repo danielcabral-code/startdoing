@@ -23,6 +23,8 @@
     "react-moment": "^1.1.1",
     "react-native": "0.63.4",
     "react-native-gesture-handler": "^1.9.0",
+    "react-native-mask-image": "^0.1.1",
+    "react-native-media-queries": "^0.3.0",
     "react-native-modal-datetime-picker": "^9.1.0",
     "react-native-reanimated": "^1.13.2",
     "react-native-safe-area-context": "^3.1.9",
