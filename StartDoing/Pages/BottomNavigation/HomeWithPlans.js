@@ -1,0 +1,258 @@
+import React, { useState, useEffect } from 'react';
+
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Text,
+  Image,
+  TouchableHighlight,
+  TouchableWithoutFeedback,
+} from 'react-native';
+
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwt_decode from "jwt-decode";
+
+const Home = () => {
+
+  const [token, setToken] = useState('');
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [birth, setBirth] = useState('');
+  const [id, setId] = useState('');
+  const [photoUrl, setPhotoUrl] = useState('https://firebasestorage.googleapis.com/v0/b/startdoing-bd1bc.appspot.com/o/person.jpg?alt=media&token=d201079f-9035-4f11-9421-58d1e9293359')
+  const [planOne, setPlanOne] = useState('');
+  const [planTwo, setPlanTwo] = useState('');
+  const [stylePlanTwoNonExistent, setStylePlanTwoNonExistent] = useState(true)
+  const [stylePlanTwoExistent, setStylePlanTwoExistent] = useState(false)
+
+  let decoded = ''
+
+
+  const getToken = async () => {
+
+    try {
+
+      setToken(await AsyncStorage.getItem('@token'))
+      if (token !== null) {
+
+        decoded = jwt_decode(token);
+        console.log(decoded);
+
+        setEmail(decoded.data.email)
+        setName(decoded.data.name)
+        setId(decoded.data.id)
+        setBirth(decoded.data.birth)
+        setPhotoUrl(decoded.data.photoUrl)
+        console.log(email, name, id, birth,photoUrl);
+
+      }
+
+      fetch(`https://startdoing.herokuapp.com/user_plans/${id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization:
+            `Bearer ${token}`,
+        },
+
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          console.log(result.length)
+          console.log(result[0].plan_name)
+          
+        
+           
+    
+          if (result.length == 2) {
+            setStylePlanTwoNonExistent(false)
+            setStylePlanTwoExistent(true)
+            setPlanOne(result[0].plan_name)
+            setPlanTwo(result[1].plan_name)
+
+          }
+          else {
+            setStylePlanTwoNonExistent(true)
+            setStylePlanTwoExistent(false)
+            setPlanOne(result[0].plan_name)
+         
+          }
+
+        })
+
+
+
+
+        .catch((error) => console.log('error', error));
+
+
+    } catch (e) {
+
+    }
+
+  }
+
+  useEffect(() => {
+    getToken()
+
+  })
+  function onPressButton() {
+    alert('You Pressed Me!');
+  }
+
+  return (
+    <>
+      <ScrollView style={styles.background}>
+        <View style={styles.bg2}>
+          <View style={styles.profileImageBackground1}>
+            <View style={styles.profileImageBackground2}>
+              <Image
+                style={styles.profileImage}
+                source={{uri:photoUrl}}></Image>
+            </View>
+          </View>
+
+          <Text style={styles.userName}>HI, {name} { }!</Text>
+
+          <TouchableHighlight
+            style={styles.planBtn}
+            onPress={onPressButton}
+            underlayColor="#F27A2999">
+            <Text style={styles.planText}>{planOne}</Text>
+          </TouchableHighlight>
+
+          {stylePlanTwoNonExistent ? (
+            <TouchableHighlight
+              style={styles.unactiveBtn}
+              underlayColor="#F27A2999">
+              <Text style={styles.unactiveText}>CREATE MORE PLANS </Text>
+            </TouchableHighlight>
+          ) : null}
+
+          {stylePlanTwoExistent ? (
+            <TouchableHighlight
+              style={styles.planBtn}
+              onPress={onPressButton}
+              underlayColor="#F27A2999">
+              <Text style={styles.planText}>{planTwo}</Text>
+            </TouchableHighlight>
+          ) : null}
+
+
+          <TouchableHighlight
+            style={styles.suggestedBtn}
+            onPress={onPressButton}
+            underlayColor="#006DA899">
+            <Text style={styles.suggestedText}>SUGGESTED TRAINING</Text>
+          </TouchableHighlight>
+        </View>
+      </ScrollView>
+    </>
+  );
+};
+
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    width: '100%',
+    backgroundColor: '#26282B',
+  },
+  bg2: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  profileImageBackground1: {
+    width: 84,
+    height: 84,
+    borderRadius: 50,
+    backgroundColor: '#F27A29',
+    marginTop: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  profileImageBackground2: {
+    width: 78,
+    height: 78,
+    borderRadius: 50,
+    backgroundColor: '#26282B',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  profileImage: {
+    width: 70,
+    height: 70,
+    borderRadius: 50,
+  },
+  userName: {
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 22,
+    marginTop: 6,
+    alignSelf: 'center',
+  },
+  planBtn: {
+    marginTop: 38,
+    width: '85%',
+    height: 90.9,
+    borderRadius: 10,
+    backgroundColor: '#F27A29',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+  },
+  planText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 18,
+    textShadowRadius: 6,
+  },
+  suggestedBtn: {
+    marginTop: 38,
+    marginBottom: 20,
+    width: '85%',
+    height: 90.9,
+    borderRadius: 10,
+    backgroundColor: '#006DA8',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+  },
+  suggestedText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 20,
+    textShadowRadius: 6,
+  },
+  unactiveBtn: {
+    marginTop: 40,
+    width: '85%',
+    height: 90.9,
+    borderRadius: 10,
+    backgroundColor: '#F27A2940',
+    justifyContent: 'center',
+  },
+  unactiveText: {
+    alignSelf: 'center',
+    color: '#FFFFFF40',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 14,
+  },
+});
+
+export default Home;
