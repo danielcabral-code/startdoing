@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component } from 'react';
+import React, {useState, useEffect, Component} from 'react';
 
 import {
   StyleSheet,
@@ -11,18 +11,18 @@ import {
   FlatList,
 } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {useNavigation} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { MaskImageView } from 'react-native-mask-image';
-import { createStyles, minWidth, maxWidth } from 'react-native-media-queries';
+import {MaskImageView} from 'react-native-mask-image';
+import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
 
 const Stack = createStackNavigator();
 const UserPlans = () => {
   return (
     <Stack.Navigator initialRouteName="UserPlan">
       <Stack.Screen
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
         name="UserPlan"
         component={UserPlan}
       />
@@ -30,17 +30,17 @@ const UserPlans = () => {
   );
 };
 
-function UserPlan({ route }) {
+function UserPlan({route}) {
   const id = route.params.id;
   const token = route.params.token;
-  const planName = route.params.planName
+  const planName = route.params.planName;
   //console.log(id, token);
 
   const [myExcerciseData, setMyExcerciseData] = useState([]);
 
   function getExercises() {
     let myData = [];
-    let myArr = []
+    let myArr = [];
     fetch(`https://startdoing.herokuapp.com/user_plans/plan/${id}`, {
       method: 'GET',
       headers: {
@@ -98,36 +98,28 @@ function UserPlan({ route }) {
         </View>
       </View>
 
-
-      <FlatList style={styles.background}
+      <FlatList
+        style={styles.background}
         keyExtractor={(item) => item.exercise_id}
         data={myExcerciseData}
-        renderItem={({ item }) => (
+        renderItem={({item}) => (
           <View style={stylesMediaQueries.maskView}>
             <MaskImageView
-              urlImage={
-                item.videoUrl
-              }
+              urlImage={item.videoUrl}
               urlMask={'https://i.imgur.com/NDpYsdD.png'}
               style={{
                 width: '100%',
                 height: '100%',
               }}
             />
-            <Text style={stylesMediaQueries.exerciseText}>{item.exerciseName.toUpperCase()}</Text>
+            <Text style={stylesMediaQueries.exerciseText}>
+              {item.exerciseName.toUpperCase()}
+            </Text>
           </View>
-        )}>
-
-      </FlatList>
-
-
-
+        )}></FlatList>
 
       <View style={styles.bottomSectionView}>
-        <TouchableHighlight
-          style={styles.startBtn}
-
-          underlayColor="#F27A2999">
+        <TouchableHighlight style={styles.startBtn} underlayColor="#F27A2999">
           <Text style={styles.startText}>START</Text>
         </TouchableHighlight>
       </View>
@@ -207,6 +199,7 @@ const base = {
     marginTop: 10,
     marginBottom: 14,
     alignItems: 'center',
+    alignSelf: 'center'
   },
 
   exerciseText: {
