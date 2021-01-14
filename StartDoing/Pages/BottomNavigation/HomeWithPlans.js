@@ -24,8 +24,8 @@ const Home = ({ navigate }) => {
   const [birth, setBirth] = useState('');
   const [id, setId] = useState('');
   const [photoUrl, setPhotoUrl] = useState('https://firebasestorage.googleapis.com/v0/b/startdoing-bd1bc.appspot.com/o/person.jpg?alt=media&token=d201079f-9035-4f11-9421-58d1e9293359')
-  const [planOne, setPlanOne] = useState('');
-  const [planTwo, setPlanTwo] = useState('');
+  const [planOneName, setPlanOneName] = useState('');
+  const [planTwoName, setPlanTwoName] = useState('');
   const [stylePlanTwoNonExistent, setStylePlanTwoNonExistent] = useState(true)
   const [stylePlanTwoExistent, setStylePlanTwoExistent] = useState(false)
   const [idPlanOne, setIdPlanOne] = useState('')
@@ -70,16 +70,16 @@ const Home = ({ navigate }) => {
           if (result.length == 2) {
             setStylePlanTwoNonExistent(false)
             setStylePlanTwoExistent(true)
-            setPlanOne(result[0].plan_name)
+            setPlanOneName(result[0].plan_name)
             setIdPlanOne(result[0]._id)
-            setPlanTwo(result[1].plan_name)
+            setPlanTwoName(result[1].plan_name)
             setIdPlanTwo(result[1]._id)
 
           }
           else {
             setStylePlanTwoNonExistent(true)
             setStylePlanTwoExistent(false)
-            setPlanOne(result[0].plan_name)
+            setPlanOneName(result[0].plan_name)
             setIdPlanOne(result[0]._id)
 
           }
@@ -124,10 +124,10 @@ const Home = ({ navigate }) => {
             style={styles.planBtn}
             onPress={() => navigation.navigate('UserPlan', {
               screen: 'UserPlan',
-              params: { id: idPlanOne, token:token }
+              params: { id: idPlanOne, token:token, planName:planOneName }
             })}
             underlayColor="#F27A2999">
-            <Text style={styles.planText}>{planOne}</Text>
+            <Text style={styles.planText}>{planOneName}</Text>
           </TouchableHighlight>
 
           {stylePlanTwoNonExistent ? (
@@ -143,10 +143,10 @@ const Home = ({ navigate }) => {
               style={styles.planBtn}
               onPress={() => navigation.navigate('UserPlan',{
                 screen: 'UserPlan',
-                params: { id: idPlanTwo }
+                params: { id: idPlanTwo, token:token, planName:planTwoName }
               })}
               underlayColor="#F27A2999">
-              <Text style={styles.planText}>{planTwo}</Text>
+              <Text style={styles.planText}>{planTwoName}</Text>
             </TouchableHighlight>
           ) : null}
 

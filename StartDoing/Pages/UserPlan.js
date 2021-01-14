@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect, Component } from 'react';
 
 import {
   StyleSheet,
@@ -8,20 +8,21 @@ import {
   Image,
   TouchableHighlight,
   TouchableWithoutFeedback,
+  FlatList,
 } from 'react-native';
 
-import {useNavigation} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {MaskImageView} from 'react-native-mask-image';
-import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
+import { MaskImageView } from 'react-native-mask-image';
+import { createStyles, minWidth, maxWidth } from 'react-native-media-queries';
 
 const Stack = createStackNavigator();
 const UserPlans = () => {
   return (
     <Stack.Navigator initialRouteName="UserPlan">
       <Stack.Screen
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
         name="UserPlan"
         component={UserPlan}
       />
@@ -29,17 +30,17 @@ const UserPlans = () => {
   );
 };
 
-function UserPlan({route}) {
+function UserPlan({ route }) {
   const id = route.params.id;
   const token = route.params.token;
+  const planName = route.params.planName
   //console.log(id, token);
-  let myData = {};
 
-  function onPressButton() {
-    alert('You Pressed Me!');
-  }
+  const [myExcerciseData, setMyExcerciseData] = useState([]);
 
   function getExercises() {
+    let myData = [];
+    let myArr = []
     fetch(`https://startdoing.herokuapp.com/user_plans/plan/${id}`, {
       method: 'GET',
       headers: {
@@ -65,11 +66,9 @@ function UserPlan({route}) {
             )
               .then((response) => response.json())
               .then((result) => {
-                myData = result;
-                console.log(myData.exerciseName);
-                /*  console.log(result);
-                console.log(result.exerciseName);
-                console.log(result.videoUrl); */
+                myData.push(result);
+
+                setMyExcerciseData(...myExcerciseData, myData);
               })
 
               .catch((error) => console.log('error', error));
@@ -82,37 +81,32 @@ function UserPlan({route}) {
 
   useEffect(() => {
     getExercises();
-  });
+  }, []);
+
+  useEffect(() => {
+    console.log('updated data');
+
+    console.log('meus', myExcerciseData);
+  }, [myExcerciseData]);
 
   return (
     <>
       <View style={styles.topSectionView}>
         <View style={styles.topBarInfoView}>
           <MaterialIcons name="keyboard-arrow-left" style={styles.arrowLeft} />
-          <Text style={styles.planNameText}>TRAINING PLAN NAME</Text>
+          <Text style={styles.planNameText}>{planName}</Text>
         </View>
       </View>
 
-      <ScrollView style={styles.background}>
-        <View style={styles.bg2}>
-          <View style={stylesMediaQueries.maskView}>
-            <MaskImageView
-              urlImage={
-                'https://firebasestorage.googleapis.com/v0/b/startdoing-bd1bc.appspot.com/o/CHEST%20-%20PUSH%20UP%20-%20ov%2030.png?alt=media&token=82b03b7d-d935-450f-ae48-c12f88a836c9'
-              }
-              urlMask={'https://i.imgur.com/NDpYsdD.png'}
-              style={{
-                width: '100%',
-                height: '100%',
-              }}
-            />
-            <Text style={stylesMediaQueries.exerciseText}>EXERCISE EX</Text>
-          </View>
 
+      <FlatList style={styles.background}
+        keyExtractor={(item) => item.exercise_id}
+        data={myExcerciseData}
+        renderItem={({ item }) => (
           <View style={stylesMediaQueries.maskView}>
             <MaskImageView
               urlImage={
-                'https://firebasestorage.googleapis.com/v0/b/startdoing-bd1bc.appspot.com/o/CHEST%20-%20PUSH%20UP%20-%20ov%2030.png?alt=media&token=82b03b7d-d935-450f-ae48-c12f88a836c9'
+                item.videoUrl
               }
               urlMask={'https://i.imgur.com/NDpYsdD.png'}
               style={{
@@ -120,29 +114,19 @@ function UserPlan({route}) {
                 height: '100%',
               }}
             />
-            <Text style={stylesMediaQueries.exerciseText}>EXERCISE EX</Text>
+            <Text style={stylesMediaQueries.exerciseText}>{item.exerciseName.toUpperCase()}</Text>
           </View>
+        )}>
 
-          <View style={stylesMediaQueries.maskView}>
-            <MaskImageView
-              urlImage={
-                'https://firebasestorage.googleapis.com/v0/b/startdoing-bd1bc.appspot.com/o/CHEST%20-%20PUSH%20UP%20-%20ov%2030.png?alt=media&token=82b03b7d-d935-450f-ae48-c12f88a836c9'
-              }
-              urlMask={'https://i.imgur.com/NDpYsdD.png'}
-              style={{
-                width: '100%',
-                height: '100%',
-              }}
-            />
-            <Text style={stylesMediaQueries.exerciseText}>EXERCISE EX</Text>
-          </View>
-        </View>
-      </ScrollView>
+      </FlatList>
+
+
+
 
       <View style={styles.bottomSectionView}>
         <TouchableHighlight
           style={styles.startBtn}
-          onPress={onPressButton}
+
           underlayColor="#F27A2999">
           <Text style={styles.startText}>START</Text>
         </TouchableHighlight>
