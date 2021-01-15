@@ -67,7 +67,7 @@ const Home = ({ navigate }) => {
           console.log(result[0]._id)
 
 
-          if (result.length == 2) {
+          if (result.length === 2) {
             setStylePlanTwoNonExistent(false)
             setStylePlanTwoExistent(true)
             setPlanOneName(result[0].plan_name)
