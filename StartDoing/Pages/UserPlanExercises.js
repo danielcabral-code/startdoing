@@ -106,26 +106,26 @@ function UserPlanExercisesScreen({ route }) {
                         </Text>
 
                     </View>
-                    <Text>
-                        {"DURATION " + exercisesList[index].duration + " " + "SECONDS"}
+                    <Text style={styles.durationText}>
+                        {"DURATION: " + exercisesList[index].duration + " " + "SECONDS"}
                     </Text>
 
                     {showGoButton ? (
                         <TouchableHighlight
-                            style={styles.planBtn}
+                            style={styles.goBtn}
                             onPress={startExercise}
                             underlayColor="#F27A2999">
-                            <Text style={styles.planText}>GO!</Text>
+                            <Text style={styles.goText}>GO!</Text>
                         </TouchableHighlight>
                     ) : null}
 
                     {showNextButton ? (
                         <TouchableHighlight
-                            style= {styles.planBtn}
+                            style= {styles.nextBtn}
                             disabled={disableNextButton}
                             onPress={nextExercise}
                             underlayColor="#F27A2999">
-                            <Text style={styles.planText}>{[(disableNextButton) ? seconds +"s" : "NEXT EXERCISE"]}</Text>
+                            <Text style={styles.nextText}>{[(disableNextButton) ? seconds +"s" : "NEXT EXERCISE"]}</Text>
                         </TouchableHighlight>
                     ) : null}
 
@@ -162,8 +162,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#26282B',
     },
-    planBtn: {
-        marginTop: 38,
+    goBtn: {
+        marginTop: 180,
+        marginBottom: 24,
         width: '85%',
         height: 90.9,
         borderRadius: 10,
@@ -178,11 +179,35 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.27,
         shadowRadius: 4.65,
     },
-    planText: {
+    goText: {
         alignSelf: 'center',
         color: 'white',
         fontFamily: 'OpenSans-Bold',
-        fontSize: 18,
+        fontSize: 28,
+        textShadowRadius: 6,
+    },
+    nextBtn: {
+        marginTop: 180,
+        marginBottom: 24,
+        width: '85%',
+        height: 90.9,
+        borderRadius: 10,
+        backgroundColor: '#F27A29',
+        justifyContent: 'center',
+        elevation: 6,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 3,
+        },
+        shadowOpacity: 0.27,
+        shadowRadius: 4.65,
+    },
+    nextText: {
+        alignSelf: 'center',
+        color: 'white',
+        fontFamily: 'OpenSans-Bold',
+        fontSize: 28,
         textShadowRadius: 6,
     },
     arrowLeft: {
@@ -210,6 +235,13 @@ const styles = StyleSheet.create({
         backgroundColor: '#F27A2940',
         justifyContent: 'center',
     },
+    durationText: {
+        alignSelf: 'center',
+        color: 'white',
+        fontFamily: 'OpenSans-Regular',
+        fontSize: 18,
+        textShadowRadius: 6,
+    },
 
 
 
@@ -220,7 +252,7 @@ const base = {
         height: 178,
         width: '85%',
         marginTop: 10,
-        marginBottom: 14,
+        marginBottom: 10,
         alignItems: 'center',
         alignSelf: 'center'
     },

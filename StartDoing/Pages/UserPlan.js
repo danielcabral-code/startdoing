@@ -35,7 +35,7 @@ function UserPlan({ route }) {
 
   const id = route.params.id;
   const token = route.params.token;
-  const planName = route.params.planName;
+  const planName = route.params.planName.toUpperCase();
   
 
   const [myExcerciseData, setMyExcerciseData] = useState([]);

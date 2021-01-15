@@ -118,7 +118,7 @@ const Home = ({ navigate }) => {
             </View>
           </View>
 
-          <Text style={styles.userName}>HI, {name} { }!</Text>
+          <Text style={styles.userName}>HI, {name.toUpperCase()} { }!</Text>
 
           <TouchableHighlight
             style={styles.planBtn}
@@ -127,7 +127,7 @@ const Home = ({ navigate }) => {
               params: { id: idPlanOne, token:token, planName:planOneName }
             })}
             underlayColor="#F27A2999">
-            <Text style={styles.planText}>{planOneName}</Text>
+            <Text style={styles.planText}>{planOneName.toUpperCase()}</Text>
           </TouchableHighlight>
 
           {stylePlanTwoNonExistent ? (
@@ -146,7 +146,7 @@ const Home = ({ navigate }) => {
                 params: { id: idPlanTwo, token:token, planName:planTwoName }
               })}
               underlayColor="#F27A2999">
-              <Text style={styles.planText}>{planTwoName}</Text>
+              <Text style={styles.planText}>{planTwoName.toUpperCase()}</Text>
             </TouchableHighlight>
           ) : null}
 
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     color: 'white',
     fontFamily: 'OpenSans-Bold',
-    fontSize: 18,
+    fontSize: 20,
     textShadowRadius: 6,
   },
   suggestedBtn: {
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     color: '#FFFFFF40',
     fontFamily: 'OpenSans-Bold',
-    fontSize: 14,
+    fontSize: 20,
   },
 });
 
