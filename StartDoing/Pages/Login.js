@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Image, Text } from 'react-native';
+import {StyleSheet, View, ScrollView, Image, Text} from 'react-native';
 
-import { LoginForm } from '../Components/Login/LoginForm';
+import {LoginForm} from '../Components/Login/LoginForm';
 import RegisterScreen from '../Pages/Register';
 import {
   ButtonForgotPassword,
@@ -9,10 +9,11 @@ import {
   ButtonGuest,
 } from '../Components/Login/Buttons';
 import ResetPasswordScreen from '../Pages/ResetPassword';
-import BottomNavigation from '../Pages/BottomNavigation/BottomNavigation'
-import UserPlan from '../Pages/UserPlan'
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import BottomNavigation from '../Pages/BottomNavigation/BottomNavigation';
+import UserPlan from '../Pages/UserPlan';
+import CreatePlan from '../Pages/CreatePlan';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 
 const Stack = createStackNavigator();
 const LoginPage = () => {
@@ -20,37 +21,41 @@ const LoginPage = () => {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen
-          options={{ headerShown: false }}
+          options={{headerShown: false}}
           name="Login"
           component={LoginScreen}
         />
         <Stack.Screen
-          options={{ headerShown: false }}
+          options={{headerShown: false}}
           name="RegisterScreen"
           component={RegisterScreen}
         />
         <Stack.Screen
-          options={{ headerShown: false }}
+          options={{headerShown: false}}
           name="ResetPassword"
           component={ResetPasswordScreen}
         />
         <Stack.Screen
-          options={{ headerShown: false }}
+          options={{headerShown: false}}
           name="BottomNavigation"
           component={BottomNavigation}
         />
-
         <Stack.Screen
-          options={{ headerShown: false }}
+          options={{headerShown: false}}
           name="UserPlan"
           component={UserPlan}
+        />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="CreatePlan"
+          component={CreatePlan}
         />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
-function LoginScreen({ navigation }) {
+function LoginScreen({navigation}) {
   return (
     <ScrollView style={styles.background}>
       <View style={styles.bg2}>

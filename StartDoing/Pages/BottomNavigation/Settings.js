@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 
 const Settings = () => {
-
   function onPressButton() {
     alert('You Pressed Me!');
   }
@@ -30,26 +29,26 @@ const Settings = () => {
           <Text style={styles.userName}>HI, !</Text>
 
           <TouchableHighlight
-          style={styles.planBtn}
-          onPress={onPressButton}
-          underlayColor="#F27A2999">
-          <Text style={styles.planText}>EDIT WEIGHT & HEIGHT</Text>
-          </TouchableHighlight>
-          
-          <TouchableHighlight
-          style={styles.planBtn}
-          onPress={onPressButton}
-          underlayColor="#F27A2999">
-          <Text style={styles.planText}>CHANGE PROFILE PICTURE</Text>
+            style={styles.planBtn}
+            onPress={onPressButton}
+            underlayColor="#F27A2999">
+            <Text style={styles.planText}>EDIT WEIGHT & HEIGHT</Text>
           </TouchableHighlight>
 
           <TouchableHighlight
-          style={styles.planBtn}
-          onPress={onPressButton}
-          underlayColor="#F27A2999">
-          <Text style={styles.planText}>CHANGE PASSWORD</Text>
+            style={styles.planBtn}
+            onPress={onPressButton}
+            underlayColor="#F27A2999">
+            <Text style={styles.planText}>CHANGE PROFILE PICTURE</Text>
           </TouchableHighlight>
-          </View>
+
+          <TouchableHighlight
+            style={styles.planBtn}
+            onPress={onPressButton}
+            underlayColor="#F27A2999">
+            <Text style={styles.planText}>CHANGE PASSWORD</Text>
+          </TouchableHighlight>
+        </View>
       </ScrollView>
     </>
   );
@@ -117,8 +116,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textShadowRadius: 6,
   },
-    
-  
 });
 
 export default Settings;

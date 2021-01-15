@@ -9,7 +9,12 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 
+import {useNavigation} from '@react-navigation/native';
+
 const Plans = () => {
+
+  const navigation = useNavigation();
+
   function onPressButton() {
     alert('You Pressed Me!');
   }
@@ -20,7 +25,7 @@ const Plans = () => {
         <View style={styles.bg2}>
           <TouchableHighlight
             style={styles.createBtn}
-            onPress={onPressButton}
+            onPress={()=>navigation.navigate('CreatePlan')}
             underlayColor="#F27A2999">
             <Text style={styles.createText}>CREATE NEW PLAN</Text>
           </TouchableHighlight>
