@@ -13,8 +13,10 @@ import {
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
+import { useNavigation } from '@react-navigation/native';
 
-const Home = () => {
+const Home = ({ navigate }) => {
+  const navigation = useNavigation();
 
   const [token, setToken] = useState('');
   const [email, setEmail] = useState('');
@@ -22,10 +24,12 @@ const Home = () => {
   const [birth, setBirth] = useState('');
   const [id, setId] = useState('');
   const [photoUrl, setPhotoUrl] = useState('https://firebasestorage.googleapis.com/v0/b/startdoing-bd1bc.appspot.com/o/person.jpg?alt=media&token=d201079f-9035-4f11-9421-58d1e9293359')
-  const [planOne, setPlanOne] = useState('');
-  const [planTwo, setPlanTwo] = useState('');
+  const [planOneName, setPlanOneName] = useState('');
+  const [planTwoName, setPlanTwoName] = useState('');
   const [stylePlanTwoNonExistent, setStylePlanTwoNonExistent] = useState(true)
   const [stylePlanTwoExistent, setStylePlanTwoExistent] = useState(false)
+  const [idPlanOne, setIdPlanOne] = useState('')
+  const [idPlanTwo, setIdPlanTwo] = useState('')
 
   let decoded = ''
 
@@ -45,7 +49,7 @@ const Home = () => {
         setId(decoded.data.id)
         setBirth(decoded.data.birth)
         setPhotoUrl(decoded.data.photoUrl)
-        console.log(email, name, id, birth,photoUrl);
+        console.log(email, name, id, birth, photoUrl);
 
       }
 
@@ -60,24 +64,24 @@ const Home = () => {
       })
         .then((response) => response.json())
         .then((result) => {
-          console.log(result.length)
-          console.log(result[0].plan_name)
-          
-        
-           
-    
+          console.log(result[0]._id)
+
+
           if (result.length == 2) {
             setStylePlanTwoNonExistent(false)
             setStylePlanTwoExistent(true)
-            setPlanOne(result[0].plan_name)
-            setPlanTwo(result[1].plan_name)
+            setPlanOneName(result[0].plan_name)
+            setIdPlanOne(result[0]._id)
+            setPlanTwoName(result[1].plan_name)
+            setIdPlanTwo(result[1]._id)
 
           }
           else {
             setStylePlanTwoNonExistent(true)
             setStylePlanTwoExistent(false)
-            setPlanOne(result[0].plan_name)
-         
+            setPlanOneName(result[0].plan_name)
+            setIdPlanOne(result[0]._id)
+
           }
 
         })
@@ -110,7 +114,7 @@ const Home = () => {
             <View style={styles.profileImageBackground2}>
               <Image
                 style={styles.profileImage}
-                source={{uri:photoUrl}}></Image>
+                source={{ uri: photoUrl }}></Image>
             </View>
           </View>
 
@@ -118,9 +122,12 @@ const Home = () => {
 
           <TouchableHighlight
             style={styles.planBtn}
-            onPress={onPressButton}
+            onPress={() => navigation.navigate('UserPlan', {
+              screen: 'UserPlan',
+              params: { id: idPlanOne, token:token, planName:planOneName }
+            })}
             underlayColor="#F27A2999">
-            <Text style={styles.planText}>{planOne}</Text>
+            <Text style={styles.planText}>{planOneName}</Text>
           </TouchableHighlight>
 
           {stylePlanTwoNonExistent ? (
@@ -134,21 +141,24 @@ const Home = () => {
           {stylePlanTwoExistent ? (
             <TouchableHighlight
               style={styles.planBtn}
-              onPress={onPressButton}
+              onPress={() => navigation.navigate('UserPlan',{
+                screen: 'UserPlan',
+                params: { id: idPlanTwo, token:token, planName:planTwoName }
+              })}
               underlayColor="#F27A2999">
-              <Text style={styles.planText}>{planTwo}</Text>
+              <Text style={styles.planText}>{planTwoName}</Text>
             </TouchableHighlight>
           ) : null}
 
 
           <TouchableHighlight
-            style={styles.suggestedBtn}
-            onPress={onPressButton}
-            underlayColor="#006DA899">
-            <Text style={styles.suggestedText}>SUGGESTED TRAINING</Text>
-          </TouchableHighlight>
+          style={styles.suggestedBtn}
+          onPress={onPressButton}
+          underlayColor="#006DA899">
+          <Text style={styles.suggestedText}>SUGGESTED TRAINING</Text>
+        </TouchableHighlight>
         </View>
-      </ScrollView>
+    </ScrollView>
     </>
   );
 };
