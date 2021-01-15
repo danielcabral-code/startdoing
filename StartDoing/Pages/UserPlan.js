@@ -100,7 +100,7 @@ function UserPlan({route}) {
 
       <FlatList
         style={styles.background}
-        keyExtractor={(item) => item.exercise_id}
+        keyExtractor={(item) => item.exerciseName}
         data={myExcerciseData}
         renderItem={({item}) => (
           <View style={stylesMediaQueries.maskView}>
