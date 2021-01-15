@@ -10,7 +10,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
 import HomeNoPlans from './HomeNoPlans';
 import HomeWithPlans from './HomeWithPlans';
-import Plans from './Plans';
+
+import PlansNoPlans from './PlansNoPlans';
+import PlansWithPlans from './PlansWithPlans';
+
 import Settings from './Settings';
 
 const Stack = createStackNavigator();
@@ -96,8 +99,7 @@ function BottomNav({ navigation }) {
   }
 
   function PlansScreen() {
-  
-    return <Plans />;
+    return <PlansNoPlans />;
   }
 
   function SettingsScreen() {
@@ -133,6 +135,7 @@ function BottomNav({ navigation }) {
         tabBarOptions={{
           activeTintColor: '#F27A29',
           inactiveTintColor: '#F27A2940',
+          labelPosition: 'below-icon',
           labelStyle: {
             fontFamily: 'OpenSans-SemiBold',
             fontSize: 10,
@@ -144,12 +147,13 @@ function BottomNav({ navigation }) {
             paddingTop: 0,
             paddingBottom: 10,
             borderTopWidth: 0,
-            elevation: 20,
+            elevation: 0,
+            position: 'absolute',
           },
         }}>
         <Tab.Screen name="HOME" component={HomeScreen} />
         <Tab.Screen name="PLANS" component={PlansScreen} />
-        <Tab.Screen name="SETTINGS" component={SettingsScreen} />
+        <Tab.Screen name="SETTINGS" component={SettingsScreen} /> 
       </Tab.Navigator>
     </>
   );
