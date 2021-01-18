@@ -35,7 +35,7 @@ const Home = ({ navigate }) => {
 
 
   const getToken = async () => {
-
+    let save=[]
     try {
 
       setToken(await AsyncStorage.getItem('@token'))
@@ -64,8 +64,17 @@ const Home = ({ navigate }) => {
       })
         .then((response) => response.json())
         .then((result) => {
-          console.log(result[0]._id)
-
+          console.log(result)
+          save = result
+          try {
+            const jsonValue = JSON.stringify(save)
+          
+            AsyncStorage.setItem('@plans', jsonValue);
+            console.log("guardou: ",jsonValue);
+            
+          } catch (e) {
+            console.log(e);
+          }
 
           if (result.length == 2) {
             setStylePlanTwoNonExistent(false)
@@ -101,7 +110,7 @@ const Home = ({ navigate }) => {
   useEffect(() => {
     getToken()
 
-  })
+  }) 
   function onPressButton() {
     alert('You Pressed Me!');
   }

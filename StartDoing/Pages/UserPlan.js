@@ -40,7 +40,7 @@ function UserPlan({route}) {
 
   function getExercises() {
     let myData = [];
-    let myArr = [];
+   
     fetch(`https://startdoing.herokuapp.com/user_plans/plan/${id}`, {
       method: 'GET',
       headers: {
