@@ -42,7 +42,7 @@ function UserPlan({ route }) {
 
   function getExercises() {
     let myData = [];
-    let myArr = [];
+   
     fetch(`https://startdoing.herokuapp.com/user_plans/plan/${id}`, {
       method: 'GET',
       headers: {
@@ -53,7 +53,7 @@ function UserPlan({ route }) {
       .then((response) => response.json())
       .then((result) => {
         result.map((result) => {
-        
+       
           result.exercises.map((data) => {
            
             fetch(
@@ -123,7 +123,7 @@ function UserPlan({ route }) {
           underlayColor="#F27A2999"
           onPress={() => navigation.navigate('UserPlanExercises',{
             screen: 'UserPlanExercises',
-            params: {exercises:myExcerciseData }
+            params: {exercises:myExcerciseData, id:id, token:token }
           })}>
           <Text style={styles.startText}>START</Text>
         </TouchableHighlight>
