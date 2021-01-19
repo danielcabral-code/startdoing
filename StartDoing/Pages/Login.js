@@ -11,6 +11,7 @@ import {
 import ResetPasswordScreen from '../Pages/ResetPassword';
 import BottomNavigation from '../Pages/BottomNavigation/BottomNavigation'
 import UserPlan from '../Pages/UserPlan'
+import UserPlanExercises from '../Pages/UserPlanExercises'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -45,7 +46,14 @@ const LoginPage = () => {
           name="UserPlan"
           component={UserPlan}
         />
+
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="UserPlanExercises"
+          component={UserPlanExercises}
+        />
       </Stack.Navigator>
+
     </NavigationContainer>
   );
 };
