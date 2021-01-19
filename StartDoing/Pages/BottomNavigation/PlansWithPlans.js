@@ -7,57 +7,38 @@ import {
   Text,
   TouchableHighlight,
   TouchableWithoutFeedback,
+  SafeAreaView
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
 import { FlatList } from 'react-native-gesture-handler';
-let myData = [];
+
 const Plans = () => {
   const [token, setToken] = useState('');
   const [id, setId] = useState('');
-  const [plans, setPlans] = useState([]);
+  const [planName, setPlanName] = useState([]);
+
 
   let decoded = ''
 
+  const getPlanName = async () => {
+    let newData = []
 
-  const getToken = async () => {
-
-    try {
-
-      setToken(await AsyncStorage.getItem('@token'))
-      if (token !== null) {
-
-        decoded = jwt_decode(token);
-        console.log(decoded);
-
-
-        setId(decoded.data.id)
-
-        console.log(id);
-
-      }
-      const newPlan =(await AsyncStorage.getItem('@plans'))
-      if (newPlan !== null) {
-       setPlans(newPlan)
-        console.log("leu ", JSON.parse(plans));
-    
-      }
-
-
-    } catch (e) {
-
+    const newPlan = (await AsyncStorage.getItem('@plans'))
+    if (newPlan !== null) {
+      newData = (JSON.parse(newPlan))
+      console.log("newdata ", newData);
+      setPlanName(...planName, newData)
     }
 
   }
 
   useEffect(() => {
-    getToken()
-    console.log("tem?",plans);
-  },[])
+    getPlanName()
+  
+    
 
-
-
-
+  }, [])
 
   return (
     <>
@@ -73,55 +54,77 @@ const Plans = () => {
           <View style={styles.customizeTextView}>
             <Text style={styles.customizeText}>CUSTOMIZE PLANS</Text>
           </View>
-          
-          <TouchableWithoutFeedback>
-            <View style={styles.unactiveBtn}>
-              <Text style={styles.unactiveText}>TRY CREATING MORE PLANS</Text>
-            </View>
-          </TouchableWithoutFeedback>
-
-          <TouchableWithoutFeedback>
-            <View style={styles.unactiveBtn}>
-              <Text style={styles.unactiveText}>TRY CREATING MORE PLANS</Text>
-            </View>
-          </TouchableWithoutFeedback>
-
-          <TouchableWithoutFeedback>
-            <View style={styles.unactiveBtn}>
-              <Text style={styles.unactiveText}>TRY CREATING MORE PLANS</Text>
-            </View>
-          </TouchableWithoutFeedback>
-
-          {/* <FlatList
-            style={styles.background}
-            keyExtractor={(item) => {plans[item]._id}}
-            data={Object.keys(plans)}
-            renderItem={({ item }) => (
-              <View>
-                <TouchableHighlight
-                  style={styles.createBtn}
-                  underlayColor="#F27A2999">
-                  <Text style={styles.createText}>{plans[item]._id}</Text>
-                </TouchableHighlight>
-              </View>
-            )}></FlatList> */}
-
         </View>
       </View>
+
+      <FlatList
+        style={styles.background}
+        keyExtractor={(item) => item._id}
+        data={planName}
+        renderItem={({ item }) => {
+
+          if (planName.length >= 3) {
+            return (
+              <View style={styles.bg3}>
+                <TouchableHighlight
+                  style={styles.createBtn}
+                  underlayColor="#F27A2999"
+                  onPress={() => console.log(item._id)}>
+
+                  <Text style={styles.createText}>{item.plan_name.toUpperCase()}</Text>
+
+                </TouchableHighlight>
+              </View>
+            )
+          }
+          else {
+            return (
+              <>
+                <View style={styles.bg3}>
+                  <TouchableHighlight
+                    style={styles.createBtn}
+                    underlayColor="#F27A2999"
+                    onPress={() => console.log(item._id)}>
+
+                    <Text style={styles.createText}>{item.plan_name.toUpperCase()}</Text>
+
+                  </TouchableHighlight>
+                </View>
+
+                <View style={styles.bg3}>
+                  <TouchableWithoutFeedback>
+                    <View style={styles.unactiveBtn}>
+                      <Text style={styles.unactiveText}>TRY CREATING MORE PLANS</Text>
+                    </View>
+                  </TouchableWithoutFeedback>
+                </View>
+
+
+
+              </>
+            )
+          }
+        }
+        }></FlatList>
     </>
   );
 };
 
 const styles = StyleSheet.create({
   background: {
-    flex: 1,
+
     width: '100%',
     backgroundColor: '#26282B',
   },
   bg2: {
     width: '100%',
     alignItems: 'center',
-    paddingBottom: 72,
+
+  },
+  bg3: {
+    width: '100%',
+    alignItems: 'center',
+
   },
   createBtn: {
     marginTop: 38,

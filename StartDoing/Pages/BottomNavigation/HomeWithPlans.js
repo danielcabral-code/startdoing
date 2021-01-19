@@ -136,7 +136,7 @@ const Home = ({ navigate }) => {
               params: { id: idPlanOne, token:token, planName:planOneName }
             })}
             underlayColor="#F27A2999">
-            <Text style={styles.planText}>{planOneName}</Text>
+            <Text style={styles.planText}>{planOneName.toUpperCase()}</Text>
           </TouchableHighlight>
 
           {stylePlanTwoNonExistent ? (
@@ -155,7 +155,7 @@ const Home = ({ navigate }) => {
                 params: { id: idPlanTwo, token:token, planName:planTwoName }
               })}
               underlayColor="#F27A2999">
-              <Text style={styles.planText}>{planTwoName}</Text>
+              <Text style={styles.planText}>{planTwoName.toUpperCase()}</Text>
             </TouchableHighlight>
           ) : null}
 
