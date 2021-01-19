@@ -17,6 +17,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {MaskImageView} from 'react-native-mask-image';
 import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createStackNavigator();
 const CreatePlans = () => {
@@ -32,18 +33,82 @@ const CreatePlans = () => {
 };
 
 function CreatePlan() {
+  const [token, setToken] = useState('');
+
   const [displayExerGroups, setDisplayExerGroups] = useState(false);
-  const [number, setNumber] = useState(1);
+  const [numberForGroups, setNumberForGroups] = useState(1);
+
+  const [exercises, setExercises] = useState([]);
+  const [numberForExercises, setNumberForExercises] = useState(1);
+
+  const [currentExerciseCategory, setCurrentExerciseCategory] = useState('');
+
+  const chest = 'CHEST';
+  const core = 'CORE';
+  const back = 'BACK';
+  const legs = 'LEGS';
 
   function displayExerciseGroups() {
-    if (number === 1) {
+    if (numberForGroups === 1) {
       setDisplayExerGroups(true);
-      setNumber(2);
-    } else if (number === 2) {
+      setNumberForGroups(2);
+    } else if (numberForGroups === 2) {
       setDisplayExerGroups(false);
-      setNumber(1);
+      setNumberForGroups(1);
     }
   }
+
+  async function getToken() {
+    try {
+      setToken(await AsyncStorage.getItem('@token'));
+    } catch (e) {}
+  }
+
+  function displayExercises(category) {
+    let myData = [];
+
+    if (token !== null && numberForExercises === 1) {
+      fetch(`https://startdoing.herokuapp.com/exercises/category/${category}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          myData = result;
+
+          setCurrentExerciseCategory(result[0].category);
+
+          setExercises(...exercises, myData);
+        })
+        .catch((error) => console.log('error', error));
+
+      setNumberForExercises(2);
+    } else if (numberForExercises === 2) {
+      if (category === chest && currentExerciseCategory === 'CHEST') {
+        setExercises([]);
+      } else if (category === core && currentExerciseCategory === 'CORE') {
+        setExercises([]);
+      } else if (category === back && currentExerciseCategory === 'BACK') {
+        setExercises([]);
+      } else if (category === legs && currentExerciseCategory === 'LEGS') {
+        setExercises([]);
+      }
+      setNumberForExercises(1);
+    }
+  }
+
+  useEffect(() => {
+    getToken();
+  }, []);
+
+  useEffect(() => {
+    console.log('updated data');
+
+    console.log('meus', exercises);
+  }, [exercises]);
 
   return (
     <>
@@ -112,7 +177,8 @@ function CreatePlan() {
             style={[
               displayExerGroups ? styles.exerciseBtn1 : styles.noExerciseBtn1,
             ]}
-            underlayColor="#F27A2999">
+            underlayColor="#F27A2999"
+            onPress={() => displayExercises(chest)}>
             <Text style={styles.exerciseText1}>CHEST</Text>
           </TouchableHighlight>
 
@@ -120,7 +186,8 @@ function CreatePlan() {
             style={[
               displayExerGroups ? styles.exerciseBtn : styles.noExerciseBtn,
             ]}
-            underlayColor="#F27A2999">
+            underlayColor="#F27A2999"
+            onPress={() => displayExercises(core)}>
             <Text style={styles.exerciseText}>CORE</Text>
           </TouchableHighlight>
 
@@ -128,7 +195,8 @@ function CreatePlan() {
             style={[
               displayExerGroups ? styles.exerciseBtn : styles.noExerciseBtn,
             ]}
-            underlayColor="#F27A2999">
+            underlayColor="#F27A2999"
+            onPress={() => displayExercises(back)}>
             <Text style={styles.exerciseText}>BACK</Text>
           </TouchableHighlight>
 
@@ -136,10 +204,35 @@ function CreatePlan() {
             style={[
               displayExerGroups ? styles.exerciseBtn : styles.noExerciseBtn,
             ]}
-            underlayColor="#F27A2999">
+            underlayColor="#F27A2999"
+            onPress={() => displayExercises(legs)}>
             <Text style={styles.exerciseText}>LEGS</Text>
           </TouchableHighlight>
         </View>
+
+        <FlatList
+          style={[
+            displayExerGroups
+              ? styles.backgroundFlatlistOpacity
+              : styles.backgroundFlatlist,
+          ]}
+          keyExtractor={(item) => item.exerciseName}
+          data={exercises}
+          renderItem={({item}) => (
+            <View style={stylesMediaQueries.maskView}>
+              <MaskImageView
+                urlImage={item.videoUrl}
+                urlMask={'https://i.imgur.com/NDpYsdD.png'}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                }}
+              />
+              <Text style={stylesMediaQueries.exerciseText}>
+                {item.exerciseName}
+              </Text>
+            </View>
+          )}></FlatList>
       </ScrollView>
     </>
   );
@@ -156,7 +249,18 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#2F3032',
   },
+  backgroundFlatList: {
+    flex: 1,
+    width: '100%',
+    backgroundColor: '#26282B',
+  },
+  backgroundFlatListOpacity: {
+    flex: 1,
+    width: '100%',
+    backgroundColor: '#2F3032',
+  },
   bg2: {
+    flex: 1,
     width: '100%',
     alignItems: 'center',
   },
@@ -337,5 +441,43 @@ const styles = StyleSheet.create({
     display: 'none',
   },
 });
+
+const base = {
+  maskView: {
+    height: 178,
+    width: '85%',
+    marginTop: 10,
+    marginBottom: 14,
+    alignItems: 'center',
+    alignSelf: 'center',
+  },
+
+  exerciseText: {
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 16,
+    marginTop: -172,
+    marginRight: '-62%',
+  },
+};
+
+const stylesMediaQueries = createStyles(
+  base,
+
+  // override styles only if screen width is less than 320
+  maxWidth(320, {
+    exerciseText: {
+      fontSize: 12,
+      marginTop: -168,
+    },
+  }),
+
+  // override styles only if screen width is more than 500
+  minWidth(480, {
+    maskView: {
+      width: 360,
+    },
+  }),
+);
 
 export default CreatePlans;
