@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   StyleSheet,
@@ -7,20 +7,46 @@ import {
   Text,
   TouchableHighlight,
   TouchableWithoutFeedback,
+  SafeAreaView
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwt_decode from "jwt-decode";
+import { FlatList } from 'react-native-gesture-handler';
 
 const Plans = () => {
-  function onPressButton() {
-    alert('You Pressed Me!');
+  const [token, setToken] = useState('');
+  const [id, setId] = useState('');
+  const [planName, setPlanName] = useState([]);
+
+
+  let decoded = ''
+
+  const getPlanName = async () => {
+    let newData = []
+
+    const newPlan = (await AsyncStorage.getItem('@plans'))
+    if (newPlan !== null) {
+      newData = (JSON.parse(newPlan))
+      console.log("newdata ", newData);
+      setPlanName(...planName, newData)
+    }
+
   }
+
+  useEffect(() => {
+    getPlanName()
+  
+    
+
+  }, [])
 
   return (
     <>
-      <ScrollView style={styles.background}>
+      <View style={styles.background}>
         <View style={styles.bg2}>
           <TouchableHighlight
             style={styles.createBtn}
-            onPress={onPressButton}
+
             underlayColor="#F27A2999">
             <Text style={styles.createText}>CREATE NEW PLAN</Text>
           </TouchableHighlight>
@@ -28,41 +54,77 @@ const Plans = () => {
           <View style={styles.customizeTextView}>
             <Text style={styles.customizeText}>CUSTOMIZE PLANS</Text>
           </View>
-
-          <TouchableHighlight
-            style={styles.createBtn}
-            onPress={onPressButton}
-            underlayColor="#F27A2999">
-            <Text style={styles.createText}>PLAN1</Text>
-          </TouchableHighlight>
-
-          <TouchableWithoutFeedback>
-            <View style={styles.unactiveBtn}>
-              <Text style={styles.unactiveText}>TRY CREATING MORE PLANS</Text>
-            </View>
-          </TouchableWithoutFeedback>
-
-          <TouchableWithoutFeedback>
-            <View style={styles.unactiveBtn}>
-              <Text style={styles.unactiveText}>TRY CREATING MORE PLANS</Text>
-            </View>
-          </TouchableWithoutFeedback>
         </View>
-      </ScrollView>
+      </View>
+
+      <FlatList
+        style={styles.background}
+        keyExtractor={(item) => item._id}
+        data={planName}
+        renderItem={({ item }) => {
+
+          if (planName.length >= 3) {
+            return (
+              <View style={styles.bg3}>
+                <TouchableHighlight
+                  style={styles.createBtn}
+                  underlayColor="#F27A2999"
+                  onPress={() => console.log(item._id)}>
+
+                  <Text style={styles.createText}>{item.plan_name.toUpperCase()}</Text>
+
+                </TouchableHighlight>
+              </View>
+            )
+          }
+          else {
+            return (
+              <>
+                <View style={styles.bg3}>
+                  <TouchableHighlight
+                    style={styles.createBtn}
+                    underlayColor="#F27A2999"
+                    onPress={() => console.log(item._id)}>
+
+                    <Text style={styles.createText}>{item.plan_name.toUpperCase()}</Text>
+
+                  </TouchableHighlight>
+                </View>
+
+                <View style={styles.bg3}>
+                  <TouchableWithoutFeedback>
+                    <View style={styles.unactiveBtn}>
+                      <Text style={styles.unactiveText}>TRY CREATING MORE PLANS</Text>
+                    </View>
+                  </TouchableWithoutFeedback>
+                </View>
+
+
+
+              </>
+            )
+          }
+        }
+        }></FlatList>
     </>
   );
 };
 
 const styles = StyleSheet.create({
   background: {
-    flex: 1,
+
     width: '100%',
     backgroundColor: '#26282B',
   },
   bg2: {
     width: '100%',
     alignItems: 'center',
-    paddingBottom: 72,
+
+  },
+  bg3: {
+    width: '100%',
+    alignItems: 'center',
+
   },
   createBtn: {
     marginTop: 38,
