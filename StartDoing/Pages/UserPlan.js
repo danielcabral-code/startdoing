@@ -1,4 +1,4 @@
-import React, {useState, useEffect, Component} from 'react';
+import React, { useState, useEffect, Component } from 'react';
 
 import {
   StyleSheet,
@@ -11,18 +11,18 @@ import {
   FlatList,
 } from 'react-native';
 
-import {useNavigation} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {MaskImageView} from 'react-native-mask-image';
-import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
+import { MaskImageView } from 'react-native-mask-image';
+import { createStyles, minWidth, maxWidth } from 'react-native-media-queries';
 
 const Stack = createStackNavigator();
 const UserPlans = () => {
   return (
     <Stack.Navigator initialRouteName="UserPlan">
       <Stack.Screen
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
         name="UserPlan"
         component={UserPlan}
       />
@@ -30,17 +30,19 @@ const UserPlans = () => {
   );
 };
 
-function UserPlan({route}) {
+function UserPlan({ route }) {
+  const navigation = useNavigation();
+
   const id = route.params.id;
   const token = route.params.token;
-  const planName = route.params.planName;
-  //console.log(id, token);
+  const planName = route.params.planName.toUpperCase();
+  
 
   const [myExcerciseData, setMyExcerciseData] = useState([]);
 
   function getExercises() {
     let myData = [];
-    let myArr = [];
+   
     fetch(`https://startdoing.herokuapp.com/user_plans/plan/${id}`, {
       method: 'GET',
       headers: {
@@ -51,9 +53,9 @@ function UserPlan({route}) {
       .then((response) => response.json())
       .then((result) => {
         result.map((result) => {
-          //console.log(result.exercises);
+       
           result.exercises.map((data) => {
-            //console.log(data.exercise_id);
+           
             fetch(
               `https://startdoing.herokuapp.com/exercises/${data.exercise_id}`,
               {
@@ -84,9 +86,7 @@ function UserPlan({route}) {
   }, []);
 
   useEffect(() => {
-    console.log('updated data');
-
-    console.log('meus', myExcerciseData);
+   
   }, [myExcerciseData]);
 
   return (
@@ -102,7 +102,7 @@ function UserPlan({route}) {
         style={styles.background}
         keyExtractor={(item) => item.exerciseName}
         data={myExcerciseData}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <View style={stylesMediaQueries.maskView}>
             <MaskImageView
               urlImage={item.videoUrl}
@@ -119,10 +119,15 @@ function UserPlan({route}) {
         )}></FlatList>
 
       <View style={styles.bottomSectionView}>
-        <TouchableHighlight style={styles.startBtn} underlayColor="#F27A2999">
+        <TouchableHighlight style={styles.startBtn}
+          underlayColor="#F27A2999"
+          onPress={() => navigation.navigate('UserPlanExercises',{
+            screen: 'UserPlanExercises',
+            params: {exercises:myExcerciseData, id:id, token:token }
+          })}>
           <Text style={styles.startText}>START</Text>
         </TouchableHighlight>
-      </View>
+    </View>
     </>
   );
 }

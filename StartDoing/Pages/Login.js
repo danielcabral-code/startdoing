@@ -8,12 +8,14 @@ import {
   ButtonNoAccount,
   ButtonGuest,
 } from '../Components/Login/Buttons';
+
 import ResetPasswordScreen from '../Pages/ResetPassword';
 import BottomNavigation from '../Pages/BottomNavigation/BottomNavigation';
 import UserPlan from '../Pages/UserPlan';
 import CreatePlan from '../Pages/CreatePlan';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
+import UserPlanExercises from '../Pages/UserPlanExercises';
 
 const Stack = createStackNavigator();
 const LoginPage = () => {
@@ -49,6 +51,11 @@ const LoginPage = () => {
           options={{headerShown: false}}
           name="CreatePlan"
           component={CreatePlan}
+        />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="UserPlanExercises"
+          component={UserPlanExercises}
         />
       </Stack.Navigator>
     </NavigationContainer>
