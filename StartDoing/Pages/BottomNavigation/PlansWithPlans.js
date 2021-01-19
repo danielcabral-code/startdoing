@@ -91,13 +91,7 @@ const Plans = () => {
                   </TouchableHighlight>
                 </View>
 
-                <View style={styles.bg3}>
-                  <TouchableWithoutFeedback>
-                    <View style={styles.unactiveBtn}>
-                      <Text style={styles.unactiveText}>TRY CREATING MORE PLANS</Text>
-                    </View>
-                  </TouchableWithoutFeedback>
-                </View>
+                
 
 
 
