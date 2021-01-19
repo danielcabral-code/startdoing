@@ -69,7 +69,7 @@ function BottomNav({ navigation }) {
         })
           .then((response) => response.json())
           .then((result) => {
-            console.log(result.length)
+          
             if (result.length == 0) {
               setPlansExist(false)
             }
@@ -92,14 +92,79 @@ function BottomNav({ navigation }) {
     })
 
     if (plansExist === true) {
-      return <HomeWithPlans />;
+      return <HomeWithPlans /> ;
+      
     }
     else return <HomeNoPlans />;
-  
+
+
   }
 
   function PlansScreen() {
-    return <PlansNoPlans />;
+    const [token, setToken] = useState('');
+    const [id, setId] = useState('');
+    const [plansExist, setPlansExist] = useState(false);
+    
+    let decoded = ''
+
+
+    const getToken = async () => {
+
+      try {
+
+        setToken(await AsyncStorage.getItem('@token'))
+        if (token !== null) {
+
+          decoded = jwt_decode(token);
+
+          setId(decoded.data.id)
+  
+        }
+
+        fetch(`https://startdoing.herokuapp.com/user_plans/${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization:
+              `Bearer ${token}`,
+          },
+
+        })
+          .then((response) => response.json())
+          .then((result) => {
+           
+  
+            if (result.length === 0) {
+              setPlansExist(false)
+            }
+            else {
+              setPlansExist(true)
+              
+            }
+
+          })
+
+          .catch((error) => console.log('error', error));
+
+
+      } catch (e) {
+
+      }
+
+    }
+
+    useEffect(() => {
+      getToken()
+
+    })
+
+    if (plansExist === true) {
+      return <PlansWithPlans/> ;
+      
+    }
+    else return <PlansNoPlans />;
+
+
   }
 
   function SettingsScreen() {
