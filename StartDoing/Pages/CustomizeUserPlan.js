@@ -1,4 +1,4 @@
-import React, {useState, useEffect, Component} from 'react';
+import React, { useState, useEffect, Component } from 'react';
 
 import {
   StyleSheet,
@@ -12,11 +12,11 @@ import {
   TextInput,
 } from 'react-native';
 
-import {useNavigation} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {MaskImageView} from 'react-native-mask-image';
-import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
+import { MaskImageView } from 'react-native-mask-image';
+import { createStyles, minWidth, maxWidth } from 'react-native-media-queries';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from 'jwt-decode';
 
@@ -26,7 +26,7 @@ const CustomizeUserPlan = () => {
   return (
     <Stack.Navigator initialRouteName="CustomizeUserPlanScreen">
       <Stack.Screen
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
         name="CustomizeUserPlanScreen"
         component={CustomizeUserPlanScreen}
       />
@@ -34,7 +34,7 @@ const CustomizeUserPlan = () => {
   );
 };
 
-function CustomizeUserPlanScreen({route}) {
+function CustomizeUserPlanScreen({ route }) {
   const navigation = useNavigation();
 
   const [token, setToken] = useState('');
@@ -86,8 +86,28 @@ function CustomizeUserPlanScreen({route}) {
 
           .catch((error) => console.log('error', error));
       }
-    } catch (e) {}
+    } catch (e) { }
   };
+
+  const deletePlan = () => {
+
+    fetch(
+      `https://startdoing.herokuapp.com/user_plans/${planID}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    )
+      .then((response) => response.json())
+      .then((result) => {console.log(result);
+      })
+
+      .catch((error) => console.log('error', error));
+
+  }
 
   useEffect(() => {
     getToken();
@@ -117,7 +137,7 @@ function CustomizeUserPlanScreen({route}) {
           style={styles.background}
           keyExtractor={(item) => item.exerciseName}
           data={myExcerciseData}
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <View style={stylesMediaQueries.maskView}>
               <MaskImageView
                 urlImage={item.videoUrl}
@@ -157,6 +177,7 @@ function CustomizeUserPlanScreen({route}) {
           <View style={styles.bottomButtonsView}>
             <TouchableHighlight
               style={styles.deleteBtn}
+              onPress={deletePlan}
               underlayColor="#F27A2999">
               <Text style={styles.deleteText}>DELETE</Text>
             </TouchableHighlight>
