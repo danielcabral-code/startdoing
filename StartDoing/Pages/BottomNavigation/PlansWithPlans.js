@@ -64,7 +64,10 @@ const Plans = () => {
                 <TouchableHighlight
                   style={styles.createBtn}
                   underlayColor="#F27A2999"
-                  onPress={() => navigation.navigate('CustomizeUserPlan')}>
+                  onPress={() => navigation.navigate('CustomizeUserPlan',{
+                    screen: 'CustomizeUserPlanScreen',
+                    params: {planID:item._id}
+                  })}>
                   <Text style={styles.createText}>
                     {item.plan_name.toUpperCase()}
                   </Text>

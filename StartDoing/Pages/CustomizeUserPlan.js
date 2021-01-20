@@ -102,7 +102,12 @@ function CustomizeUserPlanScreen({ route }) {
       },
     )
       .then((response) => response.json())
-      .then((result) => {console.log(result);
+      .then((result) => {
+        console.log(result);
+       
+          navigation.navigate('HOME')
+       
+        
       })
 
       .catch((error) => console.log('error', error));
