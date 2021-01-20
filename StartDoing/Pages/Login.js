@@ -64,6 +64,12 @@ const LoginPage = () => {
           options={{ headerShown: false }}
           name="CustomizeUserPlan"
           component={CustomizeUserPlan}
+        /> 
+
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="EditDetails"
+          component={EditDetails}
         />
 
        
