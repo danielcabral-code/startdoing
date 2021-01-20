@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component } from 'react';
+import React, {useState, useEffect, Component} from 'react';
 
 import {
   StyleSheet,
@@ -12,12 +12,13 @@ import {
   TextInput,
 } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {useNavigation} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { MaskImageView } from 'react-native-mask-image';
-import { createStyles, minWidth, maxWidth } from 'react-native-media-queries';
+import {MaskImageView} from 'react-native-mask-image';
+import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Modal from 'react-native-modal';
 import jwt_decode from 'jwt-decode';
 
 const Stack = createStackNavigator();
@@ -26,7 +27,7 @@ const CustomizeUserPlan = () => {
   return (
     <Stack.Navigator initialRouteName="CustomizeUserPlanScreen">
       <Stack.Screen
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
         name="CustomizeUserPlanScreen"
         component={CustomizeUserPlanScreen}
       />
@@ -34,12 +35,24 @@ const CustomizeUserPlan = () => {
   );
 };
 
-function CustomizeUserPlanScreen({ route }) {
+function CustomizeUserPlanScreen({route}) {
   const navigation = useNavigation();
 
   const [token, setToken] = useState('');
   const [myExcerciseData, setMyExcerciseData] = useState([]);
   const [planName, setPlanName] = useState();
+
+  const [modalRemoveVisibility, setModalRemoveVisibility] = useState(false);
+
+  const [
+    modalChangeDurationVisibility,
+    setModalChangeDurationVisibility,
+  ] = useState(false);
+
+  const [modalDeletePlanVisibility, setModalDeletePlanVisibility] = useState(
+    false,
+  );
+
   const planID = route.params.planID;
   console.log(planID);
 
@@ -86,27 +99,43 @@ function CustomizeUserPlanScreen({ route }) {
 
           .catch((error) => console.log('error', error));
       }
-    } catch (e) { }
+    } catch (e) {}
+  };
+
+  function onPressButton() {
+    alert('You Pressed Me!');
+  }
+
+  function removeExerciseModal() {
+    setModalRemoveVisibility(!modalRemoveVisibility);
+  }
+
+  function editDurationModal() {
+    setModalChangeDurationVisibility(!modalChangeDurationVisibility);
+  }
+
+  const deletePlanModal = () => {
+    setModalDeletePlanVisibility(!modalDeletePlanVisibility);
   };
 
   const deletePlan = () => {
-
-    fetch(
-      `https://startdoing.herokuapp.com/user_plans/${planID}`,
-      {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+    fetch(`https://startdoing.herokuapp.com/user_plans/${planID}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
-    )
+    })
       .then((response) => response.json())
-      .then((result) => {console.log(result);
+      .then((result) => {
+        console.log(result);
       })
 
       .catch((error) => console.log('error', error));
+  };
 
+  function savePlanModal() {
+    alert('You Pressed Me!');
   }
 
   useEffect(() => {
@@ -137,7 +166,7 @@ function CustomizeUserPlanScreen({ route }) {
           style={styles.background}
           keyExtractor={(item) => item.exerciseName}
           data={myExcerciseData}
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <View style={stylesMediaQueries.maskView}>
               <MaskImageView
                 urlImage={item.videoUrl}
@@ -158,11 +187,12 @@ function CustomizeUserPlanScreen({ route }) {
               <View style={styles.editButtonsView}>
                 <TouchableHighlight
                   style={styles.removeBtn}
-                  underlayColor="#F27A2999">
+                  onPress={removeExerciseModal}
+                  underlayColor="#FF000099">
                   <Text style={styles.removeText}>REMOVE EX.</Text>
                 </TouchableHighlight>
 
-                <TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={editDurationModal}>
                   <View style={styles.editDurationBtn}>
                     <Text style={styles.editDurationText}>EDIT DURATION</Text>
                   </View>
@@ -170,6 +200,84 @@ function CustomizeUserPlanScreen({ route }) {
               </View>
             </View>
           )}></FlatList>
+
+        <Modal
+          isVisible={modalRemoveVisibility}
+          onBackdropPress={() => setModalRemoveVisibility(false)}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>
+              ARE YOU SURE YOU WANT TO REMOVE
+            </Text>
+            <Text style={styles.modalText}>THIS EXERCISE?</Text>
+
+            <View style={styles.modalButtonsView}>
+              <TouchableHighlight
+                style={styles.modalRemoveBtn}
+                onPress={onPressButton}
+                underlayColor="#FF000099">
+                <Text style={styles.modalRemoveText}>REMOVE EX.</Text>
+              </TouchableHighlight>
+
+              <TouchableHighlight
+                style={styles.modalCancelBtn}
+                onPress={() => setModalRemoveVisibility(false)}
+                underlayColor="#006DA899">
+                <Text style={styles.modalCancelText}>CANCEL</Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          isVisible={modalChangeDurationVisibility}
+          onBackdropPress={() => setModalChangeDurationVisibility(false)}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>CHANGE DURATION</Text>
+            <TextInput style={styles.modalInputLine} />
+
+            <View style={styles.modalButtonsView}>
+              <TouchableWithoutFeedback onPress={onPressButton}>
+                <View style={styles.modalChangeDurationBtn}>
+                  <Text style={styles.modalChangeDurationText}>CHANGE</Text>
+                </View>
+              </TouchableWithoutFeedback>
+
+              <TouchableHighlight
+                style={styles.modalCancelBtn}
+                onPress={() => setModalChangeDurationVisibility(false)}
+                underlayColor="#006DA899">
+                <Text style={styles.modalCancelText}>CANCEL</Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          isVisible={modalDeletePlanVisibility}
+          onBackdropPress={() => setModalDeletePlanVisibility(false)}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>
+              ARE YOU SURE YOU WANT TO DELETE
+            </Text>
+            <Text style={styles.modalText}>THIS PLAN?</Text>
+
+            <View style={styles.modalButtonsView}>
+              <TouchableHighlight
+                style={styles.modalRemoveBtn}
+                onPress={deletePlan}
+                underlayColor="#FF000099">
+                <Text style={styles.modalRemoveText}>DELETE</Text>
+              </TouchableHighlight>
+
+              <TouchableHighlight
+                style={styles.modalCancelBtn}
+                onPress={() => setModalDeletePlanVisibility(false)}
+                underlayColor="#006DA899">
+                <Text style={styles.modalCancelText}>CANCEL</Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+        </Modal>
       </View>
 
       <View style={styles.bottomSectionView}>
@@ -177,19 +285,14 @@ function CustomizeUserPlanScreen({ route }) {
           <View style={styles.bottomButtonsView}>
             <TouchableHighlight
               style={styles.deleteBtn}
-              onPress={deletePlan}
-              underlayColor="#F27A2999">
+              onPress={deletePlanModal}
+              underlayColor="#FF000099">
               <Text style={styles.deleteText}>DELETE</Text>
             </TouchableHighlight>
 
-            <TouchableWithoutFeedback>
-              <View style={styles.makeActiveBtn}>
-                <Text style={stylesMediaQueries.makeActiveText}>MAKE ACTIVE</Text>
-              </View>
-            </TouchableWithoutFeedback>
-
             <TouchableHighlight
               style={styles.startBtn}
+              onPress={savePlanModal}
               underlayColor="#F27A2999">
               <Text style={styles.startText}>SAVE</Text>
             </TouchableHighlight>
@@ -247,7 +350,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#26282B',
   },
   deleteBtn: {
-    width: '30%',
+    width: '48%',
     height: 50,
     borderRadius: 10,
     backgroundColor: '#FF0000',
@@ -268,19 +371,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textShadowRadius: 6,
   },
-  makeActiveBtn: {
-    width: '34%',
-    marginLeft: '3%',
-    height: 50,
-    borderRadius: 10,
-    backgroundColor: '#26282B',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'white',
-  },
   startBtn: {
-    width: '30%',
-    marginLeft: '3%',
+    width: '48%',
+    marginLeft: '4%',
     height: 50,
     borderRadius: 10,
     backgroundColor: '#F27A29',
@@ -383,6 +476,99 @@ const styles = StyleSheet.create({
     marginTop: 160,
     marginBottom: 20,
   },
+  modalView: {
+    alignSelf: 'center',
+    height: 145,
+    width: '85%',
+    borderRadius: 10,
+    backgroundColor: '#26282B',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'white',
+    textAlign: 'center',
+  },
+  modalButtonsView: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '85%',
+    alignSelf: 'center',
+    marginTop: 20,
+  },
+  modalText: {
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 12,
+    alignSelf: 'center',
+  },
+  modalRemoveBtn: {
+    width: '48%',
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#FF0000',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+  },
+  modalRemoveText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 12,
+    textShadowRadius: 6,
+  },
+  modalCancelBtn: {
+    width: '48%',
+    marginLeft: '4%',
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#006DA8',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+  },
+  modalCancelText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 12,
+    textShadowRadius: 6,
+  },
+  modalChangeDurationBtn: {
+    width: '48%',
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#26282B',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'white',
+  },
+  modalChangeDurationText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 12,
+  },
+  modalInputLine: {
+    width: '30%',
+    height: 40,
+    alignSelf: 'center',
+    borderColor: 'white',
+    borderBottomWidth: 1,
+    color: 'white',
+    alignSelf: 'center',
+  },
 });
 
 const base = {
@@ -402,13 +588,6 @@ const base = {
     marginTop: -172,
     marginRight: '-62%',
   },
-
-  makeActiveText: {
-    alignSelf: 'center',
-    color: 'white',
-    fontFamily: 'OpenSans-Bold',
-    fontSize: 15,
-  },
 };
 
 const stylesMediaQueries = createStyles(
@@ -419,9 +598,6 @@ const stylesMediaQueries = createStyles(
     exerciseText: {
       fontSize: 12,
       marginTop: -168,
-    },
-    makeActiveText: {
-      fontSize: 10,
     },
   }),
 
