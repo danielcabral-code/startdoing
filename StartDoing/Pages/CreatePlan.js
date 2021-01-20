@@ -10,7 +10,7 @@ import {
   TouchableHighlight,
   TouchableWithoutFeedback,
   FlatList,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
@@ -37,13 +37,10 @@ function CreatePlan() {
   const [token, setToken] = useState('');
 
   const [displayExerGroups, setDisplayExerGroups] = useState(false);
-  const [displayFlatList, setDisplayFlatList] = useState(false);
   const [numberForGroups, setNumberForGroups] = useState(1);
   const [disableButton, setDisableButton] = useState(false);
   const [exercises, setExercises] = useState([]);
   const [numberForExercises, setNumberForExercises] = useState(1);
-
-  const [currentExerciseCategory, setCurrentExerciseCategory] = useState('');
 
   const chest = 'CHEST';
   const core = 'CORE';
@@ -82,29 +79,22 @@ function CreatePlan() {
         .then((result) => {
           myData = result;
 
-          setCurrentExerciseCategory(result[0].category);
-
           setExercises(...exercises, myData);
         })
         .catch((error) => console.log('error', error));
 
       setNumberForExercises(2);
-      setDisplayFlatList(true);
     } else if (numberForExercises === 2) {
-      if (
-        (category === chest && currentExerciseCategory === 'CHEST') ||
-        exercises.length > 0
-      ) {
+      if (category === chest) {
         setExercises([]);
-        setNumberForExercises(1);
-      } else if (category === core && currentExerciseCategory === 'CORE') {
+      } else if (category === core) {
         setExercises([]);
-        setNumberForExercises(1);
-      } else if (category === back && currentExerciseCategory === 'BACK') {
+      } else if (category === back) {
         setExercises([]);
-      } else if (category === legs && currentExerciseCategory === 'LEGS') {
+      } else if (category === legs) {
         setExercises([]);
       }
+      setNumberForExercises(1);
     }
   }
 
@@ -221,15 +211,14 @@ function CreatePlan() {
 
         <FlatList
           style={[
-            displayFlatList
+            displayExerGroups
               ? styles.backgroundFlatlistOpacity
               : styles.backgroundFlatlist,
           ]}
           keyExtractor={(item) => item.exerciseName}
           data={exercises}
           renderItem={({item}) => (
-            <TouchableOpacity
-            onLongPress={()=>console.log("ola")}>
+            <TouchableOpacity onPress={() => console.log('ola')}>
               <View style={stylesMediaQueries.maskView}>
                 <MaskImageView
                   urlImage={item.videoUrl}
