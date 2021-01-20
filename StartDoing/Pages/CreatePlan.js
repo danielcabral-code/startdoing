@@ -10,6 +10,7 @@ import {
   TouchableHighlight,
   TouchableWithoutFeedback,
   FlatList,
+  TouchableOpacity
 } from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
@@ -36,8 +37,9 @@ function CreatePlan() {
   const [token, setToken] = useState('');
 
   const [displayExerGroups, setDisplayExerGroups] = useState(false);
+  const [displayFlatList, setDisplayFlatList] = useState(false);
   const [numberForGroups, setNumberForGroups] = useState(1);
-
+  const [disableButton, setDisableButton] = useState(false);
   const [exercises, setExercises] = useState([]);
   const [numberForExercises, setNumberForExercises] = useState(1);
 
@@ -51,6 +53,7 @@ function CreatePlan() {
   function displayExerciseGroups() {
     if (numberForGroups === 1) {
       setDisplayExerGroups(true);
+      setDisableButton(true);
       setNumberForGroups(2);
     } else if (numberForGroups === 2) {
       setDisplayExerGroups(false);
@@ -86,17 +89,22 @@ function CreatePlan() {
         .catch((error) => console.log('error', error));
 
       setNumberForExercises(2);
+      setDisplayFlatList(true);
     } else if (numberForExercises === 2) {
-      if (category === chest && currentExerciseCategory === 'CHEST') {
+      if (
+        (category === chest && currentExerciseCategory === 'CHEST') ||
+        exercises.length > 0
+      ) {
         setExercises([]);
+        setNumberForExercises(1);
       } else if (category === core && currentExerciseCategory === 'CORE') {
         setExercises([]);
+        setNumberForExercises(1);
       } else if (category === back && currentExerciseCategory === 'BACK') {
         setExercises([]);
       } else if (category === legs && currentExerciseCategory === 'LEGS') {
         setExercises([]);
       }
-      setNumberForExercises(1);
     }
   }
 
@@ -162,7 +170,8 @@ function CreatePlan() {
                 : styles.addExerciseBtn,
             ]}
             underlayColor="#F27A2999"
-            onPress={displayExerciseGroups}>
+            onPress={displayExerciseGroups}
+            disabled={disableButton}>
             <Text
               style={[
                 displayExerGroups
@@ -212,26 +221,29 @@ function CreatePlan() {
 
         <FlatList
           style={[
-            displayExerGroups
+            displayFlatList
               ? styles.backgroundFlatlistOpacity
               : styles.backgroundFlatlist,
           ]}
           keyExtractor={(item) => item.exerciseName}
           data={exercises}
           renderItem={({item}) => (
-            <View style={stylesMediaQueries.maskView}>
-              <MaskImageView
-                urlImage={item.videoUrl}
-                urlMask={'https://i.imgur.com/NDpYsdD.png'}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                }}
-              />
-              <Text style={stylesMediaQueries.exerciseText}>
-                {item.exerciseName}
-              </Text>
-            </View>
+            <TouchableOpacity
+            onLongPress={()=>console.log("ola")}>
+              <View style={stylesMediaQueries.maskView}>
+                <MaskImageView
+                  urlImage={item.videoUrl}
+                  urlMask={'https://i.imgur.com/NDpYsdD.png'}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                  }}
+                />
+                <Text style={stylesMediaQueries.exerciseText}>
+                  {item.exerciseName}
+                </Text>
+              </View>
+            </TouchableOpacity>
           )}></FlatList>
       </ScrollView>
     </>
