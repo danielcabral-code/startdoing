@@ -41,6 +41,7 @@ function CustomizeUserPlanScreen({route}) {
   const [token, setToken] = useState('');
   const [myExcerciseData, setMyExcerciseData] = useState([]);
   const [planName, setPlanName] = useState();
+  const [exerciseID, setExerciseID] = useState('');
 
   const [modalRemoveVisibility, setModalRemoveVisibility] = useState(false);
 
@@ -54,7 +55,7 @@ function CustomizeUserPlanScreen({route}) {
   );
 
   const planID = route.params.planID;
-  console.log(planID);
+
 
   const getToken = async () => {
     try {
@@ -112,6 +113,7 @@ function CustomizeUserPlanScreen({route}) {
 
   function editDurationModal() {
     setModalChangeDurationVisibility(!modalChangeDurationVisibility);
+   
   }
 
   const deletePlanModal = () => {
@@ -136,6 +138,10 @@ function CustomizeUserPlanScreen({route}) {
       })
 
       .catch((error) => console.log('error', error));
+  };
+
+  const deleteExercise = () => {
+   console.log("teste ", exerciseID);
   };
 
   function savePlanModal() {
@@ -207,6 +213,7 @@ function CustomizeUserPlanScreen({route}) {
 
         <Modal
           isVisible={modalRemoveVisibility}
+          hideModalContentWhileAnimating={true}
           onBackdropPress={() => setModalRemoveVisibility(false)}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>
@@ -217,7 +224,7 @@ function CustomizeUserPlanScreen({route}) {
             <View style={styles.modalButtonsView}>
               <TouchableHighlight
                 style={styles.modalRemoveBtn}
-                onPress={onPressButton}
+                onPress={deleteExercise}
                 underlayColor="#FF000099">
                 <Text style={styles.modalRemoveText}>REMOVE EX.</Text>
               </TouchableHighlight>
@@ -234,6 +241,7 @@ function CustomizeUserPlanScreen({route}) {
 
         <Modal
           isVisible={modalChangeDurationVisibility}
+          hideModalContentWhileAnimating={true}
           onBackdropPress={() => setModalChangeDurationVisibility(false)}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>CHANGE DURATION</Text>
@@ -258,6 +266,7 @@ function CustomizeUserPlanScreen({route}) {
 
         <Modal
           isVisible={modalDeletePlanVisibility}
+          hideModalContentWhileAnimating={true}
           onBackdropPress={() => setModalDeletePlanVisibility(false)}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>
