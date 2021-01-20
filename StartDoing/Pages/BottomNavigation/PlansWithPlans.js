@@ -12,13 +12,15 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from 'jwt-decode';
 import {FlatList} from 'react-native-gesture-handler';
+import {useNavigation} from '@react-navigation/native';
+
 
 const Plans = () => {
-  const [token, setToken] = useState('');
-  const [id, setId] = useState('');
+  const navigation = useNavigation();
+
   const [planName, setPlanName] = useState([]);
 
-  let decoded = '';
+
 
   const getPlanName = async () => {
     let newData = [];
@@ -62,7 +64,7 @@ const Plans = () => {
                 <TouchableHighlight
                   style={styles.createBtn}
                   underlayColor="#F27A2999"
-                  onPress={() => console.log(item._id)}>
+                  onPress={() => navigation.navigate('CustomizeUserPlan')}>
                   <Text style={styles.createText}>
                     {item.plan_name.toUpperCase()}
                   </Text>
@@ -76,7 +78,10 @@ const Plans = () => {
                   <TouchableHighlight
                     style={styles.createBtn}
                     underlayColor="#F27A2999"
-                    onPress={() => console.log(item._id)}>
+                    onPress={() => navigation.navigate('CustomizeUserPlan',{
+                      screen: 'CustomizeUserPlanScreen',
+                      params: {planID:item._id}
+                    })}>
                     <Text style={styles.createText}>
                       {item.plan_name.toUpperCase()}
                     </Text>

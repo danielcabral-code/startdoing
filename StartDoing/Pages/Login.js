@@ -16,6 +16,7 @@ import CreatePlan from '../Pages/CreatePlan';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import UserPlanExercises from '../Pages/UserPlanExercises';
+import CustomizeUserPlan from '../Pages/CustomizeUserPlan'
 
 const Stack = createStackNavigator();
 const LoginPage = () => {
@@ -56,6 +57,12 @@ const LoginPage = () => {
           options={{headerShown: false}}
           name="UserPlanExercises"
           component={UserPlanExercises}
+        />
+
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="CustomizeUserPlan"
+          component={CustomizeUserPlan}
         />
       </Stack.Navigator>
     </NavigationContainer>
