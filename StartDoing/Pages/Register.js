@@ -284,7 +284,7 @@ function MoreInfo({route}) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: route.params.name,
+          name: route.params.name.toUpperCase(),
           email: route.params.email,
           password: route.params.password,
           height: height,
