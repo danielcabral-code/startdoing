@@ -9,6 +9,7 @@ import {
   TouchableHighlight,
   TouchableWithoutFeedback,
   FlatList,
+  TextInput,
 } from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
@@ -106,36 +107,73 @@ function CustomizeUserPlanScreen({route}) {
         </View>
       </View>
 
-      <FlatList
-        style={styles.background}
-        keyExtractor={(item) => item.exerciseName}
-        data={myExcerciseData}
-        renderItem={({item}) => (
-          <View style={stylesMediaQueries.maskView}>
-            <MaskImageView
-              urlImage={item.videoUrl}
-              urlMask={'https://i.imgur.com/NDpYsdD.png'}
-              style={{
-                width: '100%',
-                height: '100%',
-              }}
-            />
-            <Text style={stylesMediaQueries.exerciseText}>
-              {item.exerciseName}
-            </Text>
+      <View style={styles.background}>
+        <View style={styles.inputView}>
+          <Text style={styles.inputText}>CHANGE PLAN NAME</Text>
+          <TextInput style={styles.inputLine} />
+        </View>
 
-            <Text style={styles.durationText}>
-              {'DURATION: ' + item.duration + ' ' + 'SECONDS'}
-            </Text>
+        <FlatList
+          style={styles.background}
+          keyExtractor={(item) => item.exerciseName}
+          data={myExcerciseData}
+          renderItem={({item}) => (
+            <View style={stylesMediaQueries.maskView}>
+              <MaskImageView
+                urlImage={item.videoUrl}
+                urlMask={'https://i.imgur.com/NDpYsdD.png'}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                }}
+              />
+              <Text style={stylesMediaQueries.exerciseText}>
+                {item.exerciseName}
+              </Text>
 
-           
-          </View>
-        )}></FlatList>
+              <Text style={styles.durationText}>
+                {'DURATION: ' + item.duration + ' ' + 'SECONDS'}
+              </Text>
+
+              <View style={styles.editButtonsView}>
+                <TouchableHighlight
+                  style={styles.removeBtn}
+                  underlayColor="#F27A2999">
+                  <Text style={styles.removeText}>REMOVE EX.</Text>
+                </TouchableHighlight>
+
+                <TouchableWithoutFeedback>
+                  <View style={styles.editDurationBtn}>
+                    <Text style={styles.editDurationText}>EDIT DURATION</Text>
+                  </View>
+                </TouchableWithoutFeedback>
+              </View>
+            </View>
+          )}></FlatList>
+      </View>
 
       <View style={styles.bottomSectionView}>
-        <TouchableHighlight style={styles.startBtn} underlayColor="#F27A2999">
-          <Text style={styles.startText}>SAVE</Text>
-        </TouchableHighlight>
+        <View style={styles.bottomButtonsBigView}>
+          <View style={styles.bottomButtonsView}>
+            <TouchableHighlight
+              style={styles.deleteBtn}
+              underlayColor="#F27A2999">
+              <Text style={styles.deleteText}>DELETE</Text>
+            </TouchableHighlight>
+
+            <TouchableWithoutFeedback>
+              <View style={styles.makeActiveBtn}>
+                <Text style={stylesMediaQueries.makeActiveText}>MAKE ACTIVE</Text>
+              </View>
+            </TouchableWithoutFeedback>
+
+            <TouchableHighlight
+              style={styles.startBtn}
+              underlayColor="#F27A2999">
+              <Text style={styles.startText}>SAVE</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
       </View>
     </>
   );
@@ -158,15 +196,70 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#26282B',
   },
+  inputView: {
+    alignSelf: 'center',
+    marginTop: 16,
+    marginBottom: 20,
+    width: '85%',
+  },
+  inputText: {
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 18,
+    color: 'white',
+  },
+  inputLine: {
+    width: '100%',
+    height: 40,
+    alignSelf: 'center',
+    borderColor: 'white',
+    borderBottomWidth: 2,
+    color: 'white',
+    alignSelf: 'center',
+  },
   bottomSectionView: {
     height: 70,
+    display: 'flex',
+    flexDirection: 'row',
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#26282B',
   },
+  deleteBtn: {
+    width: '30%',
+    height: 50,
+    borderRadius: 10,
+    backgroundColor: '#FF0000',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+  },
+  deleteText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 18,
+    textShadowRadius: 6,
+  },
+  makeActiveBtn: {
+    width: '34%',
+    marginLeft: '3%',
+    height: 50,
+    borderRadius: 10,
+    backgroundColor: '#26282B',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'white',
+  },
   startBtn: {
-    width: '85%',
+    width: '30%',
+    marginLeft: '3%',
     height: 50,
     borderRadius: 10,
     backgroundColor: '#F27A29',
@@ -184,8 +277,64 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     color: 'white',
     fontFamily: 'OpenSans-Bold',
-    fontSize: 20,
+    fontSize: 18,
     textShadowRadius: 6,
+  },
+  editButtonsView: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+  },
+  bottomButtonsBigView: {
+    width: '85%',
+  },
+  bottomButtonsView: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+  },
+  removeBtn: {
+    width: '48%',
+    height: 40,
+    marginTop: -6,
+    borderRadius: 10,
+    alignSelf: 'flex-start',
+    backgroundColor: '#FF0000',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+  },
+  removeText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 12,
+    textShadowRadius: 6,
+  },
+  editDurationBtn: {
+    marginTop: 20,
+    width: '48%',
+    marginTop: -16,
+    marginLeft: '4%',
+    alignSelf: 'flex-end',
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#26282B',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'white',
+  },
+  editDurationText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 12,
   },
   arrowLeft: {
     fontSize: 50,
@@ -220,7 +369,7 @@ const base = {
     height: 178,
     width: '85%',
     marginTop: 10,
-    marginBottom: 14,
+    marginBottom: 120,
     alignItems: 'center',
     alignSelf: 'center',
   },
@@ -232,6 +381,13 @@ const base = {
     marginTop: -172,
     marginRight: '-62%',
   },
+
+  makeActiveText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 15,
+  },
 };
 
 const stylesMediaQueries = createStyles(
@@ -242,6 +398,9 @@ const stylesMediaQueries = createStyles(
     exerciseText: {
       fontSize: 12,
       marginTop: -168,
+    },
+    makeActiveText: {
+      fontSize: 10,
     },
   }),
 
