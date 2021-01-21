@@ -19,6 +19,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {MaskImageView} from 'react-native-mask-image';
 import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Modal from 'react-native-modal';
+import jwt_decode from 'jwt-decode';
 
 const Stack = createStackNavigator();
 const CreatePlans = () => {
@@ -38,19 +40,27 @@ function CreatePlan() {
 
   const [displayExerGroups, setDisplayExerGroups] = useState(false);
   const [numberForGroups, setNumberForGroups] = useState(1);
-  const [disableButton, setDisableButton] = useState(false);
   const [exercises, setExercises] = useState([]);
-  const [numberForExercises, setNumberForExercises] = useState(1);
+
+  const [modalGroupVisibility, setModalGroupVisibility] = useState(false);
+
+  const [planBeingCreatedExercises, setPlanBeingCreatedExercises] = useState([]);
+
+  const [exerciseID, setExerciseID] = useState('');
+  const [exerciseDuration, setExerciseDuration] = useState();
+
+  const [planName, setPlanName] = useState('');
 
   const chest = 'CHEST';
   const core = 'CORE';
   const back = 'BACK';
   const legs = 'LEGS';
 
+  let decoded = '';
+
   function displayExerciseGroups() {
     if (numberForGroups === 1) {
       setDisplayExerGroups(true);
-      setDisableButton(true);
       setNumberForGroups(2);
     } else if (numberForGroups === 2) {
       setDisplayExerGroups(false);
@@ -61,13 +71,14 @@ function CreatePlan() {
   async function getToken() {
     try {
       setToken(await AsyncStorage.getItem('@token'));
+      decoded = jwt_decode(token);
     } catch (e) {}
   }
 
   function displayExercises(category) {
     let myData = [];
 
-    if (token !== null && numberForExercises === 1) {
+    if (token !== null) {
       fetch(`https://startdoing.herokuapp.com/exercises/category/${category}`, {
         method: 'GET',
         headers: {
@@ -80,21 +91,10 @@ function CreatePlan() {
           myData = result;
 
           setExercises(...exercises, myData);
+
+          setModalGroupVisibility(!modalGroupVisibility);
         })
         .catch((error) => console.log('error', error));
-
-      setNumberForExercises(2);
-    } else if (numberForExercises === 2) {
-      if (category === chest) {
-        setExercises([]);
-      } else if (category === core) {
-        setExercises([]);
-      } else if (category === back) {
-        setExercises([]);
-      } else if (category === legs) {
-        setExercises([]);
-      }
-      setNumberForExercises(1);
     }
   }
 
@@ -107,6 +107,11 @@ function CreatePlan() {
 
     console.log('meus', exercises);
   }, [exercises]);
+
+  const selectExercise = (id, duration) => {
+    setExerciseID(id);
+    setExerciseDuration(duration);
+  };
 
   return (
     <>
@@ -150,6 +155,7 @@ function CreatePlan() {
               style={[
                 displayExerGroups ? styles.inputLineOpacity : styles.inputLine,
               ]}
+              onChangeText={(text) => setPlanName(text)}
             />
           </View>
 
@@ -160,8 +166,7 @@ function CreatePlan() {
                 : styles.addExerciseBtn,
             ]}
             underlayColor="#F27A2999"
-            onPress={displayExerciseGroups}
-            disabled={disableButton}>
+            onPress={displayExerciseGroups}>
             <Text
               style={[
                 displayExerGroups
@@ -208,33 +213,46 @@ function CreatePlan() {
             <Text style={styles.exerciseText}>LEGS</Text>
           </TouchableHighlight>
         </View>
-
-        <FlatList
-          style={[
-            displayExerGroups
-              ? styles.backgroundFlatlistOpacity
-              : styles.backgroundFlatlist,
-          ]}
-          keyExtractor={(item) => item.exerciseName}
-          data={exercises}
-          renderItem={({item}) => (
-            <TouchableOpacity onPress={() => console.log('ola')}>
-              <View style={stylesMediaQueries.maskView}>
-                <MaskImageView
-                  urlImage={item.videoUrl}
-                  urlMask={'https://i.imgur.com/NDpYsdD.png'}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                  }}
-                />
-                <Text style={stylesMediaQueries.exerciseText}>
-                  {item.exerciseName}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          )}></FlatList>
       </ScrollView>
+
+      <Modal
+        isVisible={modalGroupVisibility}
+        hideModalContentWhileAnimating={true}
+        onBackdropPress={() => {
+          setModalGroupVisibility(false);
+          setExercises([]);
+        }}>
+        <View style={styles.modalView}>
+          <FlatList
+            style={styles.backgroundFlatlist}
+            keyExtractor={(item) => item.exerciseName}
+            data={exercises}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                onPress={() => {
+                  setModalGroupVisibility(false);
+                  setExercises([]);
+
+                  setExerciseDuration(item.duration);
+                  selectExercise(item._id, item.duration);
+                }}>
+                <View style={stylesMediaQueries.maskView}>
+                  <MaskImageView
+                    urlImage={item.videoUrl}
+                    urlMask={'https://i.imgur.com/NDpYsdD.png'}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                    }}
+                  />
+                  <Text style={stylesMediaQueries.exerciseText}>
+                    {item.exerciseName}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )}></FlatList>
+        </View>
+      </Modal>
     </>
   );
 }
@@ -251,14 +269,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#2F3032',
   },
   backgroundFlatList: {
-    flex: 1,
     width: '100%',
     backgroundColor: '#26282B',
-  },
-  backgroundFlatListOpacity: {
-    flex: 1,
-    width: '100%',
-    backgroundColor: '#2F3032',
   },
   bg2: {
     flex: 1,
@@ -441,13 +453,25 @@ const styles = StyleSheet.create({
   noExerciseBtn: {
     display: 'none',
   },
+  modalView: {
+    alignSelf: 'center',
+    height: '100%',
+    width: '100%',
+    justifyContent: 'center',
+    textAlign: 'center',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    backgroundColor: '#26282B',
+    borderWidth: 1,
+    borderColor: 'white',
+  },
 });
 
 const base = {
   maskView: {
     height: 178,
     width: '85%',
-    marginTop: 10,
+    marginTop: 14,
     marginBottom: 14,
     alignItems: 'center',
     alignSelf: 'center',
