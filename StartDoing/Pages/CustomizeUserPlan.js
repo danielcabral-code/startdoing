@@ -1,4 +1,4 @@
-import React, {useState, useEffect, Component} from 'react';
+import React, { useState, useEffect, Component } from 'react';
 
 import {
   StyleSheet,
@@ -12,11 +12,11 @@ import {
   TextInput,
 } from 'react-native';
 
-import {useNavigation} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {MaskImageView} from 'react-native-mask-image';
-import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
+import { MaskImageView } from 'react-native-mask-image';
+import { createStyles, minWidth, maxWidth } from 'react-native-media-queries';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Modal from 'react-native-modal';
 import jwt_decode from 'jwt-decode';
@@ -27,7 +27,7 @@ const CustomizeUserPlan = () => {
   return (
     <Stack.Navigator initialRouteName="CustomizeUserPlanScreen">
       <Stack.Screen
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
         name="CustomizeUserPlanScreen"
         component={CustomizeUserPlanScreen}
       />
@@ -35,26 +35,20 @@ const CustomizeUserPlan = () => {
   );
 };
 
-function CustomizeUserPlanScreen({route}) {
+function CustomizeUserPlanScreen({ route }) {
   const navigation = useNavigation();
 
   const [token, setToken] = useState('');
   const [myExcerciseData, setMyExcerciseData] = useState([]);
   const [planName, setPlanName] = useState();
   const [exerciseID, setExerciseID] = useState('');
-
   const [modalRemoveVisibility, setModalRemoveVisibility] = useState(false);
-
-  const [
-    modalChangeDurationVisibility,
-    setModalChangeDurationVisibility,
-  ] = useState(false);
-
-  const [modalDeletePlanVisibility, setModalDeletePlanVisibility] = useState(
-    false,
-  );
+  const [modalChangeDurationVisibility, setModalChangeDurationVisibility,] = useState(false);
+  const [modalDeletePlanVisibility, setModalDeletePlanVisibility] = useState(false);
+  const [exerciseDuration, setExerciseDuration] = useState([])
 
   const planID = route.params.planID;
+
 
   const getToken = async () => {
     try {
@@ -62,7 +56,7 @@ function CustomizeUserPlanScreen({route}) {
       console.log('TOKEN ', token);
       if (token !== null) {
         let myData = [];
-
+        let myDuration = []
         fetch(`https://startdoing.herokuapp.com/user_plans/plan/${planID}`, {
           method: 'GET',
           headers: {
@@ -72,9 +66,14 @@ function CustomizeUserPlanScreen({route}) {
         })
           .then((response) => response.json())
           .then((result) => {
-            result.map((result) => {
+
+            result.map((result, index) => {
+              console.log("resultado", result);
               setPlanName(result.plan_name);
+              setExerciseDuration(result.exercises)
+
               result.exercises.map((data) => {
+
                 fetch(
                   `https://startdoing.herokuapp.com/exercises/${data.exercise_id}`,
                   {
@@ -88,8 +87,8 @@ function CustomizeUserPlanScreen({route}) {
                   .then((response) => response.json())
                   .then((result) => {
                     myData.push(result);
-
                     setMyExcerciseData(...myExcerciseData, myData);
+
                   })
 
                   .catch((error) => console.log('error', error));
@@ -99,7 +98,7 @@ function CustomizeUserPlanScreen({route}) {
 
           .catch((error) => console.log('error', error));
       }
-    } catch (e) {}
+    } catch (e) { }
   };
 
   function onPressButton() {
@@ -141,30 +140,49 @@ function CustomizeUserPlanScreen({route}) {
   const deleteExercise = (exerc) => {
     console.log('teste ', exerc);
 
-    let newArray = [...myExcerciseData];
-    console.log(newArray);
+    let arrayToRemoveDB = [...exerciseDuration];
+    let arrayToRemoveFlatList =[...myExcerciseData]
+   
 
-   const removeExercise= newArray.filter((task) => task._id !== exerc);
-    console.log(removeExercise);
-    setMyExcerciseData(removeExercise)
+    const removeExerciseDB = arrayToRemoveDB.filter((task) => task.exercise_id !== exerc);
+
+    const removeExerciseFL = arrayToRemoveFlatList.filter((task) => task._id !== exerc);
+
+    console.log("removido",removeExerciseFL);
+    console.log("vai para o put ",removeExerciseDB);
+
+    setExerciseDuration(removeExerciseDB)
+    setMyExcerciseData(removeExerciseFL)
     setModalRemoveVisibility(false)
   };
 
   function savePlanModal() {
-    fetch(`https://startdoing.herokuapp.com/user_plans/${planID}`, {
+    console.log(exerciseDuration.length);
+    if (exerciseDuration.length<=1) {
+       alert("U cant remove all exercises")
+    }
+    else {
+      fetch(`https://startdoing.herokuapp.com/user_plans/${planID}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        exercises: myExcerciseData,
-      }),
+
+      body:
+        JSON.stringify({
+
+          exercises: exerciseDuration
+
+        })
+
     })
       .then((response) => {
         console.log(response.status);
       })
       .catch((error) => console.log('error', error));
+    }
+    
   }
 
   useEffect(() => {
@@ -174,7 +192,9 @@ function CustomizeUserPlanScreen({route}) {
   useEffect(() => {
     console.log('updated data');
     console.log(myExcerciseData);
-  }, [myExcerciseData]);
+    console.log("duracao", exerciseDuration);
+
+  }, [myExcerciseData, exerciseDuration]);
 
   return (
     <>
@@ -195,7 +215,7 @@ function CustomizeUserPlanScreen({route}) {
           style={styles.background}
           keyExtractor={(item) => item.exerciseName}
           data={myExcerciseData}
-          renderItem={({item}) => (
+          renderItem={({ item, index }) => (
             <View style={stylesMediaQueries.maskView}>
               <MaskImageView
                 urlImage={item.videoUrl}
@@ -210,7 +230,7 @@ function CustomizeUserPlanScreen({route}) {
               </Text>
 
               <Text style={styles.durationText}>
-                {'DURATION: ' + item.duration + ' ' + 'SECONDS'}
+                {'DURATION: ' + exerciseDuration[index].exercise_duration + ' ' + 'SECONDS'}
               </Text>
 
               <View style={styles.editButtonsView}>
