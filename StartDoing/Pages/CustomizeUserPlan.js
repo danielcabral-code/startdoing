@@ -46,6 +46,7 @@ function CustomizeUserPlanScreen({ route }) {
   const [modalChangeDurationVisibility, setModalChangeDurationVisibility,] = useState(false);
   const [modalDeletePlanVisibility, setModalDeletePlanVisibility] = useState(false);
   const [exerciseDuration, setExerciseDuration] = useState([])
+  const [editDuration, setEditDuration] = useState('')
 
   const planID = route.params.planID;
 
@@ -111,7 +112,9 @@ function CustomizeUserPlanScreen({ route }) {
     setModalRemoveVisibility(!modalRemoveVisibility);
   }
 
-  function editDurationModal() {
+  function editDurationModal(id) {
+    console.log(id);
+    setExerciseID(id);
     setModalChangeDurationVisibility(!modalChangeDurationVisibility);
   }
 
@@ -141,48 +144,65 @@ function CustomizeUserPlanScreen({ route }) {
     console.log('teste ', exerc);
 
     let arrayToRemoveDB = [...exerciseDuration];
-    let arrayToRemoveFlatList =[...myExcerciseData]
-   
+    let arrayToRemoveFlatList = [...myExcerciseData]
+
 
     const removeExerciseDB = arrayToRemoveDB.filter((task) => task.exercise_id !== exerc);
 
     const removeExerciseFL = arrayToRemoveFlatList.filter((task) => task._id !== exerc);
 
-    console.log("removido",removeExerciseFL);
-    console.log("vai para o put ",removeExerciseDB);
+    console.log("removido", removeExerciseFL);
+    console.log("vai para o put ", removeExerciseDB);
 
     setExerciseDuration(removeExerciseDB)
     setMyExcerciseData(removeExerciseFL)
     setModalRemoveVisibility(false)
   };
 
+  const editExerciseDuration = (exerc, value) => {
+    console.log('teste ', exerc , value);
+    let arrayToEditDuration = [...exerciseDuration];
+    console.log(arrayToEditDuration);
+
+  /*   const editDuration = arrayToEditDuration.filter((task) => task.exercise_id === exerc);
+    console.log(editDuration); */
+    const elementsIndex = exerciseDuration.findIndex(element => element.exercise_id === exerc )
+    console.log(elementsIndex);
+
+    arrayToEditDuration[elementsIndex] = {...arrayToEditDuration[elementsIndex], exercise_duration:value}
+    setExerciseDuration(arrayToEditDuration)
+    console.log("mudado: ", exerciseDuration);
+   setModalChangeDurationVisibility(false)
+
+  };
+
   function savePlanModal() {
     console.log(exerciseDuration.length);
-    if (exerciseDuration.length<=1) {
-       alert("U cant remove all exercises")
+    if (exerciseDuration.length <= 1) {
+      alert("U cant remove all exercises")
     }
     else {
       fetch(`https://startdoing.herokuapp.com/user_plans/${planID}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
 
-      body:
-        JSON.stringify({
+        body:
+          JSON.stringify({
 
-          exercises: exerciseDuration
+            exercises: exerciseDuration
 
-        })
+          })
 
-    })
-      .then((response) => {
-        console.log(response.status);
       })
-      .catch((error) => console.log('error', error));
+        .then((response) => {
+          console.log(response.status);
+        })
+        .catch((error) => console.log('error', error));
     }
-    
+
   }
 
   useEffect(() => {
@@ -241,7 +261,7 @@ function CustomizeUserPlanScreen({ route }) {
                   <Text style={styles.removeText}>REMOVE EX.</Text>
                 </TouchableHighlight>
 
-                <TouchableWithoutFeedback onPress={editDurationModal}>
+                <TouchableWithoutFeedback onPress={() => editDurationModal(item._id)}>
                   <View style={styles.editDurationBtn}>
                     <Text style={styles.editDurationText}>EDIT DURATION</Text>
                   </View>
@@ -284,12 +304,16 @@ function CustomizeUserPlanScreen({ route }) {
           onBackdropPress={() => setModalChangeDurationVisibility(false)}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>CHANGE DURATION</Text>
-            <TextInput style={styles.modalInputLine} />
+            <TextInput style={styles.modalInputLine} 
+             onChangeText={(text) => setEditDuration(text)}
+             keyboardType="numeric"
+             value={editDuration}/>
 
             <View style={styles.modalButtonsView}>
-              <TouchableWithoutFeedback onPress={onPressButton}>
+              <TouchableWithoutFeedback onPress={() => editExerciseDuration(exerciseID,editDuration)}>
                 <View style={styles.modalChangeDurationBtn}>
-                  <Text style={styles.modalChangeDurationText}>CHANGE</Text>
+                  <Text style={styles.modalChangeDurationText}
+                   >CHANGE</Text>
                 </View>
               </TouchableWithoutFeedback>
 
