@@ -56,7 +56,6 @@ function CustomizeUserPlanScreen({route}) {
 
   const planID = route.params.planID;
 
-
   const getToken = async () => {
     try {
       setToken(await AsyncStorage.getItem('@token'));
@@ -107,13 +106,14 @@ function CustomizeUserPlanScreen({route}) {
     alert('You Pressed Me!');
   }
 
-  function removeExerciseModal() {
+  function removeExerciseModal(id) {
+    console.log(id);
+    setExerciseID(id);
     setModalRemoveVisibility(!modalRemoveVisibility);
   }
 
   function editDurationModal() {
     setModalChangeDurationVisibility(!modalChangeDurationVisibility);
-   
   }
 
   const deletePlanModal = () => {
@@ -131,21 +131,40 @@ function CustomizeUserPlanScreen({route}) {
       .then((response) => response.json())
       .then((result) => {
         console.log(result);
-       
-          navigation.navigate('HOME')
-       
-        
+
+        navigation.navigate('HOME');
       })
 
       .catch((error) => console.log('error', error));
   };
 
-  const deleteExercise = () => {
-   console.log("teste ", exerciseID);
+  const deleteExercise = (exerc) => {
+    console.log('teste ', exerc);
+
+    let newArray = [...myExcerciseData];
+    console.log(newArray);
+
+   const removeExercise= newArray.filter((task) => task._id !== exerc);
+    console.log(removeExercise);
+    setMyExcerciseData(removeExercise)
+    setModalRemoveVisibility(false)
   };
 
   function savePlanModal() {
-    alert('You Pressed Me!');
+    fetch(`https://startdoing.herokuapp.com/user_plans/${planID}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        exercises: myExcerciseData,
+      }),
+    })
+      .then((response) => {
+        console.log(response.status);
+      })
+      .catch((error) => console.log('error', error));
   }
 
   useEffect(() => {
@@ -197,7 +216,7 @@ function CustomizeUserPlanScreen({route}) {
               <View style={styles.editButtonsView}>
                 <TouchableHighlight
                   style={styles.removeBtn}
-                  onPress={removeExerciseModal}
+                  onPress={() => removeExerciseModal(item._id)}
                   underlayColor="#FF000099">
                   <Text style={styles.removeText}>REMOVE EX.</Text>
                 </TouchableHighlight>
@@ -224,7 +243,7 @@ function CustomizeUserPlanScreen({route}) {
             <View style={styles.modalButtonsView}>
               <TouchableHighlight
                 style={styles.modalRemoveBtn}
-                onPress={deleteExercise}
+                onPress={() => deleteExercise(exerciseID)}
                 underlayColor="#FF000099">
                 <Text style={styles.modalRemoveText}>REMOVE EX.</Text>
               </TouchableHighlight>
