@@ -44,7 +44,9 @@ function CreatePlan() {
 
   const [modalGroupVisibility, setModalGroupVisibility] = useState(false);
 
-  const [planBeingCreatedExercises, setPlanBeingCreatedExercises] = useState([]);
+  const [planBeingCreatedExercises, setPlanBeingCreatedExercises] = useState(
+    [],
+  );
 
   const [exerciseID, setExerciseID] = useState('');
   const [exerciseDuration, setExerciseDuration] = useState();
@@ -111,7 +113,27 @@ function CreatePlan() {
   const selectExercise = (id, duration) => {
     setExerciseID(id);
     setExerciseDuration(duration);
+
+    let exercisesArr = {
+      exercise_id: id,
+      exercise_duration: duration,
+    };
+
+    /* console.log(exercisesArr); */
+
+    setPlanBeingCreatedExercises((planBeingCreatedExercises) => [
+      ...planBeingCreatedExercises,
+      exercisesArr,
+    ]);
+
+    /* console.log(planBeingCreatedExercises); */
   };
+
+  useEffect(() => {
+    console.log('updated data');
+
+    console.log(planBeingCreatedExercises);
+  }, [planBeingCreatedExercises]);
 
   return (
     <>
@@ -213,6 +235,32 @@ function CreatePlan() {
             <Text style={styles.exerciseText}>LEGS</Text>
           </TouchableHighlight>
         </View>
+
+        <FlatList
+          style={[
+            displayExerGroups ? styles.backgroundOpacity : styles.background,
+          ]}
+          keyExtractor={(item) => item.exercise_id}
+          data={planBeingCreatedExercises}
+          renderItem={({item, index}) => (
+            <View style={stylesMediaQueries.maskView}>
+              <MaskImageView
+                /* urlImage={exercises[index].videoUrl} */
+                urlMask={'https://i.imgur.com/NDpYsdD.png'}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                }}
+              />
+              {/* <Text style={stylesMediaQueries.exerciseText}>
+                {exercises[index].exerciseName}
+              </Text> */}
+
+              <Text style={styles.durationText}>
+                {'DURATION: ' + item.exercise_duration + ' ' + 'SECONDS'}
+              </Text>
+            </View>
+          )}></FlatList>
       </ScrollView>
 
       <Modal
@@ -269,6 +317,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2F3032',
   },
   backgroundFlatList: {
+    flex: 1,
     width: '100%',
     backgroundColor: '#26282B',
   },
@@ -464,6 +513,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#26282B',
     borderWidth: 1,
     borderColor: 'white',
+  },
+  durationText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Regular',
+    fontSize: 18,
+    textShadowRadius: 6,
+    marginTop: 160,
+    marginBottom: 20,
   },
 });
 
