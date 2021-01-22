@@ -113,7 +113,7 @@ function UserPlan({ route }) {
               }}
             />
             <Text style={stylesMediaQueries.exerciseText}>
-              {item.exerciseName.toUpperCase()}
+              {item.exerciseName}
             </Text>
           </View>
         )}></FlatList>

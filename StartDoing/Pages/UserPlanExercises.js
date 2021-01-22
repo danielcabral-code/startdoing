@@ -125,7 +125,7 @@ function UserPlanExercisesScreen({route}) {
               }}
             />
             <Text style={stylesMediaQueries.exerciseText}>
-              {exercisesList[index].exerciseName.toUpperCase()}
+              {exercisesList[index].exerciseName}
             </Text>
           </View>
           <Text style={styles.durationText}>
