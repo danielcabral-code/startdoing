@@ -17,6 +17,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import UserPlanExercises from '../Pages/UserPlanExercises';
 import CustomizeUserPlan from '../Pages/CustomizeUserPlan'
+import EditDetails from '../Pages/EditDetails'
 
 
 const Stack = createStackNavigator();
