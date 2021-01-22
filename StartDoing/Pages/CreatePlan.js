@@ -48,10 +48,24 @@ function CreatePlan() {
     [],
   );
 
+  const [planBeingCreatedFlatlist, setPlanBeingCreatedFlatlist] = useState([]);
+
   const [exerciseID, setExerciseID] = useState('');
   const [exerciseDuration, setExerciseDuration] = useState();
+  const [exerciseName, setExerciseName] = useState('');
+  const [videoUrl, setVideoUrl] = useState('');
 
   const [planName, setPlanName] = useState('');
+
+  const [modalRemoveVisibility, setModalRemoveVisibility] = useState(false);
+  const [
+    modalChangeDurationVisibility,
+    setModalChangeDurationVisibility,
+  ] = useState(false);
+  const [editDuration, setEditDuration] = useState('');
+
+  const [numberForSave, setNumberForSave] = useState(1);
+  const [saveEnabler, setSaveEnabler] = useState(true);
 
   const chest = 'CHEST';
   const core = 'CORE';
@@ -69,6 +83,16 @@ function CreatePlan() {
       setNumberForGroups(1);
     }
   }
+
+  /* function enableSavePlanButton() {
+    if (numberForSave === 1) {
+      setSaveEnabler(true);
+      setNumberForGroups(2);
+    } else if (numberForSave === 2) {
+      setSaveEnabler(false);
+      setNumberForGroups(1);
+    }
+  } */
 
   async function getToken() {
     try {
@@ -110,13 +134,22 @@ function CreatePlan() {
     console.log('meus', exercises);
   }, [exercises]);
 
-  const selectExercise = (id, duration) => {
+  const selectExercise = (id, duration, exerciseName, videoUrl) => {
     setExerciseID(id);
     setExerciseDuration(duration);
+
+    setExerciseName(exerciseName);
+    setVideoUrl(videoUrl);
 
     let exercisesArr = {
       exercise_id: id,
       exercise_duration: duration,
+    };
+
+    let exercisesArrFlatlist = {
+      exercise_name: exerciseName,
+      exercise_duration: duration,
+      exercise_videoUrl: videoUrl,
     };
 
     /* console.log(exercisesArr); */
@@ -126,6 +159,11 @@ function CreatePlan() {
       exercisesArr,
     ]);
 
+    setPlanBeingCreatedFlatlist((planBeingCreatedFlatlist) => [
+      ...planBeingCreatedFlatlist,
+      exercisesArrFlatlist,
+    ]);
+
     /* console.log(planBeingCreatedExercises); */
   };
 
@@ -133,7 +171,38 @@ function CreatePlan() {
     console.log('updated data');
 
     console.log(planBeingCreatedExercises);
+
+    if (planBeingCreatedFlatlist.length >= 1) {
+      setSaveEnabler(false);
+    } else if (planBeingCreatedFlatlist.length < 1) {
+      setSaveEnabler(true);
+    }
   }, [planBeingCreatedExercises]);
+
+  function removeExerciseModal(id) {
+    console.log("vvv", id);
+    setExerciseID(id);
+    setModalRemoveVisibility(!modalRemoveVisibility);
+  }
+
+  function editDurationModal(/* id */) {
+    /* console.log(id);
+    setExerciseID(id); */
+    setModalChangeDurationVisibility(!modalChangeDurationVisibility);
+  }
+
+  const deleteExercise = (exerc) => {
+    console.log('teste ', exerc);
+
+    let arrayToRemoveFlatList = [...planBeingCreatedFlatlist]
+
+    const removeExerciseFL = arrayToRemoveFlatList.filter((task) => task.exercise_name !== exerc);
+
+    console.log("removido", removeExerciseFL);
+
+    setPlanBeingCreatedFlatlist(removeExerciseFL)
+    setModalRemoveVisibility(false)
+  };
 
   return (
     <>
@@ -240,28 +309,72 @@ function CreatePlan() {
           style={[
             displayExerGroups ? styles.backgroundOpacity : styles.background,
           ]}
-          keyExtractor={(item) => item.exercise_id}
-          data={planBeingCreatedExercises}
+          keyExtractor={(item) => item.exercise_name}
+          data={planBeingCreatedFlatlist}
           renderItem={({item, index}) => (
             <View style={stylesMediaQueries.maskView}>
               <MaskImageView
-                /* urlImage={exercises[index].videoUrl} */
+                urlImage={planBeingCreatedFlatlist[index].exercise_videoUrl}
                 urlMask={'https://i.imgur.com/NDpYsdD.png'}
                 style={{
                   width: '100%',
                   height: '100%',
                 }}
               />
-              {/* <Text style={stylesMediaQueries.exerciseText}>
-                {exercises[index].exerciseName}
-              </Text> */}
+              <Text style={stylesMediaQueries.exerciseText}>
+                {planBeingCreatedFlatlist[index].exercise_name}
+              </Text>
 
               <Text style={styles.durationText}>
-                {'DURATION: ' + item.exercise_duration + ' ' + 'SECONDS'}
+                {'DURATION: ' +
+                  planBeingCreatedFlatlist[index].exercise_duration +
+                  ' ' +
+                  'SECONDS'}
               </Text>
+
+              <View style={styles.editButtonsView}>
+                <TouchableHighlight
+                  style={styles.removeBtn}
+                  onPress={() => removeExerciseModal(item.exercise_name)}
+                  underlayColor="#FF000099">
+                  <Text style={styles.removeText}>REMOVE EX.</Text>
+                </TouchableHighlight>
+
+                <TouchableWithoutFeedback
+                  onPress={() => editDurationModal(/* item._id */)}>
+                  <View style={styles.editDurationBtn}>
+                    <Text style={styles.editDurationText}>EDIT DURATION</Text>
+                  </View>
+                </TouchableWithoutFeedback>
+              </View>
             </View>
           )}></FlatList>
       </ScrollView>
+
+      <View
+        style={[
+          displayExerGroups
+            ? styles.bottomSectionViewOpacity
+            : styles.bottomSectionView,
+        ]}>
+        <TouchableHighlight
+          style={[saveEnabler ? styles.saveBtnOpacity : styles.saveBtn]}
+          underlayColor="#F27A2999"
+          disabled={saveEnabler}
+          onPress={
+            () => console.log('hello')
+
+            /* navigation.navigate('UserPlanExercises', {
+              screen: 'UserPlanExercises',
+              params: {exercises: myExcerciseData, id: id, token: token},
+            }) */
+          }>
+          <Text
+            style={[saveEnabler ? styles.saveTextOpacity : styles.saveText]}>
+            SAVE NEW PLAN
+          </Text>
+        </TouchableHighlight>
+      </View>
 
       <Modal
         isVisible={modalGroupVisibility}
@@ -270,7 +383,7 @@ function CreatePlan() {
           setModalGroupVisibility(false);
           setExercises([]);
         }}>
-        <View style={styles.modalView}>
+        <View style={styles.modalViewExercises}>
           <FlatList
             style={styles.backgroundFlatlist}
             keyExtractor={(item) => item.exerciseName}
@@ -282,9 +395,14 @@ function CreatePlan() {
                   setExercises([]);
 
                   setExerciseDuration(item.duration);
-                  selectExercise(item._id, item.duration);
+                  selectExercise(
+                    item._id,
+                    item.duration,
+                    item.exerciseName,
+                    item.videoUrl,
+                  );
                 }}>
-                <View style={stylesMediaQueries.maskView}>
+                <View style={stylesMediaQueries.maskViewModal}>
                   <MaskImageView
                     urlImage={item.videoUrl}
                     urlMask={'https://i.imgur.com/NDpYsdD.png'}
@@ -299,6 +417,63 @@ function CreatePlan() {
                 </View>
               </TouchableOpacity>
             )}></FlatList>
+        </View>
+      </Modal>
+
+      <Modal
+        isVisible={modalRemoveVisibility}
+        hideModalContentWhileAnimating={true}
+        onBackdropPress={() => setModalRemoveVisibility(false)}>
+        <View style={styles.modalView}>
+          <Text style={styles.modalText}>ARE YOU SURE YOU WANT TO REMOVE</Text>
+          <Text style={styles.modalText}>THIS EXERCISE?</Text>
+
+          <View style={styles.modalButtonsView}>
+            <TouchableHighlight
+              style={styles.modalRemoveBtn}
+              onPress={() => deleteExercise(exerciseID)}
+              underlayColor="#FF000099">
+              <Text style={styles.modalRemoveText}>REMOVE EX.</Text>
+            </TouchableHighlight>
+
+            <TouchableHighlight
+              style={styles.modalCancelBtn}
+              onPress={() => setModalRemoveVisibility(false)}
+              underlayColor="#006DA899">
+              <Text style={styles.modalCancelText}>CANCEL</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        isVisible={modalChangeDurationVisibility}
+        hideModalContentWhileAnimating={true}
+        onBackdropPress={() => setModalChangeDurationVisibility(false)}>
+        <View style={styles.modalView}>
+          <Text style={styles.modalText}>CHANGE DURATION</Text>
+          <TextInput
+            style={styles.modalInputLine}
+            onChangeText={(text) => setEditDuration(text)}
+            keyboardType="numeric"
+            value={editDuration}
+          />
+
+          <View style={styles.modalButtonsView}>
+            <TouchableWithoutFeedback /* onPress={() => editExerciseDuration(exerciseID,editDuration)} */
+            >
+              <View style={styles.modalChangeDurationBtn}>
+                <Text style={styles.modalChangeDurationText}>CHANGE</Text>
+              </View>
+            </TouchableWithoutFeedback>
+
+            <TouchableHighlight
+              style={styles.modalCancelBtn}
+              onPress={() => setModalChangeDurationVisibility(false)}
+              underlayColor="#006DA899">
+              <Text style={styles.modalCancelText}>CANCEL</Text>
+            </TouchableHighlight>
+          </View>
         </View>
       </Modal>
     </>
@@ -502,7 +677,7 @@ const styles = StyleSheet.create({
   noExerciseBtn: {
     display: 'none',
   },
-  modalView: {
+  modalViewExercises: {
     alignSelf: 'center',
     height: '100%',
     width: '100%',
@@ -523,10 +698,217 @@ const styles = StyleSheet.create({
     marginTop: 160,
     marginBottom: 20,
   },
+  editButtonsView: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+  },
+  removeBtn: {
+    width: '48%',
+    height: 40,
+    marginTop: -6,
+    borderRadius: 10,
+    alignSelf: 'flex-start',
+    backgroundColor: '#FF0000',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+  },
+  removeText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 12,
+    textShadowRadius: 6,
+  },
+  editDurationBtn: {
+    marginTop: 20,
+    width: '48%',
+    marginTop: -16,
+    marginLeft: '4%',
+    alignSelf: 'flex-end',
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#26282B',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'white',
+  },
+  editDurationText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 12,
+  },
+  modalView: {
+    alignSelf: 'center',
+    height: 145,
+    width: '85%',
+    borderRadius: 10,
+    backgroundColor: '#26282B',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'white',
+    textAlign: 'center',
+  },
+  modalButtonsView: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '85%',
+    alignSelf: 'center',
+    marginTop: 20,
+  },
+  modalText: {
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 12,
+    alignSelf: 'center',
+  },
+  modalRemoveBtn: {
+    width: '48%',
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#FF0000',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+  },
+  modalRemoveText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 12,
+    textShadowRadius: 6,
+  },
+  modalCancelBtn: {
+    width: '48%',
+    marginLeft: '4%',
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#006DA8',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+  },
+  modalCancelText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 12,
+    textShadowRadius: 6,
+  },
+  modalChangeDurationBtn: {
+    width: '48%',
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#26282B',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'white',
+  },
+  modalChangeDurationText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 12,
+  },
+  modalInputLine: {
+    width: '30%',
+    height: 40,
+    alignSelf: 'center',
+    borderColor: 'white',
+    borderBottomWidth: 1,
+    color: 'white',
+    alignSelf: 'center',
+  },
+  bottomSectionView: {
+    height: 70,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#26282B',
+  },
+  bottomSectionViewOpacity: {
+    height: 70,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#2F3032',
+  },
+  saveBtn: {
+    width: '85%',
+    height: 50,
+    borderRadius: 10,
+    backgroundColor: '#F27A29',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+  },
+  saveBtnOpacity: {
+    width: '85%',
+    height: 50,
+    borderRadius: 10,
+    backgroundColor: '#F27A2980',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+  },
+  saveText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 20,
+    textShadowRadius: 6,
+  },
+  saveTextOpacity: {
+    alignSelf: 'center',
+    color: '#FFFFFF85',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 20,
+  },
 });
 
 const base = {
   maskView: {
+    height: 178,
+    width: '85%',
+    marginTop: 10,
+    marginBottom: 120,
+    alignItems: 'center',
+    alignSelf: 'center',
+  },
+
+  maskViewModal: {
     height: 178,
     width: '85%',
     marginTop: 14,
@@ -558,6 +940,10 @@ const stylesMediaQueries = createStyles(
   // override styles only if screen width is more than 500
   minWidth(480, {
     maskView: {
+      width: 360,
+    },
+
+    maskViewModal: {
       width: 360,
     },
   }),
