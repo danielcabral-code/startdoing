@@ -13,10 +13,13 @@ import {
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
+import { useNavigation } from '@react-navigation/native';
 
-const Home = () => {
+const Home = ({navigate}) => {
+  const navigation = useNavigation();
   const [token, setToken] = useState('');
   const [name, setName] = useState('');
+  const [birth, setBirth] = useState('');
   let decoded = ''
 
   function onPressButton() {
@@ -31,6 +34,7 @@ const Home = () => {
       if (token !== null) {
         decoded = jwt_decode(token);
         setName(decoded.data.name)
+        setBirth(decoded.data.birth)
       }
     }
     catch (e) {
@@ -74,7 +78,10 @@ const Home = () => {
 
           <TouchableHighlight
             style={styles.suggestedBtn}
-            onPress={onPressButton}
+            onPress={() => navigation.navigate('SuggestedPlanScreen',{
+              screen: 'SuggestedPlanScreen',
+              params: { birth: birth, token: token}
+            })}
             underlayColor="#006DA899">
             <Text style={styles.suggestedText}>SUGGESTED TRAINING</Text>
           </TouchableHighlight>

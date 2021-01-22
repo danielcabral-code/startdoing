@@ -17,6 +17,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import UserPlanExercises from '../Pages/UserPlanExercises';
 import CustomizeUserPlan from '../Pages/CustomizeUserPlan'
+import SuggestedPlanScreen from '../Pages/SuggestedPlan'
+import SuggestedExercisesScreen from '../Pages/SuggestedPlanExercises'
 
 
 const Stack = createStackNavigator();
@@ -66,7 +68,19 @@ const LoginPage = () => {
           component={CustomizeUserPlan}
         />
 
-       
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="SuggestedPlanScreen"
+          component={SuggestedPlanScreen}
+        />
+
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="SuggestedExercisesScreen"
+          component={SuggestedExercisesScreen}
+        />
+
+
       </Stack.Navigator>
     </NavigationContainer>
   );
