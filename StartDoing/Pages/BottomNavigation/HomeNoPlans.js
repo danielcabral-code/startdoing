@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   StyleSheet,
@@ -11,11 +11,36 @@ import {
 } from 'react-native';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwt_decode from "jwt-decode";
 
 const Home = () => {
+  const [token, setToken] = useState('');
+  const [name, setName] = useState('');
+  let decoded = ''
+
   function onPressButton() {
     alert('You Pressed Me!');
   }
+
+  const getToken = async () => {
+
+    try {
+
+      setToken(await AsyncStorage.getItem('@token'))
+      if (token !== null) {
+        decoded = jwt_decode(token);
+        setName(decoded.data.name)
+      }
+    }
+    catch (e) {
+
+    }
+  }
+
+  useEffect(() => {
+    getToken()
+  })
 
   return (
     <>
@@ -29,7 +54,7 @@ const Home = () => {
             </View>
           </View>
 
-          <Text style={styles.userName}>HI, {}!</Text>
+          <Text style={styles.userName}>HI, {name} { }!</Text>
 
           <TouchableWithoutFeedback>
             <View style={styles.unactiveBtn}>

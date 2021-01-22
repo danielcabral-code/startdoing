@@ -127,7 +127,7 @@ const Home = ({ navigate }) => {
             </View>
           </View>
 
-          <Text style={styles.userName}>HI, {name.toUpperCase()} { }!</Text>
+          <Text style={styles.userName}>HI, {name} { }!</Text>
 
           <TouchableHighlight
             style={styles.planBtn}
