@@ -9,10 +9,17 @@ import {
   TouchableHighlight,
 } from 'react-native';
 
+import {useNavigation} from '@react-navigation/native';
+
+
 const Settings = () => {
+
+  const navigation = useNavigation();
+
   function onPressButton() {
     alert('You Pressed Me!');
   }
+
 
   return (
     <>
@@ -30,7 +37,7 @@ const Settings = () => {
 
           <TouchableHighlight
             style={styles.planBtn}
-            onPress={onPressButton}
+            onPress={() => navigation.navigate('EditDetails')}
             underlayColor="#F27A2999">
             <Text style={styles.planText}>EDIT WEIGHT & HEIGHT</Text>
           </TouchableHighlight>
