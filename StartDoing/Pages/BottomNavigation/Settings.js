@@ -44,7 +44,7 @@ const Settings = () => {
 
           <TouchableHighlight
             style={styles.planBtn}
-            onPress={onPressButton}
+            onPress={() => navigation.navigate('ChangeProfilePicture')}
             underlayColor="#F27A2999">
             <Text style={styles.planText}>CHANGE PROFILE PICTURE</Text>
           </TouchableHighlight>
