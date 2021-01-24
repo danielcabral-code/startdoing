@@ -51,7 +51,7 @@ const Settings = () => {
 
           <TouchableHighlight
             style={styles.planBtn}
-            onPress={onPressButton}
+            onPress={() => navigation.navigate('ChangePassword')}
             underlayColor="#F27A2999">
             <Text style={styles.planText}>CHANGE PASSWORD</Text>
           </TouchableHighlight>
