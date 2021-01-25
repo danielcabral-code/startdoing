@@ -10,6 +10,7 @@ import {
 } from '../Components/Login/Buttons';
 
 import ResetPasswordScreen from '../Pages/ResetPassword';
+import GuestHome from '../Pages/GuestHome';
 import BottomNavigation from '../Pages/BottomNavigation/BottomNavigation';
 import UserPlan from '../Pages/UserPlan';
 import CreatePlan from '../Pages/CreatePlan';
@@ -39,6 +40,11 @@ const LoginPage = () => {
           options={{ headerShown: false }}
           name="ResetPassword"
           component={ResetPasswordScreen}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="Guest"
+          component={GuestHome}
         />
         <Stack.Screen
           options={{ headerShown: false }}
