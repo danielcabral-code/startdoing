@@ -162,7 +162,10 @@ const Home = ({ navigate }) => {
 
           <TouchableHighlight
           style={styles.suggestedBtn}
-          onPress={onPressButton}
+          onPress={() => navigation.navigate('SuggestedPlanScreen',{
+            screen: 'SuggestedPlanScreen',
+            params: { birth: birth, token: token}
+          })}
           underlayColor="#006DA899">
           <Text style={styles.suggestedText}>SUGGESTED TRAINING</Text>
         </TouchableHighlight>
