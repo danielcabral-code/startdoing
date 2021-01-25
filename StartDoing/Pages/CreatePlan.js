@@ -36,6 +36,8 @@ const CreatePlans = () => {
 };
 
 function CreatePlan() {
+  const navigation = useNavigation();
+
   const [token, setToken] = useState('');
 
   const [displayExerGroups, setDisplayExerGroups] = useState(false);
@@ -66,6 +68,9 @@ function CreatePlan() {
 
   const [numberForSave, setNumberForSave] = useState(1);
   const [saveEnabler, setSaveEnabler] = useState(true);
+
+  const [editPlanName, setEditPlanName] = useState('');
+  const [id, setId] = useState('');
 
   const chest = 'CHEST';
   const core = 'CORE';
@@ -98,6 +103,8 @@ function CreatePlan() {
     try {
       setToken(await AsyncStorage.getItem('@token'));
       decoded = jwt_decode(token);
+      setId(decoded.data.id);
+      console.log('dawd', id);
     } catch (e) {}
   }
 
@@ -126,7 +133,7 @@ function CreatePlan() {
 
   useEffect(() => {
     getToken();
-  }, []);
+  });
 
   useEffect(() => {
     /* console.log('updated data');
@@ -207,28 +214,66 @@ function CreatePlan() {
   };
 
   const editExerciseDuration = (exerc, value) => {
-    console.log('teste ', exerc, value);
+    /* console.log('teste ', exerc, value); */
     let arrayToEditDuration = [...planBeingCreatedFlatlist];
-    console.log(arrayToEditDuration);
+    let arrayToEditDurationPlan = [...planBeingCreatedExercises];
+    /* console.log(arrayToEditDuration); */
 
     /*   const editDuration = arrayToEditDuration.filter((task) => task.exercise_id === exerc);
     console.log(editDuration); */
 
-
     const elementsIndex = planBeingCreatedFlatlist.findIndex(
       (element) => element.exercise_name === exerc,
     );
-    console.log(elementsIndex);
+
+    /* console.log(elementsIndex); */
 
     arrayToEditDuration[elementsIndex] = {
       ...arrayToEditDuration[elementsIndex],
       exercise_duration: value,
     };
 
+    arrayToEditDurationPlan[elementsIndex] = {
+      ...arrayToEditDurationPlan[elementsIndex],
+      exercise_duration: value,
+    };
+
     setPlanBeingCreatedFlatlist(arrayToEditDuration);
-    console.log('mudado: ', planBeingCreatedFlatlist);
+    setPlanBeingCreatedExercises(arrayToEditDurationPlan);
+    /* console.log('mudado: ', planBeingCreatedFlatlist); */
     setModalChangeDurationVisibility(false);
   };
+
+  function savePlanModal() {
+    /* console.log(planBeingCreatedFlatlist.length); */
+
+    console.log(editPlanName.length);
+    let planNameEdited = '';
+
+    if (editPlanName.length > 0) {
+      planNameEdited = editPlanName;
+      setEditPlanName('');
+
+      fetch(`https://startdoing.herokuapp.com/user_plans/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+
+        body: JSON.stringify({
+          plan_name: planNameEdited.toUpperCase(),
+          user_id: id,
+          exercises: planBeingCreatedExercises,
+        }),
+      })
+        .then((response) => {
+          console.log(response.status);
+          navigation.navigate('HOME');
+        })
+        .catch((error) => console.log('error', error));
+    }
+  }
 
   return (
     <>
@@ -272,7 +317,8 @@ function CreatePlan() {
               style={[
                 displayExerGroups ? styles.inputLineOpacity : styles.inputLine,
               ]}
-              onChangeText={(text) => setPlanName(text)}
+              onChangeText={(text) => setEditPlanName(text)}
+              value={editPlanName}
             />
           </View>
 
@@ -387,14 +433,7 @@ function CreatePlan() {
           style={[saveEnabler ? styles.saveBtnOpacity : styles.saveBtn]}
           underlayColor="#F27A2999"
           disabled={saveEnabler}
-          onPress={
-            () => console.log('hello')
-
-            /* navigation.navigate('UserPlanExercises', {
-              screen: 'UserPlanExercises',
-              params: {exercises: myExcerciseData, id: id, token: token},
-            }) */
-          }>
+          onPress={savePlanModal}>
           <Text
             style={[saveEnabler ? styles.saveTextOpacity : styles.saveText]}>
             SAVE NEW PLAN
