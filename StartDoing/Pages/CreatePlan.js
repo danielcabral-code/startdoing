@@ -10,6 +10,7 @@ import {
   TouchableHighlight,
   TouchableWithoutFeedback,
   FlatList,
+  TouchableOpacity,
 } from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
@@ -18,6 +19,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {MaskImageView} from 'react-native-mask-image';
 import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Modal from 'react-native-modal';
+import jwt_decode from 'jwt-decode';
 
 const Stack = createStackNavigator();
 const CreatePlans = () => {
@@ -33,6 +36,8 @@ const CreatePlans = () => {
 };
 
 function CreatePlan() {
+  const navigation = useNavigation();
+
   const [token, setToken] = useState('');
 
   const [displayExerGroups, setDisplayExerGroups] = useState(false);
@@ -43,10 +48,40 @@ function CreatePlan() {
 
   const [currentExerciseCategory, setCurrentExerciseCategory] = useState('');
 
+  const [modalGroupVisibility, setModalGroupVisibility] = useState(false);
+
+  const [planBeingCreatedExercises, setPlanBeingCreatedExercises] = useState(
+    [],
+  );
+
+  const [planBeingCreatedFlatlist, setPlanBeingCreatedFlatlist] = useState([]);
+
+  const [exerciseID, setExerciseID] = useState('');
+  const [exerciseDuration, setExerciseDuration] = useState();
+  const [exerciseName, setExerciseName] = useState('');
+  const [videoUrl, setVideoUrl] = useState('');
+
+  const [planName, setPlanName] = useState('');
+
+  const [modalRemoveVisibility, setModalRemoveVisibility] = useState(false);
+  const [
+    modalChangeDurationVisibility,
+    setModalChangeDurationVisibility,
+  ] = useState(false);
+  const [editDuration, setEditDuration] = useState('');
+
+  const [numberForSave, setNumberForSave] = useState(1);
+  const [saveEnabler, setSaveEnabler] = useState(true);
+
+  const [editPlanName, setEditPlanName] = useState('');
+  const [id, setId] = useState('');
+
   const chest = 'CHEST';
   const core = 'CORE';
   const back = 'BACK';
   const legs = 'LEGS';
+
+  let decoded = '';
 
   function displayExerciseGroups() {
     if (numberForGroups === 1) {
@@ -61,13 +96,16 @@ function CreatePlan() {
   async function getToken() {
     try {
       setToken(await AsyncStorage.getItem('@token'));
+      decoded = jwt_decode(token);
+      setId(decoded.data.id);
+      console.log('dawd', id);
     } catch (e) {}
   }
 
   function displayExercises(category) {
     let myData = [];
 
-    if (token !== null && numberForExercises === 1) {
+    if (token !== null) {
       fetch(`https://startdoing.herokuapp.com/exercises/category/${category}`, {
         method: 'GET',
         headers: {
@@ -79,24 +117,155 @@ function CreatePlan() {
         .then((result) => {
           myData = result;
 
-          setCurrentExerciseCategory(result[0].category);
-
           setExercises(...exercises, myData);
+
+          setModalGroupVisibility(!modalGroupVisibility);
         })
         .catch((error) => console.log('error', error));
+    }
+  }
 
-      setNumberForExercises(2);
-    } else if (numberForExercises === 2) {
-      if (category === chest && currentExerciseCategory === 'CHEST') {
-        setExercises([]);
-      } else if (category === core && currentExerciseCategory === 'CORE') {
-        setExercises([]);
-      } else if (category === back && currentExerciseCategory === 'BACK') {
-        setExercises([]);
-      } else if (category === legs && currentExerciseCategory === 'LEGS') {
-        setExercises([]);
-      }
-      setNumberForExercises(1);
+  useEffect(() => {
+    getToken();
+  });
+
+  useEffect(() => {
+    /* console.log('updated data');
+
+    console.log('meus', exercises); */
+  }, [exercises]);
+
+  const selectExercise = (id, duration, exerciseName, videoUrl) => {
+    setExerciseID(id);
+    setExerciseDuration(duration);
+
+    setExerciseName(exerciseName);
+    setVideoUrl(videoUrl);
+
+    let exercisesArr = {
+      exercise_id: id,
+      exercise_duration: duration,
+    };
+
+    let exercisesArrFlatlist = {
+      exercise_name: exerciseName,
+      exercise_duration: duration,
+      exercise_videoUrl: videoUrl,
+    };
+
+    /* console.log(exercisesArr); */
+
+    setPlanBeingCreatedExercises((planBeingCreatedExercises) => [
+      ...planBeingCreatedExercises,
+      exercisesArr,
+    ]);
+
+    setPlanBeingCreatedFlatlist((planBeingCreatedFlatlist) => [
+      ...planBeingCreatedFlatlist,
+      exercisesArrFlatlist,
+    ]);
+
+    /* console.log(planBeingCreatedExercises); */
+  };
+
+  useEffect(() => {
+    /* console.log('updated data');
+
+    console.log(planBeingCreatedExercises); */
+
+    if (planBeingCreatedFlatlist.length >= 1) {
+      setSaveEnabler(false);
+    } else if (planBeingCreatedFlatlist.length < 1) {
+      setSaveEnabler(true);
+    }
+  }, [planBeingCreatedExercises]);
+
+  function removeExerciseModal(id) {
+    /* console.log('vvv', id); */
+    setExerciseID(id);
+    setModalRemoveVisibility(!modalRemoveVisibility);
+  }
+
+  function editDurationModal(id) {
+    console.log(id);
+    setExerciseID(id);
+    setModalChangeDurationVisibility(!modalChangeDurationVisibility);
+  }
+
+  const deleteExercise = (exerc) => {
+    /* console.log('teste ', exerc); */
+
+    let arrayToRemoveFlatList = [...planBeingCreatedFlatlist];
+
+    const removeExerciseFL = arrayToRemoveFlatList.filter(
+      (task) => task.exercise_name !== exerc,
+    );
+
+    /* console.log('removido', removeExerciseFL); */
+
+    setPlanBeingCreatedFlatlist(removeExerciseFL);
+    setModalRemoveVisibility(false);
+  };
+
+  const editExerciseDuration = (exerc, value) => {
+    /* console.log('teste ', exerc, value); */
+    let arrayToEditDuration = [...planBeingCreatedFlatlist];
+    let arrayToEditDurationPlan = [...planBeingCreatedExercises];
+    /* console.log(arrayToEditDuration); */
+
+    /*   const editDuration = arrayToEditDuration.filter((task) => task.exercise_id === exerc);
+    console.log(editDuration); */
+
+    const elementsIndex = planBeingCreatedFlatlist.findIndex(
+      (element) => element.exercise_name === exerc,
+    );
+
+    /* console.log(elementsIndex); */
+
+    arrayToEditDuration[elementsIndex] = {
+      ...arrayToEditDuration[elementsIndex],
+      exercise_duration: value,
+    };
+
+    arrayToEditDurationPlan[elementsIndex] = {
+      ...arrayToEditDurationPlan[elementsIndex],
+      exercise_duration: value,
+    };
+
+    setPlanBeingCreatedFlatlist(arrayToEditDuration);
+    setPlanBeingCreatedExercises(arrayToEditDurationPlan);
+    /* console.log('mudado: ', planBeingCreatedFlatlist); */
+    setModalChangeDurationVisibility(false);
+  };
+
+  function savePlanModal() {
+    /* console.log(planBeingCreatedFlatlist.length); */
+
+    console.log(editPlanName.length);
+    let planNameEdited = '';
+
+    if (editPlanName.length > 0) {
+      planNameEdited = editPlanName;
+      setEditPlanName('');
+
+      fetch(`https://startdoing.herokuapp.com/user_plans/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+
+        body: JSON.stringify({
+          plan_name: planNameEdited.toUpperCase(),
+          user_id: id,
+          exercises: planBeingCreatedExercises,
+        }),
+      })
+        .then((response) => {
+          console.log(response.status);
+          navigation.navigate('HOME');
+        })
+        .catch((error) => console.log('error', error));
     }
   }
 
@@ -152,6 +321,8 @@ function CreatePlan() {
               style={[
                 displayExerGroups ? styles.inputLineOpacity : styles.inputLine,
               ]}
+              onChangeText={(text) => setEditPlanName(text)}
+              value={editPlanName}
             />
           </View>
 
@@ -212,16 +383,14 @@ function CreatePlan() {
 
         <FlatList
           style={[
-            displayExerGroups
-              ? styles.backgroundFlatlistOpacity
-              : styles.backgroundFlatlist,
+            displayExerGroups ? styles.backgroundOpacity : styles.background,
           ]}
-          keyExtractor={(item) => item.exerciseName}
-          data={exercises}
-          renderItem={({item}) => (
+          keyExtractor={(item) => item.exercise_name}
+          data={planBeingCreatedFlatlist}
+          renderItem={({item, index}) => (
             <View style={stylesMediaQueries.maskView}>
               <MaskImageView
-                urlImage={item.videoUrl}
+                urlImage={planBeingCreatedFlatlist[index].exercise_videoUrl}
                 urlMask={'https://i.imgur.com/NDpYsdD.png'}
                 style={{
                   width: '100%',
@@ -229,11 +398,153 @@ function CreatePlan() {
                 }}
               />
               <Text style={stylesMediaQueries.exerciseText}>
-                {item.exerciseName}
+                {planBeingCreatedFlatlist[index].exercise_name}
               </Text>
+
+              <Text style={styles.durationText}>
+                {'DURATION: ' +
+                  planBeingCreatedFlatlist[index].exercise_duration +
+                  ' ' +
+                  'SECONDS'}
+              </Text>
+
+              <View style={styles.editButtonsView}>
+                <TouchableHighlight
+                  style={styles.removeBtn}
+                  onPress={() => removeExerciseModal(item.exercise_name)}
+                  underlayColor="#FF000099">
+                  <Text style={styles.removeText}>REMOVE EX.</Text>
+                </TouchableHighlight>
+
+                <TouchableWithoutFeedback
+                  onPress={() => editDurationModal(item.exercise_name)}>
+                  <View style={styles.editDurationBtn}>
+                    <Text style={styles.editDurationText}>EDIT DURATION</Text>
+                  </View>
+                </TouchableWithoutFeedback>
+              </View>
             </View>
           )}></FlatList>
       </ScrollView>
+
+      <View
+        style={[
+          displayExerGroups
+            ? styles.bottomSectionViewOpacity
+            : styles.bottomSectionView,
+        ]}>
+        <TouchableHighlight
+          style={[saveEnabler ? styles.saveBtnOpacity : styles.saveBtn]}
+          underlayColor="#F27A2999"
+          disabled={saveEnabler}
+          onPress={savePlanModal}>
+          <Text
+            style={[saveEnabler ? styles.saveTextOpacity : styles.saveText]}>
+            SAVE NEW PLAN
+          </Text>
+        </TouchableHighlight>
+      </View>
+
+      <Modal
+        isVisible={modalGroupVisibility}
+        hideModalContentWhileAnimating={true}
+        onBackdropPress={() => {
+          setModalGroupVisibility(false);
+          setExercises([]);
+        }}>
+        <View style={styles.modalViewExercises}>
+          <FlatList
+            style={styles.backgroundFlatlist}
+            keyExtractor={(item) => item.exerciseName}
+            data={exercises}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                onPress={() => {
+                  setModalGroupVisibility(false);
+                  setExercises([]);
+
+                  setExerciseDuration(item.duration);
+                  selectExercise(
+                    item._id,
+                    item.duration,
+                    item.exerciseName,
+                    item.videoUrl,
+                  );
+                }}>
+                <View style={stylesMediaQueries.maskViewModal}>
+                  <MaskImageView
+                    urlImage={item.videoUrl}
+                    urlMask={'https://i.imgur.com/NDpYsdD.png'}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                    }}
+                  />
+                  <Text style={stylesMediaQueries.exerciseText}>
+                    {item.exerciseName}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )}></FlatList>
+        </View>
+      </Modal>
+
+      <Modal
+        isVisible={modalRemoveVisibility}
+        hideModalContentWhileAnimating={true}
+        onBackdropPress={() => setModalRemoveVisibility(false)}>
+        <View style={styles.modalView}>
+          <Text style={styles.modalText}>ARE YOU SURE YOU WANT TO REMOVE</Text>
+          <Text style={styles.modalText}>THIS EXERCISE?</Text>
+
+          <View style={styles.modalButtonsView}>
+            <TouchableHighlight
+              style={styles.modalRemoveBtn}
+              onPress={() => deleteExercise(exerciseID)}
+              underlayColor="#FF000099">
+              <Text style={styles.modalRemoveText}>REMOVE EX.</Text>
+            </TouchableHighlight>
+
+            <TouchableHighlight
+              style={styles.modalCancelBtn}
+              onPress={() => setModalRemoveVisibility(false)}
+              underlayColor="#006DA899">
+              <Text style={styles.modalCancelText}>CANCEL</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        isVisible={modalChangeDurationVisibility}
+        hideModalContentWhileAnimating={true}
+        onBackdropPress={() => setModalChangeDurationVisibility(false)}>
+        <View style={styles.modalView}>
+          <Text style={styles.modalText}>CHANGE DURATION</Text>
+          <TextInput
+            style={styles.modalInputLine}
+            onChangeText={(text) => setEditDuration(text)}
+            keyboardType="numeric"
+            value={editDuration}
+          />
+
+          <View style={styles.modalButtonsView}>
+            <TouchableWithoutFeedback
+              onPress={() => editExerciseDuration(exerciseID, editDuration)}>
+              <View style={styles.modalChangeDurationBtn}>
+                <Text style={styles.modalChangeDurationText}>CHANGE</Text>
+              </View>
+            </TouchableWithoutFeedback>
+
+            <TouchableHighlight
+              style={styles.modalCancelBtn}
+              onPress={() => setModalChangeDurationVisibility(false)}
+              underlayColor="#006DA899">
+              <Text style={styles.modalCancelText}>CANCEL</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </Modal>
     </>
   );
 }
@@ -440,6 +751,225 @@ const styles = StyleSheet.create({
   noExerciseBtn: {
     display: 'none',
   },
+  modalViewExercises: {
+    alignSelf: 'center',
+    height: '100%',
+    width: '100%',
+    justifyContent: 'center',
+    textAlign: 'center',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    backgroundColor: '#26282B',
+    borderWidth: 1,
+    borderColor: 'white',
+  },
+  durationText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Regular',
+    fontSize: 18,
+    textShadowRadius: 6,
+    marginTop: 160,
+    marginBottom: 20,
+  },
+  editButtonsView: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+  },
+  removeBtn: {
+    width: '48%',
+    height: 40,
+    marginTop: -6,
+    borderRadius: 10,
+    alignSelf: 'flex-start',
+    backgroundColor: '#FF0000',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+  },
+  removeText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 12,
+    textShadowRadius: 6,
+  },
+  editDurationBtn: {
+    marginTop: 20,
+    width: '48%',
+    marginTop: -16,
+    marginLeft: '4%',
+    alignSelf: 'flex-end',
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#26282B',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'white',
+  },
+  editDurationText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 12,
+  },
+  modalView: {
+    alignSelf: 'center',
+    height: 145,
+    width: '85%',
+    borderRadius: 10,
+    backgroundColor: '#26282B',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'white',
+    textAlign: 'center',
+  },
+  modalButtonsView: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '85%',
+    alignSelf: 'center',
+    marginTop: 20,
+  },
+  modalText: {
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 12,
+    alignSelf: 'center',
+  },
+  modalRemoveBtn: {
+    width: '48%',
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#FF0000',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+  },
+  modalRemoveText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 12,
+    textShadowRadius: 6,
+  },
+  modalCancelBtn: {
+    width: '48%',
+    marginLeft: '4%',
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#006DA8',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+  },
+  modalCancelText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 12,
+    textShadowRadius: 6,
+  },
+  modalChangeDurationBtn: {
+    width: '48%',
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#26282B',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'white',
+  },
+  modalChangeDurationText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 12,
+  },
+  modalInputLine: {
+    width: '30%',
+    height: 40,
+    alignSelf: 'center',
+    borderColor: 'white',
+    borderBottomWidth: 1,
+    color: 'white',
+    alignSelf: 'center',
+  },
+  bottomSectionView: {
+    height: 70,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#26282B',
+  },
+  bottomSectionViewOpacity: {
+    height: 70,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#2F3032',
+  },
+  saveBtn: {
+    width: '85%',
+    height: 50,
+    borderRadius: 10,
+    backgroundColor: '#F27A29',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+  },
+  saveBtnOpacity: {
+    width: '85%',
+    height: 50,
+    borderRadius: 10,
+    backgroundColor: '#F27A2980',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+  },
+  saveText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 20,
+    textShadowRadius: 6,
+  },
+  saveTextOpacity: {
+    alignSelf: 'center',
+    color: '#FFFFFF85',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 20,
+  },
 });
 
 const base = {
@@ -447,6 +977,15 @@ const base = {
     height: 178,
     width: '85%',
     marginTop: 10,
+    marginBottom: 120,
+    alignItems: 'center',
+    alignSelf: 'center',
+  },
+
+  maskViewModal: {
+    height: 178,
+    width: '85%',
+    marginTop: 14,
     marginBottom: 14,
     alignItems: 'center',
     alignSelf: 'center',
@@ -475,6 +1014,10 @@ const stylesMediaQueries = createStyles(
   // override styles only if screen width is more than 500
   minWidth(480, {
     maskView: {
+      width: 360,
+    },
+
+    maskViewModal: {
       width: 360,
     },
   }),
