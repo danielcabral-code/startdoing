@@ -22,6 +22,7 @@ const Settings = () => {
   const [token, setToken] = useState('');
   const [id, setId] = useState('');
   const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [photoUrl, setPhotoUrl] = useState('https://firebasestorage.googleapis.com/v0/b/startdoing-bd1bc.appspot.com/o/person.jpg?alt=media&token=d201079f-9035-4f11-9421-58d1e9293359')
   let decoded = ''
 
@@ -36,7 +37,8 @@ const Settings = () => {
         setId(decoded.data.id)
         setName(decoded.data.name)
         setPhotoUrl(decoded.data.photoUrl)
-        console.log("NAME", name);
+        setEmail(decoded.data.email)
+      
       }
     }
     catch (e) {
@@ -86,7 +88,10 @@ const Settings = () => {
 
           <TouchableHighlight
             style={styles.planBtn}
-            onPress={() => navigation.navigate('ChangePassword')}
+            onPress={() => navigation.navigate('ChangePassword',{
+              screen: 'ChangePassword',
+              params: {email: email}
+            })}
             underlayColor="#F27A2999">
             <Text style={styles.planText}>CHANGE PASSWORD</Text>
           </TouchableHighlight>

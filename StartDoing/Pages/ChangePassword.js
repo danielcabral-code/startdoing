@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
 import {
   TextInput,
@@ -10,8 +10,8 @@ import {
   Image,
 } from 'react-native';
 
-import {createStackNavigator} from '@react-navigation/stack';
-import {useNavigation} from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
 import 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
@@ -20,7 +20,7 @@ const ChangePassword = () => {
   return (
     <Stack.Navigator initialRouteName="ChangePasswordPage">
       <Stack.Screen
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
         name="ChangePassword"
         component={ChangePasswordPage}
       />
@@ -28,7 +28,87 @@ const ChangePassword = () => {
   );
 };
 
-function ChangePasswordPage({route}) {
+function ChangePasswordPage({ route }) {
+  const navigation = useNavigation();
+
+  const [password, setPassword] = useState('');
+  const [repeatPassword, setRepeatPassword] = useState('');
+  const [emailErrorShow, setEmailErrorShow] = useState(false);
+  const [invalidEmailErrorShow, setInvalidEmailErrorShow] = useState(false);
+  const [unknownEmail, setUnknownEmail] = useState(false);
+  const [passwordErrorShow, setPasswordErrorShow] = useState(false);
+  const [confirmPasswordErrorShow, setConfirmpasswordErrorShow] = useState(false);
+  const [passwordLengthError, setPasswordLengthError] = useState(false);
+
+  let email = route.params.email
+  console.log(email);
+
+
+
+  function checkRegisterInputs() {
+    let code = 0;
+
+
+    if (!password || password.trim() === '') {
+      setPasswordErrorShow(true);
+      return;
+    }else if (password.length<6) {
+ 
+      setPasswordLengthError(true)
+      return
+    }
+    else {
+      setPasswordLengthError(false)
+      setPasswordErrorShow(false);
+    }
+
+    if (!repeatPassword || repeatPassword.trim() === '') {
+      setConfirmpasswordErrorShow(true);
+      return;
+    } else {
+      setConfirmpasswordErrorShow(false);
+    }
+
+    if (password !== repeatPassword) {
+      setConfirmpasswordErrorShow(true);
+      return;
+    }
+
+    fetch('https://startdoing.herokuapp.com/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email,
+      }),
+    })
+      .then((response) => {
+        code = JSON.stringify(response.status);
+
+        if (code == 406) {
+          fetch(`https://startdoing.herokuapp.com/recoverpassword/${email}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              password: password,
+            }),
+          })
+            .then((response) => {
+              console.log(response.status);
+            })
+            .catch((error) => console.log('error', error));
+
+          navigation.navigate('Login');
+        } else {
+          setUnknownEmail(true);
+        }
+      })
+      .catch((error) => console.log('error', error));
+  }
+
   return (
     <>
       <View style={styles.topSectionView}>
@@ -44,51 +124,56 @@ function ChangePasswordPage({route}) {
             <Text style={styles.inputText}>EMAIL</Text>
             <TextInput
               style={styles.inputLine}
-              /* keyboardType="email-address"
-            onChangeText={(text) => setEmail(text)}
-            value={email} */
+              placeholderTextColor='gray'
+              editable={false}
+              keyboardType="email-address"
+              onChangeText={(text) => setEmail(text)}
+              value={email}
             />
-            {/* {emailErrorShow ? (
-            <Text style={styles.textError}>Please Enter Your Email.</Text>
-          ) : null}
-          {invalidEmailErrorShow ? (
-            <Text style={styles.textError}>Please Enter a Valid Email.</Text>
-          ) : null}
-          {unknownEmail ? (
-            <Text style={styles.textError}>This Email Does not Exist.</Text>
-          ) : null} */}
+            {emailErrorShow ? (
+              <Text style={styles.textError}>Please Enter Your Email.</Text>
+            ) : null}
+            {invalidEmailErrorShow ? (
+              <Text style={styles.textError}>Please Enter a Valid Email.</Text>
+            ) : null}
+            {unknownEmail ? (
+              <Text style={styles.textError}>This Email Does not Exist.</Text>
+            ) : null}
           </View>
 
           <View style={styles.inputView}>
             <Text style={styles.inputText}>NEW PASSWORD</Text>
             <TextInput
               style={styles.inputLine}
-              /* onChangeText={(text) => setPassword(text)}
-            secureTextEntry={true}
-            value={password} */
+              onChangeText={(text) => setPassword(text)}
+              secureTextEntry={true}
+              value={password}
             />
-            {/* {passwordErrorShow ? (
-            <Text style={styles.textError}>Please Enter a Password.</Text>
-          ) : null} */}
+            {passwordErrorShow ? (
+              <Text style={styles.textError}>Please Enter a Password.</Text>
+            ) : null}
+             {passwordLengthError ? (
+              <Text style={styles.textError}>Password Must Be at Least 6 characters.</Text>
+            ) : null}
           </View>
 
           <View style={styles.inputViewRepeat}>
             <Text style={styles.inputText}>REPEAT NEW PASSWORD</Text>
             <TextInput
               style={styles.inputLine}
-              /* onChangeText={(text) => setRepeatPassword(text)}
-            secureTextEntry={true}
-            value={repeatPassword} */
+              onChangeText={(text) => setRepeatPassword(text)}
+              secureTextEntry={true}
+              value={repeatPassword}
             />
-            {/* {confirmPasswordErrorShow ? (
-            <Text style={styles.textError}>Passwords Must Match.</Text>
-          ) : null} */}
+            {confirmPasswordErrorShow ? (
+              <Text style={styles.textError}>Passwords Must Match.</Text>
+            ) : null}
           </View>
 
           <TouchableHighlight
             style={styles.saveBtn}
             underlayColor="#F27A2999"
-            /* onPress={checkRegisterInputs} */
+            onPress={checkRegisterInputs}
           >
             <Text style={styles.saveText}>RESET PASSWORD</Text>
           </TouchableHighlight>

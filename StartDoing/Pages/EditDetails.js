@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 
 import {
   TextInput,
@@ -14,7 +14,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useEffect } from 'react';
+
 
 const Stack = createStackNavigator();
 const EditDetails = () => {
