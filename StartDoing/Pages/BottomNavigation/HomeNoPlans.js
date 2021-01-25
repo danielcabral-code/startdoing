@@ -17,6 +17,8 @@ import jwt_decode from "jwt-decode";
 const Home = () => {
   const [token, setToken] = useState('');
   const [name, setName] = useState('');
+  const [photoUrl, setPhotoUrl] = useState('https://firebasestorage.googleapis.com/v0/b/startdoing-bd1bc.appspot.com/o/person.jpg?alt=media&token=d201079f-9035-4f11-9421-58d1e9293359')
+
   let decoded = ''
 
   function onPressButton() {
@@ -31,6 +33,7 @@ const Home = () => {
       if (token !== null) {
         decoded = jwt_decode(token);
         setName(decoded.data.name)
+        setPhotoUrl(decoded.data.photoUrl)
       }
     }
     catch (e) {
@@ -50,7 +53,7 @@ const Home = () => {
             <View style={styles.profileImageBackground2}>
               <Image
                 style={styles.profileImage}
-                source={require('../../Images/Person.jpg')}></Image>
+                source={{ uri: photoUrl }}></Image>
             </View>
           </View>
 
