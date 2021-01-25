@@ -129,9 +129,9 @@ function CreatePlan() {
   }, []);
 
   useEffect(() => {
-    console.log('updated data');
+    /* console.log('updated data');
 
-    console.log('meus', exercises);
+    console.log('meus', exercises); */
   }, [exercises]);
 
   const selectExercise = (id, duration, exerciseName, videoUrl) => {
@@ -168,9 +168,9 @@ function CreatePlan() {
   };
 
   useEffect(() => {
-    console.log('updated data');
+    /* console.log('updated data');
 
-    console.log(planBeingCreatedExercises);
+    console.log(planBeingCreatedExercises); */
 
     if (planBeingCreatedFlatlist.length >= 1) {
       setSaveEnabler(false);
@@ -180,28 +180,54 @@ function CreatePlan() {
   }, [planBeingCreatedExercises]);
 
   function removeExerciseModal(id) {
-    console.log("vvv", id);
+    /* console.log('vvv', id); */
     setExerciseID(id);
     setModalRemoveVisibility(!modalRemoveVisibility);
   }
 
-  function editDurationModal(/* id */) {
-    /* console.log(id);
-    setExerciseID(id); */
+  function editDurationModal(id) {
+    console.log(id);
+    setExerciseID(id);
     setModalChangeDurationVisibility(!modalChangeDurationVisibility);
   }
 
   const deleteExercise = (exerc) => {
-    console.log('teste ', exerc);
+    /* console.log('teste ', exerc); */
 
-    let arrayToRemoveFlatList = [...planBeingCreatedFlatlist]
+    let arrayToRemoveFlatList = [...planBeingCreatedFlatlist];
 
-    const removeExerciseFL = arrayToRemoveFlatList.filter((task) => task.exercise_name !== exerc);
+    const removeExerciseFL = arrayToRemoveFlatList.filter(
+      (task) => task.exercise_name !== exerc,
+    );
 
-    console.log("removido", removeExerciseFL);
+    /* console.log('removido', removeExerciseFL); */
 
-    setPlanBeingCreatedFlatlist(removeExerciseFL)
-    setModalRemoveVisibility(false)
+    setPlanBeingCreatedFlatlist(removeExerciseFL);
+    setModalRemoveVisibility(false);
+  };
+
+  const editExerciseDuration = (exerc, value) => {
+    console.log('teste ', exerc, value);
+    let arrayToEditDuration = [...planBeingCreatedFlatlist];
+    console.log(arrayToEditDuration);
+
+    /*   const editDuration = arrayToEditDuration.filter((task) => task.exercise_id === exerc);
+    console.log(editDuration); */
+
+
+    const elementsIndex = planBeingCreatedFlatlist.findIndex(
+      (element) => element.exercise_name === exerc,
+    );
+    console.log(elementsIndex);
+
+    arrayToEditDuration[elementsIndex] = {
+      ...arrayToEditDuration[elementsIndex],
+      exercise_duration: value,
+    };
+
+    setPlanBeingCreatedFlatlist(arrayToEditDuration);
+    console.log('mudado: ', planBeingCreatedFlatlist);
+    setModalChangeDurationVisibility(false);
   };
 
   return (
@@ -341,7 +367,7 @@ function CreatePlan() {
                 </TouchableHighlight>
 
                 <TouchableWithoutFeedback
-                  onPress={() => editDurationModal(/* item._id */)}>
+                  onPress={() => editDurationModal(item.exercise_name)}>
                   <View style={styles.editDurationBtn}>
                     <Text style={styles.editDurationText}>EDIT DURATION</Text>
                   </View>
@@ -460,8 +486,8 @@ function CreatePlan() {
           />
 
           <View style={styles.modalButtonsView}>
-            <TouchableWithoutFeedback /* onPress={() => editExerciseDuration(exerciseID,editDuration)} */
-            >
+            <TouchableWithoutFeedback
+              onPress={() => editExerciseDuration(exerciseID, editDuration)}>
               <View style={styles.modalChangeDurationBtn}>
                 <Text style={styles.modalChangeDurationText}>CHANGE</Text>
               </View>
