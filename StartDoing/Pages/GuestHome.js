@@ -63,7 +63,7 @@ function GuestPage({route}) {
           </TouchableWithoutFeedback>
 
           <TouchableHighlight
-            onPress={() => navigation.navigate('SuggestedPlanScreen')}
+            onPress={() => navigation.navigate('SuggestedPlanScreenGuest')}
             style={styles.suggestedBtn}
             underlayColor="#006DA899">
             <Text style={styles.suggestedText}>SUGGESTED TRAINING</Text>

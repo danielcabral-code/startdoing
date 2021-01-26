@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component } from 'react';
+import React, {useState, useEffect, Component} from 'react';
 
 import {
   StyleSheet,
@@ -10,59 +10,63 @@ import {
   TouchableWithoutFeedback,
   FlatList,
 } from 'react-native';
-
-import { useNavigation } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {useNavigation} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { MaskImageView } from 'react-native-mask-image';
-import { createStyles, minWidth, maxWidth } from 'react-native-media-queries';
+import {MaskImageView} from 'react-native-mask-image';
+import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
 
-/* const Stack = createStackNavigator();
-const Guest = () => {
+const Stack = createStackNavigator();
+const SuggestedPlanScreenGuest = () => {
   return (
-    <Stack.Navigator initialRouteName="Guest">
+    <Stack.Navigator initialRouteName="SuggestedPlanScreenGuest">
       <Stack.Screen
-        options={{ headerShown: false }}
-        name="Guest"
-        component={GuestPage}
+        options={{headerShown: false}}
+        name="SuggestedPlanScreenGuest"
+        component={SuggestedPlanScreen}
       />
     </Stack.Navigator>
   );
-}; */
+};
 
-function GuestPage({ route }) {
+function SuggestedPlanScreen({route}) {
   const navigation = useNavigation();
-
-  /* const id = route.params.id;
-  const token = route.params.token;
-  const planName = route.params.planName.toUpperCase();
-  
 
   const [myExcerciseData, setMyExcerciseData] = useState([]);
 
-  function getExercises() {
+  function calculateAge() {
     let myData = [];
-   
-    fetch(`https://startdoing.herokuapp.com/user_plans/plan/${id}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+
+    const ages = [20, 30, 40, 50, 60];
+
+    let ageParam = ages[Math.floor(Math.random() * ages.length)];
+
+    console.log(ageParam);
+
+    fetch(
+      `https://startdoing.herokuapp.com/default_plans/getdefault/${ageParam}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
-    })
+    )
       .then((response) => response.json())
       .then((result) => {
-        result.map((result) => {
-       
-          result.exercises.map((data) => {
-           
+        console.log(result);
+        result.map((data) => {
+          console.log(data.exercises);
+
+          data.exercises.map((exerc) => {
+            console.log(exerc);
+
             fetch(
-              `https://startdoing.herokuapp.com/exercises/${data.exercise_id}`,
+              `https://startdoing.herokuapp.com/exercises/${exerc.exercise_id}`,
               {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
-                  Authorization: `Bearer ${token}`,
                 },
               },
             )
@@ -82,19 +86,19 @@ function GuestPage({ route }) {
   }
 
   useEffect(() => {
-    getExercises();
+    calculateAge();
   }, []);
 
   useEffect(() => {
-   
-  }, [myExcerciseData]); */
+    console.log('updated ', myExcerciseData);
+  }, [myExcerciseData]);
 
   return (
     <>
       <View style={styles.topSectionView}>
         <View style={styles.topBarInfoView}>
           <MaterialIcons name="keyboard-arrow-left" style={styles.arrowLeft} />
-          <Text style={styles.planNameText}>SUGGESTED TRAINING</Text>
+          <Text style={styles.planNameText}>SUGGESTED PLAN</Text>
         </View>
       </View>
 
@@ -102,7 +106,7 @@ function GuestPage({ route }) {
         style={styles.background}
         keyExtractor={(item) => item.exerciseName}
         data={myExcerciseData}
-        renderItem={({ item }) => (
+        renderItem={({item}) => (
           <View style={stylesMediaQueries.maskView}>
             <MaskImageView
               urlImage={item.videoUrl}
@@ -119,15 +123,18 @@ function GuestPage({ route }) {
         )}></FlatList>
 
       <View style={styles.bottomSectionView}>
-        <TouchableHighlight style={styles.startBtn}
+        <TouchableHighlight
+          style={styles.startBtn}
           underlayColor="#F27A2999"
-          onPress={() => navigation.navigate('UserPlanExercises',{
-            screen: 'UserPlanExercises',
-            params: {exercises:myExcerciseData, id:id, token:token }
-          })}>
+          onPress={() =>
+            navigation.navigate('SuggestedExercisesScreenGuest', {
+              screen: 'SuggestedExercisesScreenGuest',
+              params: {exercises: myExcerciseData},
+            })
+          }>
           <Text style={styles.startText}>START</Text>
         </TouchableHighlight>
-    </View>
+      </View>
     </>
   );
 }
@@ -204,7 +211,7 @@ const base = {
     marginTop: 10,
     marginBottom: 14,
     alignItems: 'center',
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
 
   exerciseText: {
@@ -235,4 +242,4 @@ const stylesMediaQueries = createStyles(
   }),
 );
 
-export default Guest;
+export default SuggestedPlanScreenGuest;
