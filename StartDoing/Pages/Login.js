@@ -10,6 +10,7 @@ import {
 } from '../Components/Login/Buttons';
 
 import ResetPasswordScreen from '../Pages/ResetPassword';
+import GuestHome from '../Pages/GuestHome';
 import BottomNavigation from '../Pages/BottomNavigation/BottomNavigation';
 import UserPlan from '../Pages/UserPlan';
 import CreatePlan from '../Pages/CreatePlan';
@@ -19,6 +20,7 @@ import UserPlanExercises from '../Pages/UserPlanExercises';
 import CustomizeUserPlan from '../Pages/CustomizeUserPlan'
 import SuggestedPlanScreen from '../Pages/SuggestedPlan'
 import SuggestedExercisesScreen from '../Pages/SuggestedPlanExercises'
+import EditDetails from '../Pages/EditDetails'
 
 
 const Stack = createStackNavigator();
@@ -40,6 +42,11 @@ const LoginPage = () => {
           options={{ headerShown: false }}
           name="ResetPassword"
           component={ResetPasswordScreen}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="Guest"
+          component={GuestHome}
         />
         <Stack.Screen
           options={{ headerShown: false }}
@@ -66,6 +73,12 @@ const LoginPage = () => {
           options={{ headerShown: false }}
           name="CustomizeUserPlan"
           component={CustomizeUserPlan}
+        /> 
+
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="EditDetails"
+          component={EditDetails}
         />
 
         <Stack.Screen

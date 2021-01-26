@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component } from 'react';
+import React, {useState, useEffect, Component} from 'react';
 
 import {
   StyleSheet,
@@ -12,11 +12,11 @@ import {
   TextInput,
 } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {useNavigation} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { MaskImageView } from 'react-native-mask-image';
-import { createStyles, minWidth, maxWidth } from 'react-native-media-queries';
+import {MaskImageView} from 'react-native-mask-image';
+import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Modal from 'react-native-modal';
 import jwt_decode from 'jwt-decode';
@@ -27,7 +27,7 @@ const CustomizeUserPlan = () => {
   return (
     <Stack.Navigator initialRouteName="CustomizeUserPlanScreen">
       <Stack.Screen
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
         name="CustomizeUserPlanScreen"
         component={CustomizeUserPlanScreen}
       />
@@ -35,7 +35,7 @@ const CustomizeUserPlan = () => {
   );
 };
 
-function CustomizeUserPlanScreen({ route }) {
+function CustomizeUserPlanScreen({route}) {
   const navigation = useNavigation();
 
   const [token, setToken] = useState('');
@@ -43,16 +43,24 @@ function CustomizeUserPlanScreen({ route }) {
   const [planName, setPlanName] = useState();
   const [exerciseID, setExerciseID] = useState('');
   const [modalRemoveVisibility, setModalRemoveVisibility] = useState(false);
-  const [modalChangeDurationVisibility, setModalChangeDurationVisibility,] = useState(false);
-  const [modalDeletePlanVisibility, setModalDeletePlanVisibility] = useState(false);
-  const [exerciseDuration, setExerciseDuration] = useState([])
-  const [editDuration, setEditDuration] = useState('')
-  const [editPlanName, setEditPlanName] = useState('')
-  const [invalidDurationErrorShow, setInvalidDurationErrorShow] = useState(false);
-  const [removerExerciseErrorShow, setRemoveExerciseErrorShow] = useState(false);
+  const [
+    modalChangeDurationVisibility,
+    setModalChangeDurationVisibility,
+  ] = useState(false);
+  const [modalDeletePlanVisibility, setModalDeletePlanVisibility] = useState(
+    false,
+  );
+  const [exerciseDuration, setExerciseDuration] = useState([]);
+  const [editDuration, setEditDuration] = useState('');
+  const [editPlanName, setEditPlanName] = useState('');
+  const [invalidDurationErrorShow, setInvalidDurationErrorShow] = useState(
+    false,
+  );
+  const [removerExerciseErrorShow, setRemoveExerciseErrorShow] = useState(
+    false,
+  );
 
   const planID = route.params.planID;
-
 
   const getToken = async () => {
     try {
@@ -60,7 +68,7 @@ function CustomizeUserPlanScreen({ route }) {
       console.log('TOKEN ', token);
       if (token !== null) {
         let myData = [];
-        let myDuration = []
+        let myDuration = [];
         fetch(`https://startdoing.herokuapp.com/user_plans/plan/${planID}`, {
           method: 'GET',
           headers: {
@@ -70,14 +78,12 @@ function CustomizeUserPlanScreen({ route }) {
         })
           .then((response) => response.json())
           .then((result) => {
-
             result.map((result, index) => {
-              console.log("resultado", result);
+              console.log('resultado', result);
               setPlanName(result.plan_name);
-              setExerciseDuration(result.exercises)
+              setExerciseDuration(result.exercises);
 
               result.exercises.map((data) => {
-
                 fetch(
                   `https://startdoing.herokuapp.com/exercises/${data.exercise_id}`,
                   {
@@ -92,7 +98,6 @@ function CustomizeUserPlanScreen({ route }) {
                   .then((result) => {
                     myData.push(result);
                     setMyExcerciseData(...myExcerciseData, myData);
-
                   })
 
                   .catch((error) => console.log('error', error));
@@ -102,9 +107,8 @@ function CustomizeUserPlanScreen({ route }) {
 
           .catch((error) => console.log('error', error));
       }
-    } catch (e) { }
+    } catch (e) {}
   };
-
 
   function removeExerciseModal(id) {
     console.log(id);
@@ -144,24 +148,26 @@ function CustomizeUserPlanScreen({ route }) {
     console.log('teste ', exerciseDuration.length);
 
     if (exerciseDuration.length <= 1) {
-      setRemoveExerciseErrorShow(true)
-    }
-    else {
-      setRemoveExerciseErrorShow(false)
+      setRemoveExerciseErrorShow(true);
+    } else {
+      setRemoveExerciseErrorShow(false);
       let arrayToRemoveDB = [...exerciseDuration];
-      let arrayToRemoveFlatList = [...myExcerciseData]
+      let arrayToRemoveFlatList = [...myExcerciseData];
 
+      const removeExerciseDB = arrayToRemoveDB.filter(
+        (task) => task.exercise_id !== exerc,
+      );
 
-      const removeExerciseDB = arrayToRemoveDB.filter((task) => task.exercise_id !== exerc);
+      const removeExerciseFL = arrayToRemoveFlatList.filter(
+        (task) => task._id !== exerc,
+      );
 
-      const removeExerciseFL = arrayToRemoveFlatList.filter((task) => task._id !== exerc);
+      console.log('removido', removeExerciseFL);
+      console.log('vai para o put ', removeExerciseDB);
 
-      console.log("removido", removeExerciseFL);
-      console.log("vai para o put ", removeExerciseDB);
-
-      setExerciseDuration(removeExerciseDB)
-      setMyExcerciseData(removeExerciseFL)
-      setModalRemoveVisibility(false)
+      setExerciseDuration(removeExerciseDB);
+      setMyExcerciseData(removeExerciseFL);
+      setModalRemoveVisibility(false);
     }
   };
 
@@ -170,90 +176,80 @@ function CustomizeUserPlanScreen({ route }) {
 
     function validateDuration(time) {
       let numreg = /^[0-9]+$/;
-      return numreg.test(time)
+      return numreg.test(time);
     }
 
     if (value <= 0) {
-
-      console.log("erro");
-      setInvalidDurationErrorShow(true)
-    }
-    else if (!validateDuration(value)) {
-      console.log("erro");
-      setInvalidDurationErrorShow(true)
-    }
-    else {
-      setInvalidDurationErrorShow(false)
+      console.log('erro');
+      setInvalidDurationErrorShow(true);
+    } else if (!validateDuration(value)) {
+      console.log('erro');
+      setInvalidDurationErrorShow(true);
+    } else {
+      setInvalidDurationErrorShow(false);
       let arrayToEditDuration = [...exerciseDuration];
       console.log(arrayToEditDuration);
 
-      const elementsIndex = exerciseDuration.findIndex(element => element.exercise_id === exerc)
+      const elementsIndex = exerciseDuration.findIndex(
+        (element) => element.exercise_id === exerc,
+      );
       console.log(elementsIndex);
 
-      arrayToEditDuration[elementsIndex] = { ...arrayToEditDuration[elementsIndex], exercise_duration: value }
-      setExerciseDuration(arrayToEditDuration)
-      console.log("mudado: ", exerciseDuration);
-      setModalChangeDurationVisibility(false)
+      arrayToEditDuration[elementsIndex] = {
+        ...arrayToEditDuration[elementsIndex],
+        exercise_duration: value,
+      };
+      setExerciseDuration(arrayToEditDuration);
+      console.log('mudado: ', exerciseDuration);
+      setModalChangeDurationVisibility(false);
     }
-
-
-
   };
 
   function savePlanModal() {
     console.log(exerciseDuration.length);
     console.log(editPlanName.length);
-    let planNameEdited = ''
+    let planNameEdited = '';
 
-      if (editPlanName.length > 0) {
-        planNameEdited = editPlanName
-        setEditPlanName('')
+    if (editPlanName.length > 0) {
+      planNameEdited = editPlanName;
+      setEditPlanName('');
 
-        fetch(`https://startdoing.herokuapp.com/user_plans/${planID}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
+      fetch(`https://startdoing.herokuapp.com/user_plans/${planID}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
 
-          body:
-            JSON.stringify({
-              plan_name: planNameEdited.toUpperCase(),
-              exercises: exerciseDuration
-
-            })
-
+        body: JSON.stringify({
+          plan_name: planNameEdited.toUpperCase(),
+          exercises: exerciseDuration,
+        }),
+      })
+        .then((response) => {
+          console.log(response.status);
+          navigation.navigate('HOME');
         })
-          .then((response) => {
-            console.log(response.status);
-            navigation.navigate('HOME');
-          })
-          .catch((error) => console.log('error', error));
-      }
-      else {
-        fetch(`https://startdoing.herokuapp.com/user_plans/${planID}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
+        .catch((error) => console.log('error', error));
+    } else {
+      fetch(`https://startdoing.herokuapp.com/user_plans/${planID}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
 
-          body:
-            JSON.stringify({
-              plan_name: planName,
-              exercises: exerciseDuration
-
-            })
-
+        body: JSON.stringify({
+          plan_name: planName,
+          exercises: exerciseDuration,
+        }),
+      })
+        .then((response) => {
+          console.log(response.status);
+          navigation.navigate('HOME');
         })
-          .then((response) => {
-            console.log(response.status);
-            navigation.navigate('HOME');
-          })
-          .catch((error) => console.log('error', error));
-      }
-
-  
+        .catch((error) => console.log('error', error));
+    }
   }
 
   useEffect(() => {
@@ -263,8 +259,7 @@ function CustomizeUserPlanScreen({ route }) {
   useEffect(() => {
     console.log('updated data');
     console.log(myExcerciseData);
-    console.log("duracao", exerciseDuration);
-
+    console.log('duracao', exerciseDuration);
   }, [myExcerciseData, exerciseDuration]);
 
   return (
@@ -279,7 +274,8 @@ function CustomizeUserPlanScreen({ route }) {
       <View style={styles.background}>
         <View style={styles.inputView}>
           <Text style={styles.inputText}>CHANGE PLAN NAME</Text>
-          <TextInput style={styles.inputLine}
+          <TextInput
+            style={styles.inputLine}
             onChangeText={(text) => setEditPlanName(text)}
             value={editPlanName}
           />
@@ -289,7 +285,7 @@ function CustomizeUserPlanScreen({ route }) {
           style={styles.background}
           keyExtractor={(item) => item.exerciseName}
           data={myExcerciseData}
-          renderItem={({ item, index }) => (
+          renderItem={({item, index}) => (
             <View style={stylesMediaQueries.maskView}>
               <MaskImageView
                 urlImage={item.videoUrl}
@@ -304,7 +300,10 @@ function CustomizeUserPlanScreen({ route }) {
               </Text>
 
               <Text style={styles.durationText}>
-                {'DURATION: ' + exerciseDuration[index].exercise_duration + ' ' + 'SECONDS'}
+                {'DURATION: ' +
+                  exerciseDuration[index].exercise_duration +
+                  ' ' +
+                  'SECONDS'}
               </Text>
 
               <View style={styles.editButtonsView}>
@@ -315,7 +314,8 @@ function CustomizeUserPlanScreen({ route }) {
                   <Text style={styles.removeText}>REMOVE EX.</Text>
                 </TouchableHighlight>
 
-                <TouchableWithoutFeedback onPress={() => editDurationModal(item._id)}>
+                <TouchableWithoutFeedback
+                  onPress={() => editDurationModal(item._id)}>
                   <View style={styles.editDurationBtn}>
                     <Text style={styles.editDurationText}>EDIT DURATION</Text>
                   </View>
@@ -334,7 +334,9 @@ function CustomizeUserPlanScreen({ route }) {
             </Text>
             <Text style={styles.modalText}>THIS EXERCISE?</Text>
             {removerExerciseErrorShow ? (
-              <Text style={styles.modalTextError}>You Can't Remove All Exercises.</Text>
+              <Text style={styles.modalTextError}>
+                You Can't Remove All Exercises.
+              </Text>
             ) : null}
 
             <View style={styles.modalButtonsView}>
@@ -361,20 +363,23 @@ function CustomizeUserPlanScreen({ route }) {
           onBackdropPress={() => setModalChangeDurationVisibility(false)}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>CHANGE DURATION</Text>
-            <TextInput style={styles.modalInputLine}
+            <TextInput
+              style={styles.modalInputLine}
               onChangeText={(text) => setEditDuration(text)}
               keyboardType="numeric"
-              value={editDuration} />
+              value={editDuration}
+            />
             {invalidDurationErrorShow ? (
-              <Text style={styles.modalTextError}>Field Only Accepts Valid Numbers.</Text>
+              <Text style={styles.modalTextError}>
+                Field Only Accepts Valid Numbers.
+              </Text>
             ) : null}
 
-
             <View style={styles.modalButtonsView}>
-              <TouchableWithoutFeedback onPress={() => editExerciseDuration(exerciseID, editDuration)}>
+              <TouchableWithoutFeedback
+                onPress={() => editExerciseDuration(exerciseID, editDuration)}>
                 <View style={styles.modalChangeDurationBtn}>
-                  <Text style={styles.modalChangeDurationText}
-                  >CHANGE</Text>
+                  <Text style={styles.modalChangeDurationText}>CHANGE</Text>
                 </View>
               </TouchableWithoutFeedback>
 
