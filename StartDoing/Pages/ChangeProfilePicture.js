@@ -35,6 +35,7 @@ function ChangeProfilePicturePage({ route }) {
   
   const [token, setToken] = useState('');
   const [photoUrl, setPhotoUrl] = useState()
+  const [id, setId] = useState('');
 
 
 
@@ -51,6 +52,7 @@ function ChangeProfilePicturePage({ route }) {
         decoded = jwt_decode(token);
         console.log(decoded);
         setPhotoUrl(decoded.data.photoUrl)
+        setId(decoded.data.id)
 
       }
 
@@ -87,7 +89,24 @@ function ChangeProfilePicturePage({ route }) {
 
   const savePhoto = () => {
     
-    
+    fetch(`https://startdoing.herokuapp.com/updatephoto/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization:
+          `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+       photoUrl:photoUrl,
+      }),
+    })
+      .then((response) => {
+        console.log(response.status);
+       
+      })
+      .catch((error) => console.log('error', error));
+
+
   }
   useEffect(() => {
     getToken()
@@ -119,7 +138,7 @@ function ChangeProfilePicturePage({ route }) {
           <TouchableHighlight
             style={styles.saveBtn}
             underlayColor="#F27A2999"
-           
+           onPress={savePhoto}
           >
             <Text style={styles.saveText}>SAVE CHANGES</Text>
           </TouchableHighlight>
