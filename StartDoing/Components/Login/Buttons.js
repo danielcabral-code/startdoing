@@ -10,13 +10,13 @@ import {
 
 import {useNavigation} from '@react-navigation/native';
 
-export const ButtonForgotPassword = ({ navigate }) => {
+export const ButtonForgotPassword = ({navigate}) => {
   const navigation = useNavigation();
-
 
   return (
     <>
-      <TouchableWithoutFeedback onPress={()=>navigation.navigate('ResetPassword')}>
+      <TouchableWithoutFeedback
+        onPress={() => navigation.navigate('ResetPassword')}>
         <View style={styles.forgotPasswordBtn}>
           <Text style={styles.forgotPasswordText}>FORGOT PASSWORD?</Text>
         </View>
@@ -42,15 +42,12 @@ export const ButtonNoAccount = ({navigate}) => {
 };
 
 export const ButtonGuest = () => {
-  function onPressButton() {
-    alert('You Pressed Me!');
-  }
-
+  const navigation = useNavigation();
   return (
     <>
       <TouchableHighlight
         style={styles.guestBtn}
-        onPress={onPressButton}
+        onPress={() => navigation.navigate('Guest')}
         underlayColor="#006DA899">
         <Text style={styles.guestText}>ENTER AS GUEST</Text>
       </TouchableHighlight>

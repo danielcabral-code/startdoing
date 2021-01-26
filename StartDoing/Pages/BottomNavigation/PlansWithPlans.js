@@ -90,7 +90,6 @@ const Plans = () => {
                     </Text>
                   </TouchableHighlight>
 
-<<<<<<< HEAD
                   <TouchableWithoutFeedback>
                     <View style={styles.unactiveBtn}>
                       <Text style={styles.unactiveText}>
@@ -99,12 +98,6 @@ const Plans = () => {
                     </View>
                   </TouchableWithoutFeedback>
                 </View>
-=======
-                
-
-
-
->>>>>>> feature/createPlanInterface
               </>
             );
           }

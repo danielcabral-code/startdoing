@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   StyleSheet,
@@ -12,48 +12,25 @@ import {
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import jwt_decode from "jwt-decode";
-import { useNavigation } from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import jwt_decode from 'jwt-decode';
+import {useNavigation} from '@react-navigation/native';
 
-const Home = ({navigate}) => {
+const Stack = createStackNavigator();
+const GuestHome = () => {
+  return (
+    <Stack.Navigator initialRouteName="GuestHome">
+      <Stack.Screen
+        options={{headerShown: false}}
+        name="Guest"
+        component={GuestPage}
+      />
+    </Stack.Navigator>
+  );
+};
+
+function GuestPage({route}) {
   const navigation = useNavigation();
-  const [token, setToken] = useState('');
-  const [name, setName] = useState('');
-<<<<<<< HEAD
-  const [photoUrl, setPhotoUrl] = useState('https://firebasestorage.googleapis.com/v0/b/startdoing-bd1bc.appspot.com/o/person.jpg?alt=media&token=d201079f-9035-4f11-9421-58d1e9293359')
-
-=======
-  const [birth, setBirth] = useState('');
->>>>>>> feature/suggestedplan
-  let decoded = ''
-
-  function onPressButton() {
-    alert('You Pressed Me!');
-  }
-
-  const getToken = async () => {
-
-    try {
-
-      setToken(await AsyncStorage.getItem('@token'))
-      if (token !== null) {
-        decoded = jwt_decode(token);
-        setName(decoded.data.name)
-<<<<<<< HEAD
-        setPhotoUrl(decoded.data.photoUrl)
-=======
-        setBirth(decoded.data.birth)
->>>>>>> feature/suggestedplan
-      }
-    }
-    catch (e) {
-
-    }
-  }
-
-  useEffect(() => {
-    getToken()
-  })
 
   return (
     <>
@@ -63,11 +40,11 @@ const Home = ({navigate}) => {
             <View style={styles.profileImageBackground2}>
               <Image
                 style={styles.profileImage}
-                source={{ uri: photoUrl }}></Image>
+                source={require('../Images/Person.jpg')}></Image>
             </View>
           </View>
 
-          <Text style={styles.userName}>HI, {name} { }!</Text>
+          <Text style={styles.userName}>HI!</Text>
 
           <TouchableWithoutFeedback>
             <View style={styles.unactiveBtn}>
@@ -79,26 +56,27 @@ const Home = ({navigate}) => {
 
           <MaterialIcons name="keyboard-arrow-down" style={styles.arrowDown} />
 
-          <TouchableWithoutFeedback onPress={onPressButton}>
+          <TouchableWithoutFeedback>
             <View style={styles.createPlanBtn}>
               <Text style={styles.createPlanText}>CREATE A PLAN</Text>
             </View>
           </TouchableWithoutFeedback>
 
           <TouchableHighlight
+            onPress={() => navigation.navigate('SuggestedPlanScreenGuest')}
             style={styles.suggestedBtn}
-            onPress={() => navigation.navigate('SuggestedPlanScreen',{
-              screen: 'SuggestedPlanScreen',
-              params: { birth: birth, token: token}
-            })}
             underlayColor="#006DA899">
             <Text style={styles.suggestedText}>SUGGESTED TRAINING</Text>
           </TouchableHighlight>
+
+          <Text style={styles.guestMessage}>
+            CREATE AN ACCOUNT TO ACCESS ALL FEATURES!
+          </Text>
         </View>
       </ScrollView>
     </>
   );
-};
+}
 
 const styles = StyleSheet.create({
   background: {
@@ -155,7 +133,7 @@ const styles = StyleSheet.create({
   },
   arrowDown: {
     fontSize: 60,
-    color: 'white',
+    color: '#FFFFFF85',
     marginTop: 12,
   },
   createPlanBtn: {
@@ -166,17 +144,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#26282B',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: 'white',
+    borderColor: '#FFFFFF85',
   },
   createPlanText: {
     alignSelf: 'center',
-    color: 'white',
+    color: '#FFFFFF85',
     fontFamily: 'OpenSans-Bold',
     fontSize: 15,
   },
   suggestedBtn: {
     marginTop: 38,
-    marginBottom: 20,
+    marginBottom: 24,
     width: '85%',
     height: 90.9,
     borderRadius: 10,
@@ -198,6 +176,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textShadowRadius: 6,
   },
+  guestMessage: {
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 14,
+    marginTop: 20,
+    alignSelf: 'center',
+  },
 });
 
-export default Home;
+export default GuestHome;

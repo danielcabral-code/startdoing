@@ -10,6 +10,7 @@ import {
 } from '../Components/Login/Buttons';
 
 import ResetPasswordScreen from '../Pages/ResetPassword';
+import GuestHome from '../Pages/GuestHome';
 import BottomNavigation from '../Pages/BottomNavigation/BottomNavigation';
 import UserPlan from '../Pages/UserPlan';
 import CreatePlan from '../Pages/CreatePlan';
@@ -19,6 +20,11 @@ import UserPlanExercises from '../Pages/UserPlanExercises';
 import CustomizeUserPlan from '../Pages/CustomizeUserPlan';
 import EditDetails from '../Pages/EditDetails';
 import ChangePassword from '../Pages/ChangePassword';
+import SuggestedPlanScreen from '../Pages/SuggestedPlan';
+import SuggestedPlanScreenGuest from '../Pages/SuggestedPlanGuest';
+import SuggestedExercisesScreen from '../Pages/SuggestedPlanExercises';
+import SuggestedExercisesScreenGuest from '../Pages/SuggestedPlanGuestExercises';
+import EditDetails from '../Pages/EditDetails';
 
 const Stack = createStackNavigator();
 const LoginPage = () => {
@@ -39,6 +45,11 @@ const LoginPage = () => {
           options={{headerShown: false}}
           name="ResetPassword"
           component={ResetPasswordScreen}
+        />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="Guest"
+          component={GuestHome}
         />
         <Stack.Screen
           options={{headerShown: false}}
@@ -77,6 +88,30 @@ const LoginPage = () => {
           options={{headerShown: false}}
           name="ChangePassword"
           component={ChangePassword}
+        />
+
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="SuggestedPlanScreen"
+          component={SuggestedPlanScreen}
+        />
+
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="SuggestedPlanScreenGuest"
+          component={SuggestedPlanScreenGuest}
+        />
+
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="SuggestedExercisesScreen"
+          component={SuggestedExercisesScreen}
+        />
+
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="SuggestedExercisesScreenGuest"
+          component={SuggestedExercisesScreenGuest}
         />
       </Stack.Navigator>
     </NavigationContainer>
