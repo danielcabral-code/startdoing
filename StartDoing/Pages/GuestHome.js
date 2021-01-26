@@ -12,8 +12,9 @@ import {
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createStackNavigator } from '@react-navigation/stack';
+import {createStackNavigator} from '@react-navigation/stack';
 import jwt_decode from 'jwt-decode';
+import {useNavigation} from '@react-navigation/native';
 
 const Stack = createStackNavigator();
 const GuestHome = () => {
@@ -29,23 +30,7 @@ const GuestHome = () => {
 };
 
 function GuestPage({route}) {
-  const [token, setToken] = useState('');
-  const [name, setName] = useState('');
-  let decoded = '';
-
-  const getToken = async () => {
-    try {
-      setToken(await AsyncStorage.getItem('@token'));
-      if (token !== null) {
-        decoded = jwt_decode(token);
-        setName(decoded.data.name);
-      }
-    } catch (e) {}
-  };
-
-  useEffect(() => {
-    getToken();
-  });
+  const navigation = useNavigation();
 
   return (
     <>
@@ -78,12 +63,15 @@ function GuestPage({route}) {
           </TouchableWithoutFeedback>
 
           <TouchableHighlight
+            onPress={() => navigation.navigate('SuggestedPlanScreen')}
             style={styles.suggestedBtn}
             underlayColor="#006DA899">
             <Text style={styles.suggestedText}>SUGGESTED TRAINING</Text>
           </TouchableHighlight>
 
-          <Text style={styles.guestMessage}>CREATE AN ACCOUNT TO ACCESS ALL FEATURES!</Text>
+          <Text style={styles.guestMessage}>
+            CREATE AN ACCOUNT TO ACCESS ALL FEATURES!
+          </Text>
         </View>
       </ScrollView>
     </>
