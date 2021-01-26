@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   TextInput,
@@ -10,17 +10,20 @@ import {
   Image,
 } from 'react-native';
 
-import {createStackNavigator} from '@react-navigation/stack';
-import {useNavigation} from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
 import 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import * as ImagePicker from 'react-native-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwt_decode from "jwt-decode";
 
 const Stack = createStackNavigator();
 const ChangeProfilePicture = () => {
   return (
     <Stack.Navigator initialRouteName="ChangeProfilePicturePage">
       <Stack.Screen
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
         name="ChangeProfilePicture"
         component={ChangeProfilePicturePage}
       />
@@ -28,33 +31,101 @@ const ChangeProfilePicture = () => {
   );
 };
 
-function ChangeProfilePicturePage({route}) {
+function ChangeProfilePicturePage({ route }) {
+  
+  const [token, setToken] = useState('');
+  const [photoUrl, setPhotoUrl] = useState()
+
+
+
+
+  let decoded = ''
+
+
+  const getToken = async () => {
+
+    try {
+      setToken(await AsyncStorage.getItem('@token'))
+      if (token !== null) {
+
+        decoded = jwt_decode(token);
+        console.log(decoded);
+        setPhotoUrl(decoded.data.photoUrl)
+
+      }
+
+    } catch (e) {
+
+    }
+
+  }
+  const options = {
+    title: 'Select Avatar',
+    storageOptions: {
+      skipBackup: true,
+      path: 'images',
+    },
+  };
+
+  const openPicker = () => {
+    ImagePicker.launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        const source = response.uri
+        console.log(source);
+        setPhotoUrl(source)
+      };
+
+
+    });
+  }
+
+  const savePhoto = () => {
+    
+    
+  }
+  useEffect(() => {
+    getToken()
+
+  },[token])
+
   return (
     <>
       <View style={styles.topSectionView}>
         <View style={styles.topBarInfoView}>
           <MaterialIcons name="keyboard-arrow-left" style={styles.arrowLeft} />
-          <Text style={styles.planNameText}>CHANGE PASSWORD</Text>
+          <Text style={styles.planNameText}>CHANGE PROFILE PHOTO</Text>
         </View>
       </View>
 
       <ScrollView style={styles.background}>
         <View style={styles.bg2}>
-          <View style={styles.profileImageBackground1}>
-            <View style={styles.profileImageBackground2}>
-              <Image
-                style={styles.profileImage}
-                source={require('../Images/Person.jpg')}></Image>
+          <TouchableHighlight
+           onPress={openPicker}>
+            <View style={styles.profileImageBackground1}>
+              <View style={styles.profileImageBackground2}>
+                <Image
+                  style={styles.profileImage}
+                  source={{ uri: photoUrl }} ></Image>
+              </View>
             </View>
-          </View>
+          </TouchableHighlight>
 
           <TouchableHighlight
             style={styles.saveBtn}
             underlayColor="#F27A2999"
-            /* onPress={checkRegisterInputs} */
+           
           >
             <Text style={styles.saveText}>SAVE CHANGES</Text>
           </TouchableHighlight>
+
+
+
         </View>
       </ScrollView>
     </>
@@ -66,6 +137,10 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     backgroundColor: '#26282B',
+  },
+  image: {
+    marginVertical: 24,
+    alignItems: 'center',
   },
   bg2: {
     width: '100%',
