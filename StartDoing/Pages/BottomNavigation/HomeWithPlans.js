@@ -35,7 +35,7 @@ const Home = ({ navigate }) => {
 
 
   const getToken = async () => {
-    let save=[]
+    let save = []
     try {
 
       setToken(await AsyncStorage.getItem('@token'))
@@ -68,10 +68,10 @@ const Home = ({ navigate }) => {
           save = result
           try {
             const jsonValue = JSON.stringify(save)
-          
+
             AsyncStorage.setItem('@plans', jsonValue);
-            console.log("guardou: ",jsonValue);
-            
+            console.log("guardou: ", jsonValue);
+
           } catch (e) {
             console.log(e);
           }
@@ -110,7 +110,7 @@ const Home = ({ navigate }) => {
   useEffect(() => {
     getToken()
 
-  }) 
+  })
   function onPressButton() {
     alert('You Pressed Me!');
   }
@@ -133,7 +133,7 @@ const Home = ({ navigate }) => {
             style={styles.planBtn}
             onPress={() => navigation.navigate('UserPlan', {
               screen: 'UserPlan',
-              params: { id: idPlanOne, token:token, planName:planOneName }
+              params: { id: idPlanOne, token: token, planName: planOneName }
             })}
             underlayColor="#F27A2999">
             <Text style={styles.planText}>{planOneName}</Text>
@@ -150,9 +150,9 @@ const Home = ({ navigate }) => {
           {stylePlanTwoExistent ? (
             <TouchableHighlight
               style={styles.planBtn}
-              onPress={() => navigation.navigate('UserPlan',{
+              onPress={() => navigation.navigate('UserPlan', {
                 screen: 'UserPlan',
-                params: { id: idPlanTwo, token:token, planName:planTwoName }
+                params: { id: idPlanTwo, token: token, planName: planTwoName }
               })}
               underlayColor="#F27A2999">
               <Text style={styles.planText}>{planTwoName}</Text>
@@ -161,13 +161,13 @@ const Home = ({ navigate }) => {
 
 
           <TouchableHighlight
-          style={styles.suggestedBtn}
-          onPress={onPressButton}
-          underlayColor="#006DA899">
-          <Text style={styles.suggestedText}>SUGGESTED TRAINING</Text>
-        </TouchableHighlight>
+            style={styles.suggestedBtn}
+            onPress={onPressButton}
+            underlayColor="#006DA899">
+            <Text style={styles.suggestedText}>SUGGESTED TRAINING</Text>
+          </TouchableHighlight>
         </View>
-    </ScrollView>
+      </ScrollView>
     </>
   );
 };
