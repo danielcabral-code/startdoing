@@ -19,12 +19,9 @@ const Home = ({navigate}) => {
   const navigation = useNavigation();
   const [token, setToken] = useState('');
   const [name, setName] = useState('');
-<<<<<<< HEAD
   const [photoUrl, setPhotoUrl] = useState('https://firebasestorage.googleapis.com/v0/b/startdoing-bd1bc.appspot.com/o/person.jpg?alt=media&token=d201079f-9035-4f11-9421-58d1e9293359')
 
-=======
   const [birth, setBirth] = useState('');
->>>>>>> feature/suggestedplan
   let decoded = ''
 
   function onPressButton() {
@@ -39,11 +36,8 @@ const Home = ({navigate}) => {
       if (token !== null) {
         decoded = jwt_decode(token);
         setName(decoded.data.name)
-<<<<<<< HEAD
         setPhotoUrl(decoded.data.photoUrl)
-=======
         setBirth(decoded.data.birth)
->>>>>>> feature/suggestedplan
       }
     }
     catch (e) {

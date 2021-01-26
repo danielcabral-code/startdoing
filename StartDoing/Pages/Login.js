@@ -24,7 +24,6 @@ import SuggestedPlanScreen from '../Pages/SuggestedPlan';
 import SuggestedPlanScreenGuest from '../Pages/SuggestedPlanGuest';
 import SuggestedExercisesScreen from '../Pages/SuggestedPlanExercises';
 import SuggestedExercisesScreenGuest from '../Pages/SuggestedPlanGuestExercises';
-import EditDetails from '../Pages/EditDetails';
 
 const Stack = createStackNavigator();
 const LoginPage = () => {
