@@ -33,10 +33,6 @@ function GuestPage({route}) {
   const [name, setName] = useState('');
   let decoded = '';
 
-  function onPressButton() {
-    alert('You Pressed Me!');
-  }
-
   const getToken = async () => {
     try {
       setToken(await AsyncStorage.getItem('@token'));
@@ -75,7 +71,7 @@ function GuestPage({route}) {
 
           <MaterialIcons name="keyboard-arrow-down" style={styles.arrowDown} />
 
-          <TouchableWithoutFeedback onPress={onPressButton}>
+          <TouchableWithoutFeedback>
             <View style={styles.createPlanBtn}>
               <Text style={styles.createPlanText}>CREATE A PLAN</Text>
             </View>
@@ -83,10 +79,11 @@ function GuestPage({route}) {
 
           <TouchableHighlight
             style={styles.suggestedBtn}
-            onPress={onPressButton}
             underlayColor="#006DA899">
             <Text style={styles.suggestedText}>SUGGESTED TRAINING</Text>
           </TouchableHighlight>
+
+          <Text style={styles.guestMessage}>CREATE AN ACCOUNT TO ACCESS ALL FEATURES!</Text>
         </View>
       </ScrollView>
     </>
@@ -148,7 +145,7 @@ const styles = StyleSheet.create({
   },
   arrowDown: {
     fontSize: 60,
-    color: 'white',
+    color: '#FFFFFF85',
     marginTop: 12,
   },
   createPlanBtn: {
@@ -159,17 +156,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#26282B',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: 'white',
+    borderColor: '#FFFFFF85',
   },
   createPlanText: {
     alignSelf: 'center',
-    color: 'white',
+    color: '#FFFFFF85',
     fontFamily: 'OpenSans-Bold',
     fontSize: 15,
   },
   suggestedBtn: {
     marginTop: 38,
-    marginBottom: 20,
+    marginBottom: 24,
     width: '85%',
     height: 90.9,
     borderRadius: 10,
@@ -190,6 +187,13 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-Bold',
     fontSize: 20,
     textShadowRadius: 6,
+  },
+  guestMessage: {
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 14,
+    marginTop: 20,
+    alignSelf: 'center',
   },
 });
 
