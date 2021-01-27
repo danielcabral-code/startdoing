@@ -7,6 +7,7 @@ import {
   View,
   Text,
   TouchableHighlight,
+  TouchableWithoutFeedback,
   Image,
 } from 'react-native';
 
@@ -17,6 +18,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import * as ImagePicker from 'react-native-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
+import storage from '@react-native-firebase/storage';
 
 const Stack = createStackNavigator();
 const ChangeProfilePicture = () => {
@@ -32,15 +34,17 @@ const ChangeProfilePicture = () => {
 };
 
 function ChangeProfilePicturePage({ route }) {
-  
+
+  const navigation = useNavigation();
+
   const [token, setToken] = useState('');
   const [photoUrl, setPhotoUrl] = useState()
   const [id, setId] = useState('');
-
-
+  const [email, setEmail] = useState('');
 
 
   let decoded = ''
+  let firebasePhotoLink = ''
 
 
   const getToken = async () => {
@@ -53,6 +57,7 @@ function ChangeProfilePicturePage({ route }) {
         console.log(decoded);
         setPhotoUrl(decoded.data.photoUrl)
         setId(decoded.data.id)
+        setEmail(decoded.data.email)
 
       }
 
@@ -62,7 +67,7 @@ function ChangeProfilePicturePage({ route }) {
 
   }
   const options = {
-    title: 'Select Avatar',
+    title: 'Select your photo',
     storageOptions: {
       skipBackup: true,
       path: 'images',
@@ -87,31 +92,70 @@ function ChangeProfilePicturePage({ route }) {
     });
   }
 
-  const savePhoto = () => {
-    
-    fetch(`https://startdoing.herokuapp.com/updatephoto/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization:
-          `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-       photoUrl:photoUrl,
-      }),
-    })
-      .then((response) => {
-        console.log(response.status);
-       
-      })
-      .catch((error) => console.log('error', error));
+  const savePhoto = async () => {
+
+    const uri = photoUrl;
+    console.log(uri);
+    const filename = uri.substring(uri.lastIndexOf('/') + 1);
+    const uploadUri = Platform.OS === 'ios' ? uri.replace('content://', '') : uri;
+
+
+    const task = storage()
+      .ref(filename)
+      .putFile(uploadUri)
+
+    try {
+      await task;
+      let imageRef = storage().ref('/' + filename);
+      imageRef
+        .getDownloadURL()
+        .then((url) => {
+          //from url you can fetched the uploaded image easily
+          console.log("link", url);
+          firebasePhotoLink = url
+          console.log("url", firebasePhotoLink);
+
+          fetch(`https://startdoing.herokuapp.com/updatephoto/${id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization:
+                `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              photoUrl: firebasePhotoLink,
+            }),
+          })
+            .then((response) => {
+              console.log(response.status);
+
+            })
+            .catch((error) => console.log('error', error));
+        })
+        .catch((e) => console.log('getting downloadURL of image error => ', e));
+
+
+
+    } catch (e) {
+      console.error(e);
+    }
+
+    console.log(
+      'Photo uploaded!',
+      'Your photo has been uploaded to Firebase Cloud Storage!'
+    );
+
+
+
+
+
 
 
   }
   useEffect(() => {
     getToken()
 
-  },[token])
+  }, [token])
 
   return (
     <>
@@ -124,8 +168,8 @@ function ChangeProfilePicturePage({ route }) {
 
       <ScrollView style={styles.background}>
         <View style={styles.bg2}>
-          <TouchableHighlight
-           onPress={openPicker}>
+          <TouchableWithoutFeedback
+            onPress={openPicker}>
             <View style={styles.profileImageBackground1}>
               <View style={styles.profileImageBackground2}>
                 <Image
@@ -133,12 +177,12 @@ function ChangeProfilePicturePage({ route }) {
                   source={{ uri: photoUrl }} ></Image>
               </View>
             </View>
-          </TouchableHighlight>
+          </TouchableWithoutFeedback>
 
           <TouchableHighlight
             style={styles.saveBtn}
             underlayColor="#F27A2999"
-           onPress={savePhoto}
+            onPress={savePhoto}
           >
             <Text style={styles.saveText}>SAVE CHANGES</Text>
           </TouchableHighlight>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   StyleSheet,
@@ -9,16 +9,48 @@ import {
   TouchableHighlight,
 } from 'react-native';
 
-import {useNavigation} from '@react-navigation/native';
-
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwt_decode from "jwt-decode";
 
 const Settings = () => {
 
   const navigation = useNavigation();
 
+  const [token, setToken] = useState('');
+  const [photoUrl, setPhotoUrl] = useState()
+  const [id, setId] = useState('');
+
+  let decoded = ''
+  let firebasePhotoLink = ''
+
+
+  const getToken = async () => {
+
+    try {
+      setToken(await AsyncStorage.getItem('@token'))
+      if (token !== null) {
+
+        decoded = jwt_decode(token);
+        console.log(decoded);
+        setPhotoUrl(decoded.data.photoUrl)
+        setId(decoded.data.id)
+
+      }
+
+    } catch (e) {
+
+    }
+
+  }
+
   function onPressButton() {
     alert('You Pressed Me!');
   }
+  useEffect(() => {
+    getToken()
+
+  }, [token])
 
 
   return (
@@ -29,7 +61,7 @@ const Settings = () => {
             <View style={styles.profileImageBackground2}>
               <Image
                 style={styles.profileImage}
-                source={require('../../Images/Person.jpg')}></Image>
+                source={{ uri: photoUrl }}></Image>
             </View>
           </View>
 
