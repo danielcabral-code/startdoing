@@ -50,11 +50,7 @@ function SuggestedPlanScreen({ route }) {
         console.log("idade", age);
 
         let ageParam = 0
-        if (age >= 0 && age <= 20) {
-            ageParam = 20
-            console.log(ageParam);
-        }
-        else if (age > 20 && age <= 30) {
+        if (age >= 0 && age <= 30) {
             ageParam = 30
             console.log(ageParam);
         }

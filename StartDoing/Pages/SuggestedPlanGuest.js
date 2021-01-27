@@ -37,7 +37,7 @@ function SuggestedPlanScreen({route}) {
   function calculateAge() {
     let myData = [];
 
-    const ages = [20, 30, 40, 50, 60];
+    const ages = [30, 40, 50, 60];
 
     let ageParam = ages[Math.floor(Math.random() * ages.length)];
 
