@@ -69,12 +69,12 @@ function CreatePlan() {
     setModalChangeDurationVisibility,
   ] = useState(false);
   const [editDuration, setEditDuration] = useState('');
-
-  const [numberForSave, setNumberForSave] = useState(1);
   const [saveEnabler, setSaveEnabler] = useState(true);
 
   const [editPlanName, setEditPlanName] = useState('');
   const [id, setId] = useState('');
+
+  const [planNameErrorShow, setPlanNameErrorShow] = useState(false);
 
   const chest = 'CHEST';
   const core = 'CORE';
@@ -244,6 +244,13 @@ function CreatePlan() {
     console.log(editPlanName.length);
     let planNameEdited = '';
 
+    if (!editPlanName || editPlanName.trim() === '') {
+      setPlanNameErrorShow(true);
+      return;
+    } else {
+      setPlanNameErrorShow(false);
+    }
+
     if (editPlanName.length > 0) {
       planNameEdited = editPlanName;
       setEditPlanName('');
@@ -289,7 +296,7 @@ function CreatePlan() {
         ]}>
         <View style={styles.topBarInfoView}>
           <MaterialIcons
-          onPress={() => navigation.goBack()}
+            onPress={() => navigation.goBack()}
             name="keyboard-arrow-left"
             style={[
               displayExerGroups ? styles.arrowLeftOpacity : styles.arrowLeft,
@@ -325,6 +332,9 @@ function CreatePlan() {
               onChangeText={(text) => setEditPlanName(text)}
               value={editPlanName}
             />
+            {planNameErrorShow ? (
+              <Text style={styles.textError}>Your Plan Needs a Name.</Text>
+            ) : null}
           </View>
 
           <TouchableHighlight
@@ -970,6 +980,12 @@ const styles = StyleSheet.create({
     color: '#FFFFFF85',
     fontFamily: 'OpenSans-Bold',
     fontSize: 20,
+  },
+  textError: {
+    fontFamily: 'OpenSans-Regular',
+    fontSize: 12,
+    color: 'red',
+    marginTop: 10,
   },
 });
 

@@ -327,6 +327,7 @@ function MoreInfo({route}) {
           <DateTimePickerModal
             isVisible={isDatePickerVisible}
             mode="date"
+            maximumDate={new Date()}
             onConfirm={handleConfirm}
             onCancel={hideDatePicker}
           />

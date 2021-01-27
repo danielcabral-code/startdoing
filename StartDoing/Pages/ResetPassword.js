@@ -7,7 +7,7 @@ import {
   ScrollView,
   Text,
   TouchableHighlight,
-  Image
+  Image,
 } from 'react-native';
 
 import {createStackNavigator} from '@react-navigation/stack';
@@ -37,6 +37,7 @@ function ResetPasswordScreen({navigation}) {
   const [confirmPasswordErrorShow, setConfirmpasswordErrorShow] = useState(
     false,
   );
+  const [passwordLengthError, setPasswordLengthError] = useState(false);
 
   validateEmail = (email) => {
     let regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -63,7 +64,11 @@ function ResetPasswordScreen({navigation}) {
     if (!password || password.trim() === '') {
       setPasswordErrorShow(true);
       return;
+    } else if (password.length < 6) {
+      setPasswordLengthError(true);
+      return;
     } else {
+      setPasswordLengthError(false);
       setPasswordErrorShow(false);
     }
 
@@ -151,6 +156,11 @@ function ResetPasswordScreen({navigation}) {
           />
           {passwordErrorShow ? (
             <Text style={styles.textError}>Please Enter a Password.</Text>
+          ) : null}
+          {passwordLengthError ? (
+            <Text style={styles.textError}>
+              Password Must Have at Least 6 Characters.
+            </Text>
           ) : null}
         </View>
 

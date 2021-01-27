@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   StyleSheet,
@@ -10,13 +10,13 @@ import {
   Image,
 } from 'react-native';
 
-import { createStackNavigator } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {useNavigation} from '@react-navigation/native';
 import 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import * as ImagePicker from 'react-native-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import jwt_decode from "jwt-decode";
+import jwt_decode from 'jwt-decode';
 import storage from '@react-native-firebase/storage';
 
 const Stack = createStackNavigator();
@@ -24,7 +24,7 @@ const ChangeProfilePicture = () => {
   return (
     <Stack.Navigator initialRouteName="ChangeProfilePicturePage">
       <Stack.Screen
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
         name="ChangeProfilePicture"
         component={ChangeProfilePicturePage}
       />
@@ -32,37 +32,30 @@ const ChangeProfilePicture = () => {
   );
 };
 
-function ChangeProfilePicturePage({ route }) {
-
+function ChangeProfilePicturePage({route}) {
   const navigation = useNavigation();
 
   const [token, setToken] = useState('');
-  const [photoUrl, setPhotoUrl] = useState()
+  const [photoUrl, setPhotoUrl] = useState();
   const [id, setId] = useState('');
   const [uploadSuccessMensage, setUploadSucessMensage] = useState(false);
+  const [saveBtnEnabler, setSaveBtnEnabler] = useState(true);
+  const [showSaveBtn, setShowSaveBtn] = useState(true);
 
-
-  let decoded = ''
-  let firebasePhotoLink = ''
+  let decoded = '';
+  let firebasePhotoLink = '';
 
   const getToken = async () => {
-
     try {
-      setToken(await AsyncStorage.getItem('@token'))
+      setToken(await AsyncStorage.getItem('@token'));
       if (token !== null) {
-
         decoded = jwt_decode(token);
         console.log(decoded);
-        setPhotoUrl(decoded.data.photoUrl)
-        setId(decoded.data.id)
-
+        setPhotoUrl(decoded.data.photoUrl);
+        setId(decoded.data.id);
       }
-
-    } catch (e) {
-
-    }
-
-  }
+    } catch (e) {}
+  };
   const options = {
     title: 'Select your photo',
     storageOptions: {
@@ -80,26 +73,22 @@ function ChangeProfilePicturePage({ route }) {
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
-        const source = response.uri
+        const source = response.uri;
         console.log(source);
-        setPhotoUrl(source)
-      };
-
-
+        setPhotoUrl(source);
+        setSaveBtnEnabler(false);
+      }
     });
-  }
+  };
 
   const savePhoto = async () => {
-
     const uri = photoUrl;
     console.log(uri);
     const filename = uri.substring(uri.lastIndexOf('/') + 1);
-    const uploadUri = Platform.OS === 'ios' ? uri.replace('content://', '') : uri;
+    const uploadUri =
+      Platform.OS === 'ios' ? uri.replace('content://', '') : uri;
 
-
-    const task = storage()
-      .ref(filename)
-      .putFile(uploadUri)
+    const task = storage().ref(filename).putFile(uploadUri);
 
     try {
       await task;
@@ -107,15 +96,13 @@ function ChangeProfilePicturePage({ route }) {
       imageRef
         .getDownloadURL()
         .then((url) => {
-
-          firebasePhotoLink = url
+          firebasePhotoLink = url;
 
           fetch(`https://startdoing.herokuapp.com/updatephoto/${id}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
-              Authorization:
-                `Bearer ${token}`,
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
               photoUrl: firebasePhotoLink,
@@ -123,64 +110,80 @@ function ChangeProfilePicturePage({ route }) {
           })
             .then((response) => {
               console.log(response.status);
-
             })
             .catch((error) => console.log('error', error));
         })
         .catch((e) => console.log('getting downloadURL of image error => ', e));
-
-
     } catch (e) {
       console.error(e);
     }
 
     console.log(
       'Photo uploaded!',
-      'Your photo has been uploaded to Firebase Cloud Storage!'
+      'Your photo has been uploaded to Firebase Cloud Storage!',
     );
-    setUploadSucessMensage(true)
+    setUploadSucessMensage(true);
+    setShowSaveBtn(false);
 
-  }
+    setInterval(() => {
+      navigation.navigate('SETTINGS');
+    }, 3000);
+  };
 
   useEffect(() => {
-    getToken()
-
-  }, [token])
+    getToken();
+  }, [token]);
 
   return (
     <>
       <View style={styles.topSectionView}>
         <View style={styles.topBarInfoView}>
-          <MaterialIcons name="keyboard-arrow-left" style={styles.arrowLeft} />
+          <MaterialIcons
+            onPress={() => navigation.goBack()}
+            name="keyboard-arrow-left"
+            style={styles.arrowLeft}
+          />
           <Text style={styles.planNameText}>CHANGE PROFILE PHOTO</Text>
         </View>
       </View>
 
       <ScrollView style={styles.background}>
         <View style={styles.bg2}>
-          <TouchableWithoutFeedback
-            onPress={openPicker}>
+          <TouchableWithoutFeedback onPress={openPicker}>
             <View style={styles.profileImageBackground1}>
               <View style={styles.profileImageBackground2}>
                 <Image
                   style={styles.profileImage}
-                  source={{ uri: photoUrl }} ></Image>
+                  source={{uri: photoUrl}}></Image>
               </View>
             </View>
           </TouchableWithoutFeedback>
-         
-            {uploadSuccessMensage ? (
-              <Text style={styles.textSuccess}>Profile Image Changed! Next Time You Login Into App You Will See The New Photo!</Text>
-            ) : null}
-      
-          <TouchableHighlight
-            style={styles.saveBtn}
-            underlayColor="#F27A2999"
-            onPress={savePhoto}
-          >
-            <Text style={styles.saveText}>SAVE CHANGES</Text>
-          </TouchableHighlight>
-          
+
+          {uploadSuccessMensage ? (
+            <View>
+              <Text style={styles.textSuccess}>
+                SUCCESS! NEXT TIME YOU LOGIN,
+              </Text>
+              <Text style={styles.textSuccess2}>
+                YOU'LL SEE YOUR NEW PICTURE!
+              </Text>
+            </View>
+          ) : null}
+
+          {showSaveBtn ? (
+            <TouchableHighlight
+              style={[saveBtnEnabler ? styles.saveBtnOpacity : styles.saveBtn]}
+              underlayColor="#F27A2999"
+              onPress={savePhoto}
+              disabled={saveBtnEnabler}>
+              <Text
+                style={[
+                  saveBtnEnabler ? styles.saveTextOpacity : styles.saveText,
+                ]}>
+                SAVE CHANGES
+              </Text>
+            </TouchableHighlight>
+          ) : null}
         </View>
       </ScrollView>
     </>
@@ -264,6 +267,23 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.27,
     shadowRadius: 4.65,
   },
+  saveBtnOpacity: {
+    marginTop: 100,
+    marginBottom: 24,
+    width: '85%',
+    height: 90.9,
+    borderRadius: 10,
+    backgroundColor: '#F27A2980',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+  },
   saveText: {
     alignSelf: 'center',
     color: 'white',
@@ -271,11 +291,22 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textShadowRadius: 6,
   },
+  saveTextOpacity: {
+    alignSelf: 'center',
+    color: '#FFFFFF85',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 20,
+  },
   textSuccess: {
-    fontFamily: 'OpenSans-Regular',
-    fontSize: 12,
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 16,
     color: 'green',
-    marginTop: 10,
+    marginTop: 60,
+  },
+  textSuccess2: {
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 16,
+    color: 'green',
   },
 });
 

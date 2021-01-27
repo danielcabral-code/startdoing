@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   StyleSheet,
@@ -9,48 +9,40 @@ import {
   TouchableHighlight,
 } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import jwt_decode from "jwt-decode";
+import jwt_decode from 'jwt-decode';
 
 const Settings = () => {
-
   const navigation = useNavigation();
 
   const [token, setToken] = useState('');
   const [id, setId] = useState('');
   const [name, setName] = useState('');
-  const [photoUrl, setPhotoUrl] = useState()
-  let decoded = ''
-
+  const [email, setEmail] = useState('');
+  const [photoUrl, setPhotoUrl] = useState();
+  let decoded = '';
 
   const getToken = async () => {
-
     try {
-
-      setToken(await AsyncStorage.getItem('@token'))
+      setToken(await AsyncStorage.getItem('@token'));
       if (token !== null) {
         decoded = jwt_decode(token);
-        setId(decoded.data.id)
-        setName(decoded.data.name)
-        setPhotoUrl(decoded.data.photoUrl)
-      
+        setId(decoded.data.id);
+        setName(decoded.data.name);
+        setEmail(decoded.data.email);
+        setPhotoUrl(decoded.data.photoUrl);
       }
-    }
-    catch (e) {
-
-    }
-  }
+    } catch (e) {}
+  };
 
   useEffect(() => {
-    getToken()
-  })
+    getToken();
+  });
 
   useEffect(() => {
-    getToken()
-
-  }, [token])
-
+    getToken();
+  }, [token]);
 
   return (
     <>
@@ -60,7 +52,7 @@ const Settings = () => {
             <View style={styles.profileImageBackground2}>
               <Image
                 style={styles.profileImage}
-                source={{ uri: photoUrl }}></Image>
+                source={{uri: photoUrl}}></Image>
             </View>
           </View>
 
@@ -68,10 +60,12 @@ const Settings = () => {
 
           <TouchableHighlight
             style={styles.planBtn}
-            onPress={() => navigation.navigate('EditDetails',{
-              screen: 'EditDetails',
-              params: { id: id, token:token}
-            })}
+            onPress={() =>
+              navigation.navigate('EditDetails', {
+                screen: 'EditDetails',
+                params: {id: id, token: token},
+              })
+            }
             underlayColor="#F27A2999">
             <Text style={styles.planText}>EDIT WEIGHT & HEIGHT</Text>
           </TouchableHighlight>
@@ -85,10 +79,12 @@ const Settings = () => {
 
           <TouchableHighlight
             style={styles.planBtn}
-            onPress={() => navigation.navigate('ChangePassword',{
-              screen: 'ChangePassword',
-              params: {email: email}
-            })}
+            onPress={() =>
+              navigation.navigate('ChangePassword', {
+                screen: 'ChangePassword',
+                params: {email: email},
+              })
+            }
             underlayColor="#F27A2999">
             <Text style={styles.planText}>CHANGE PASSWORD</Text>
           </TouchableHighlight>
