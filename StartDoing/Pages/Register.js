@@ -49,6 +49,7 @@ function RegisterScreen({navigation}) {
     false,
   );
   const [emailInUse, setEmailInUse] = useState(false);
+  const [passwordLengthError, setPasswordLengthError] = useState(false);
 
   validateEmail = (email) => {
     let regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -82,7 +83,11 @@ function RegisterScreen({navigation}) {
     if (!password || password.trim() === '') {
       setPasswordErrorShow(true);
       return;
+    } else if (password.length < 6) {
+      setPasswordLengthError(true);
+      return;
     } else {
+      setPasswordLengthError(false);
       setPasswordErrorShow(false);
     }
 
@@ -170,6 +175,11 @@ function RegisterScreen({navigation}) {
           />
           {passwordErrorShow ? (
             <Text style={styles.textError}>Please Enter a Password.</Text>
+          ) : null}
+          {passwordLengthError ? (
+            <Text style={styles.textError}>
+              Password Must Have at Least 6 Characters.
+            </Text>
           ) : null}
         </View>
         <View style={styles.inputView}>
@@ -306,7 +316,6 @@ function MoreInfo({route}) {
     <>
       <ScrollView style={styles.background}>
         <View style={styles.bg2}>
-
           <Text style={styles.indicateValue}>INDICATE YOUR DATE OF BIRTH</Text>
           <TouchableHighlight
             style={styles.selectBtn}
@@ -364,7 +373,6 @@ function MoreInfo({route}) {
             underlayColor="#F27A2999">
             <Text style={styles.createText}>CREATE ACCOUNT</Text>
           </TouchableHighlight>
-          
         </View>
       </ScrollView>
     </>

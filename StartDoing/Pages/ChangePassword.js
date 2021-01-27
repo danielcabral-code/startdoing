@@ -155,7 +155,7 @@ function ChangePasswordPage({route}) {
             ) : null}
             {passwordLengthError ? (
               <Text style={styles.textError}>
-                Password Must Be at Least 6 characters.
+                Password Must Have at Least 6 Characters.
               </Text>
             ) : null}
           </View>
