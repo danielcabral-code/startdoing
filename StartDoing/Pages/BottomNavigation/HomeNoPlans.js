@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   StyleSheet,
@@ -12,42 +12,39 @@ import {
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import jwt_decode from "jwt-decode";
-import { useNavigation } from '@react-navigation/native';
+import jwt_decode from 'jwt-decode';
+import {useNavigation} from '@react-navigation/native';
 
 const Home = ({navigate}) => {
   const navigation = useNavigation();
   const [token, setToken] = useState('');
   const [name, setName] = useState('');
-  const [photoUrl, setPhotoUrl] = useState('https://firebasestorage.googleapis.com/v0/b/startdoing-bd1bc.appspot.com/o/person.jpg?alt=media&token=d201079f-9035-4f11-9421-58d1e9293359')
+  const [photoUrl, setPhotoUrl] = useState(
+    'https://firebasestorage.googleapis.com/v0/b/startdoing-bd1bc.appspot.com/o/person.jpg?alt=media&token=d201079f-9035-4f11-9421-58d1e9293359',
+  );
 
   const [birth, setBirth] = useState('');
-  let decoded = ''
+  let decoded = '';
 
   function onPressButton() {
     alert('You Pressed Me!');
   }
 
   const getToken = async () => {
-
     try {
-
-      setToken(await AsyncStorage.getItem('@token'))
+      setToken(await AsyncStorage.getItem('@token'));
       if (token !== null) {
         decoded = jwt_decode(token);
-        setName(decoded.data.name)
-        setPhotoUrl(decoded.data.photoUrl)
-        setBirth(decoded.data.birth)
+        setName(decoded.data.name);
+        setPhotoUrl(decoded.data.photoUrl);
+        setBirth(decoded.data.birth);
       }
-    }
-    catch (e) {
-
-    }
-  }
+    } catch (e) {}
+  };
 
   useEffect(() => {
-    getToken()
-  })
+    getToken();
+  });
 
   return (
     <>
@@ -57,11 +54,13 @@ const Home = ({navigate}) => {
             <View style={styles.profileImageBackground2}>
               <Image
                 style={styles.profileImage}
-                source={{ uri: photoUrl }}></Image>
+                source={{uri: photoUrl}}></Image>
             </View>
           </View>
 
-          <Text style={styles.userName}>HI, {name} { }!</Text>
+          <Text style={styles.userName}>
+            HI, {name.toUpperCase()}!
+          </Text>
 
           <TouchableWithoutFeedback>
             <View style={styles.unactiveBtn}>
@@ -73,7 +72,8 @@ const Home = ({navigate}) => {
 
           <MaterialIcons name="keyboard-arrow-down" style={styles.arrowDown} />
 
-          <TouchableWithoutFeedback onPress={onPressButton}>
+          <TouchableWithoutFeedback
+            onPress={() => navigation.navigate('CreatePlan')}>
             <View style={styles.createPlanBtn}>
               <Text style={styles.createPlanText}>CREATE A PLAN</Text>
             </View>
@@ -81,10 +81,12 @@ const Home = ({navigate}) => {
 
           <TouchableHighlight
             style={styles.suggestedBtn}
-            onPress={() => navigation.navigate('SuggestedPlanScreen',{
-              screen: 'SuggestedPlanScreen',
-              params: { birth: birth, token: token}
-            })}
+            onPress={() =>
+              navigation.navigate('SuggestedPlanScreen', {
+                screen: 'SuggestedPlanScreen',
+                params: {birth: birth, token: token},
+              })
+            }
             underlayColor="#006DA899">
             <Text style={styles.suggestedText}>SUGGESTED TRAINING</Text>
           </TouchableHighlight>

@@ -266,7 +266,11 @@ function CustomizeUserPlanScreen({route}) {
     <>
       <View style={styles.topSectionView}>
         <View style={styles.topBarInfoView}>
-          <MaterialIcons name="keyboard-arrow-left" style={styles.arrowLeft} />
+          <MaterialIcons
+            onPress={() => navigation.goBack()}
+            name="keyboard-arrow-left"
+            style={styles.arrowLeft}
+          />
           <Text style={styles.planNameText}>{planName}</Text>
         </View>
       </View>
@@ -335,7 +339,7 @@ function CustomizeUserPlanScreen({route}) {
             <Text style={styles.modalText}>THIS EXERCISE?</Text>
             {removerExerciseErrorShow ? (
               <Text style={styles.modalTextError}>
-                You Can't Remove All Exercises.
+                You Must Have at Least 1 Exercise.
               </Text>
             ) : null}
 
@@ -370,8 +374,8 @@ function CustomizeUserPlanScreen({route}) {
               value={editDuration}
             />
             {invalidDurationErrorShow ? (
-              <Text style={styles.modalTextError}>
-                Field Only Accepts Valid Numbers.
+              <Text style={styles.modalTextErrorDuration}>
+                Exercise Duration is too Short.
               </Text>
             ) : null}
 
@@ -646,6 +650,16 @@ const styles = StyleSheet.create({
     color: 'red',
     fontFamily: 'OpenSans-Bold',
     fontSize: 12,
+    marginTop: 6,
+    marginBottom: -6,
+    alignSelf: 'center',
+  },
+  modalTextErrorDuration: {
+    color: 'red',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 12,
+    marginTop: 4,
+    marginBottom: -16,
     alignSelf: 'center',
   },
   modalRemoveBtn: {
@@ -711,6 +725,7 @@ const styles = StyleSheet.create({
   modalInputLine: {
     width: '30%',
     height: 40,
+    marginTop: -10,
     alignSelf: 'center',
     borderColor: 'white',
     borderBottomWidth: 1,

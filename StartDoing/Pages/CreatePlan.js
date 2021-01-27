@@ -289,6 +289,7 @@ function CreatePlan() {
         ]}>
         <View style={styles.topBarInfoView}>
           <MaterialIcons
+          onPress={() => navigation.goBack()}
             name="keyboard-arrow-left"
             style={[
               displayExerGroups ? styles.arrowLeftOpacity : styles.arrowLeft,

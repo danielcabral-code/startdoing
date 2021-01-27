@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 
 import {
   TextInput,
@@ -10,8 +10,8 @@ import {
   Image,
 } from 'react-native';
 
-import { createStackNavigator } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {useNavigation} from '@react-navigation/native';
 import 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
@@ -20,7 +20,7 @@ const ChangePassword = () => {
   return (
     <Stack.Navigator initialRouteName="ChangePasswordPage">
       <Stack.Screen
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
         name="ChangePassword"
         component={ChangePasswordPage}
       />
@@ -28,7 +28,7 @@ const ChangePassword = () => {
   );
 };
 
-function ChangePasswordPage({ route }) {
+function ChangePasswordPage({route}) {
   const navigation = useNavigation();
 
   const [password, setPassword] = useState('');
@@ -37,28 +37,25 @@ function ChangePasswordPage({ route }) {
   const [invalidEmailErrorShow, setInvalidEmailErrorShow] = useState(false);
   const [unknownEmail, setUnknownEmail] = useState(false);
   const [passwordErrorShow, setPasswordErrorShow] = useState(false);
-  const [confirmPasswordErrorShow, setConfirmpasswordErrorShow] = useState(false);
+  const [confirmPasswordErrorShow, setConfirmpasswordErrorShow] = useState(
+    false,
+  );
   const [passwordLengthError, setPasswordLengthError] = useState(false);
 
-  let email = route.params.email
+  let email = route.params.email;
   console.log(email);
-
-
 
   function checkRegisterInputs() {
     let code = 0;
 
-
     if (!password || password.trim() === '') {
       setPasswordErrorShow(true);
       return;
-    }else if (password.length<6) {
- 
-      setPasswordLengthError(true)
-      return
-    }
-    else {
-      setPasswordLengthError(false)
+    } else if (password.length < 6) {
+      setPasswordLengthError(true);
+      return;
+    } else {
+      setPasswordLengthError(false);
       setPasswordErrorShow(false);
     }
 
@@ -113,7 +110,11 @@ function ChangePasswordPage({ route }) {
     <>
       <View style={styles.topSectionView}>
         <View style={styles.topBarInfoView}>
-          <MaterialIcons name="keyboard-arrow-left" style={styles.arrowLeft} />
+          <MaterialIcons
+            onPress={() => navigation.goBack()}
+            name="keyboard-arrow-left"
+            style={styles.arrowLeft}
+          />
           <Text style={styles.planNameText}>CHANGE PASSWORD</Text>
         </View>
       </View>
@@ -124,7 +125,7 @@ function ChangePasswordPage({ route }) {
             <Text style={styles.inputText}>EMAIL</Text>
             <TextInput
               style={styles.inputLine}
-              placeholderTextColor='gray'
+              placeholderTextColor="gray"
               editable={false}
               keyboardType="email-address"
               onChangeText={(text) => setEmail(text)}
@@ -152,8 +153,10 @@ function ChangePasswordPage({ route }) {
             {passwordErrorShow ? (
               <Text style={styles.textError}>Please Enter a Password.</Text>
             ) : null}
-             {passwordLengthError ? (
-              <Text style={styles.textError}>Password Must Be at Least 6 characters.</Text>
+            {passwordLengthError ? (
+              <Text style={styles.textError}>
+                Password Must Be at Least 6 characters.
+              </Text>
             ) : null}
           </View>
 
@@ -173,8 +176,7 @@ function ChangePasswordPage({ route }) {
           <TouchableHighlight
             style={styles.saveBtn}
             underlayColor="#F27A2999"
-            onPress={checkRegisterInputs}
-          >
+            onPress={checkRegisterInputs}>
             <Text style={styles.saveText}>RESET PASSWORD</Text>
           </TouchableHighlight>
         </View>

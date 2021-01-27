@@ -35,11 +35,10 @@ function SuggestedExercisesScreen({route}) {
   const navigation = useNavigation();
 
   const exercisesList = route.params.exercises;
-  console.log("list", exercisesList);
-  
-  const token =route.params.token
+  console.log('list', exercisesList);
+
+  const token = route.params.token;
   console.log(token);
- 
 
   const [seconds, setSeconds] = useState(0);
   const [index, setIndex] = useState(0);
@@ -48,7 +47,7 @@ function SuggestedExercisesScreen({route}) {
   const [disableNextButton, setDisableNextButton] = useState(true);
   const [showHomeButton, setShowHomeButton] = useState(false);
   const [exerciseNumber, setExerciseNumber] = useState('1');
-  const [exerciseDuration, setExerciseDuration]= useState('')
+  const [exerciseDuration, setExerciseDuration] = useState('');
 
   function nextExercise() {
     let activeIndex = index;
@@ -64,33 +63,35 @@ function SuggestedExercisesScreen({route}) {
       setExerciseNumber(activeExerciseNumber);
       setShowGoButton(true);
       setShowNextButton(true);
-      
     }
   }
 
   function startExercise() {
-    setSeconds(exercisesList[index].duration)
+    setSeconds(exercisesList[index].duration);
     setShowGoButton(false);
     setShowNextButton(true);
     setDisableNextButton(true);
   }
 
   useEffect(() => {
-   
-    
     if (seconds > 0) {
       setTimeout(() => setSeconds(seconds - 1), 1000);
     } else {
       setSeconds('');
       setDisableNextButton(false);
     }
-  }),[seconds];
+  }),
+    [seconds];
 
   return (
     <>
       <View style={styles.topSectionView}>
         <View style={styles.topBarInfoView}>
-          <MaterialIcons name="keyboard-arrow-left" style={styles.arrowLeft} />
+          <MaterialIcons
+            onPress={() => navigation.goBack()}
+            name="keyboard-arrow-left"
+            style={styles.arrowLeft}
+          />
           <Text style={styles.planNameText}>EXERCISE {exerciseNumber}</Text>
         </View>
       </View>
@@ -113,7 +114,7 @@ function SuggestedExercisesScreen({route}) {
           <Text style={styles.durationText}>
             {'DURATION: ' + exercisesList[index].duration + ' ' + 'SECONDS'}
           </Text>
-          
+
           {showGoButton ? (
             <TouchableHighlight
               style={styles.goBtn}

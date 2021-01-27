@@ -67,7 +67,7 @@ const Settings = () => {
             </View>
           </View>
 
-          <Text style={styles.userName}>HI,{name} {}!</Text>
+          <Text style={styles.userName}>HI, {name.toUpperCase()}!</Text>
 
           <TouchableHighlight
             style={styles.planBtn}

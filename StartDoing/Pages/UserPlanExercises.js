@@ -35,10 +35,9 @@ function UserPlanExercisesScreen({route}) {
   const navigation = useNavigation();
 
   const exercisesList = route.params.exercises;
-  const id=route.params.id
-  const token =route.params.token
+  const id = route.params.id;
+  const token = route.params.token;
   console.log(id);
- 
 
   const [seconds, setSeconds] = useState(0);
   const [index, setIndex] = useState(0);
@@ -47,7 +46,7 @@ function UserPlanExercisesScreen({route}) {
   const [disableNextButton, setDisableNextButton] = useState(true);
   const [showHomeButton, setShowHomeButton] = useState(false);
   const [exerciseNumber, setExerciseNumber] = useState('1');
-  const [exerciseDuration, setExerciseDuration]= useState('')
+  const [exerciseDuration, setExerciseDuration] = useState('');
 
   function nextExercise() {
     let activeIndex = index;
@@ -74,41 +73,41 @@ function UserPlanExercisesScreen({route}) {
   }
 
   useEffect(() => {
-    fetch(
-        `https://startdoing.herokuapp.com/user_plans/plan/${id}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      )
-        .then((response) => response.json())
-        .then((result) => {
-            result.map((data)=>{
-        
-                console.log(data.exercises[index].exercise_duration);
-                setExerciseDuration(data.exercises[index].exercise_duration)
-            })
-         
-        })
+    fetch(`https://startdoing.herokuapp.com/user_plans/plan/${id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        result.map((data) => {
+          console.log(data.exercises[index].exercise_duration);
+          setExerciseDuration(data.exercises[index].exercise_duration);
+        });
+      })
 
-        .catch((error) => console.log('error', error));
-    
+      .catch((error) => console.log('error', error));
+
     if (seconds > 0) {
       setTimeout(() => setSeconds(seconds - 1), 1000);
     } else {
       setSeconds('');
       setDisableNextButton(false);
     }
-  }),[seconds];
+  }),
+    [seconds];
 
   return (
     <>
       <View style={styles.topSectionView}>
         <View style={styles.topBarInfoView}>
-          <MaterialIcons name="keyboard-arrow-left" style={styles.arrowLeft} />
+          <MaterialIcons
+            onPress={() => navigation.goBack()}
+            name="keyboard-arrow-left"
+            style={styles.arrowLeft}
+          />
           <Text style={styles.planNameText}>EXERCISE {exerciseNumber}</Text>
         </View>
       </View>

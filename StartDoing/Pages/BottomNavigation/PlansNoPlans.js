@@ -12,7 +12,6 @@ import {
 import {useNavigation} from '@react-navigation/native';
 
 const Plans = () => {
-
   const navigation = useNavigation();
 
   function onPressButton() {
@@ -25,7 +24,7 @@ const Plans = () => {
         <View style={styles.bg2}>
           <TouchableHighlight
             style={styles.createBtn}
-            onPress={()=>navigation.navigate('CreatePlan')}
+            onPress={() => navigation.navigate('CreatePlan')}
             underlayColor="#F27A2999">
             <Text style={styles.createText}>CREATE NEW PLAN</Text>
           </TouchableHighlight>
@@ -40,17 +39,9 @@ const Plans = () => {
             </View>
           </TouchableWithoutFeedback>
 
-          <TouchableWithoutFeedback>
-            <View style={styles.unactiveBtn}>
-              <Text style={styles.unactiveText}>TRY CREATING MORE PLANS</Text>
-            </View>
-          </TouchableWithoutFeedback>
-
-          <TouchableWithoutFeedback>
-            <View style={styles.unactiveBtn}>
-              <Text style={styles.unactiveText}>TRY CREATING MORE PLANS</Text>
-            </View>
-          </TouchableWithoutFeedback>
+          <Text style={styles.maxPlansMessage}>
+            YOU CAN CREATE UP TO 2 PLANS!
+          </Text>
         </View>
       </ScrollView>
     </>
@@ -66,7 +57,7 @@ const styles = StyleSheet.create({
   bg2: {
     width: '100%',
     alignItems: 'center',
-    paddingBottom: 72
+    paddingBottom: 72,
   },
   createBtn: {
     marginTop: 38,
@@ -116,6 +107,14 @@ const styles = StyleSheet.create({
     color: '#FFFFFF40',
     fontFamily: 'OpenSans-Bold',
     fontSize: 14,
+  },
+  maxPlansMessage: {
+    color: 'white',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 14,
+    marginTop: 50,
+    marginBottom: 20,
+    alignSelf: 'center',
   },
 });
 

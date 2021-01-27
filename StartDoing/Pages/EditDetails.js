@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   TextInput,
@@ -10,18 +10,17 @@ import {
   Image,
 } from 'react-native';
 
-import { createStackNavigator } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {useNavigation} from '@react-navigation/native';
 import 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
 
 const Stack = createStackNavigator();
 const EditDetails = () => {
   return (
     <Stack.Navigator initialRouteName="EditDetailsPage">
       <Stack.Screen
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
         name="EditDetails"
         component={EditDetailsPage}
       />
@@ -29,40 +28,40 @@ const EditDetails = () => {
   );
 };
 
-function EditDetailsPage({ route }) {
+function EditDetailsPage({route}) {
   const navigation = useNavigation();
 
-  const [height, setHeight] = useState('')
-  const [weight, setWeight] = useState('')
-  const [editHeight, setEditHeight] = useState('')
-  const [editWeight, setEditWeight] = useState('')
-  const [onlyNumbersHeightErrorShow, setOnlyNumbersHeightErrorShow] = useState(false);
-  const [onlyNumbersWeightErrorShow, setOnlyNumbersWeightErrorShow] = useState(false);
+  const [height, setHeight] = useState('');
+  const [weight, setWeight] = useState('');
+  const [editHeight, setEditHeight] = useState('');
+  const [editWeight, setEditWeight] = useState('');
+  const [onlyNumbersHeightErrorShow, setOnlyNumbersHeightErrorShow] = useState(
+    false,
+  );
+  const [onlyNumbersWeightErrorShow, setOnlyNumbersWeightErrorShow] = useState(
+    false,
+  );
 
-  let id = route.params.id
-  let token = route.params.token
-
+  let id = route.params.id;
+  let token = route.params.token;
 
   function getUser() {
     fetch(`https://startdoing.herokuapp.com/getuser/${id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization:
-          `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
-
     })
       .then((response) => response.json())
       .then((result) => {
         result.map((data) => {
-          setHeight(data.height)
-          setWeight(data.weight)
-        })
+          setHeight(data.height);
+          setWeight(data.weight);
+        });
       })
       .catch((error) => console.log('error', error));
   }
-
 
   function validateHeight(height) {
     let numreg = /^[0-9]+$/;
@@ -75,71 +74,68 @@ function EditDetailsPage({ route }) {
   }
 
   function editDetails() {
-
-    let saveHeight = ''
-    let saveWeight = ''
+    let saveHeight = '';
+    let saveWeight = '';
 
     if (editWeight.length === 0) {
       console.log(editWeight.length);
       console.log(weight);
-      saveWeight = weight
-    }
-    else {
+      saveWeight = weight;
+    } else {
       if (!validateWeight(editWeight)) {
         setOnlyNumbersWeightErrorShow(true);
         return;
       } else {
         setOnlyNumbersWeightErrorShow(false);
       }
-      saveWeight = editWeight
+      saveWeight = editWeight;
     }
 
     if (editHeight.length === 0) {
       console.log(editHeight.length);
       console.log(height);
-      saveHeight = height
-    }
-    else {
+      saveHeight = height;
+    } else {
       if (!validateHeight(editHeight)) {
         setOnlyNumbersHeightErrorShow(true);
         return;
       } else {
         setOnlyNumbersHeightErrorShow(false);
       }
-      saveHeight = editHeight
+      saveHeight = editHeight;
     }
-
-
 
     fetch(`https://startdoing.herokuapp.com/update/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        Authorization:
-          `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         height: saveHeight,
-        weight: saveWeight
+        weight: saveWeight,
       }),
     })
       .then((response) => {
         console.log(response.status);
-         navigation.navigate('SETTINGS')
+        navigation.navigate('SETTINGS');
       })
       .catch((error) => console.log('error', error));
-
   }
 
   useEffect(() => {
-    getUser()
-  }, [height, weight])
+    getUser();
+  }, [height, weight]);
 
   return (
     <>
       <View style={styles.topSectionView}>
         <View style={styles.topBarInfoView}>
-          <MaterialIcons name="keyboard-arrow-left" style={styles.arrowLeft} />
+          <MaterialIcons
+            onPress={() => navigation.goBack()}
+            name="keyboard-arrow-left"
+            style={styles.arrowLeft}
+          />
           <Text style={styles.planNameText}>EDIT WEIGHT & HEIGHT</Text>
         </View>
       </View>
@@ -160,7 +156,6 @@ function EditDetailsPage({ route }) {
           {onlyNumbersWeightErrorShow ? (
             <Text style={styles.textError}>Field Only Accepts Numbers.</Text>
           ) : null}
-
 
           <View style={styles.inputViewMeasurement}>
             <Text style={styles.inputText}>INDICATE YOUR HEIGHT IN CM</Text>
