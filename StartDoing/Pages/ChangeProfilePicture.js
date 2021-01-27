@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
 import {
-  TextInput,
   StyleSheet,
   ScrollView,
   View,
@@ -40,12 +39,11 @@ function ChangeProfilePicturePage({ route }) {
   const [token, setToken] = useState('');
   const [photoUrl, setPhotoUrl] = useState()
   const [id, setId] = useState('');
-  const [email, setEmail] = useState('');
+  const [uploadSuccessMensage, setUploadSucessMensage] = useState(false);
 
 
   let decoded = ''
   let firebasePhotoLink = ''
-
 
   const getToken = async () => {
 
@@ -57,7 +55,6 @@ function ChangeProfilePicturePage({ route }) {
         console.log(decoded);
         setPhotoUrl(decoded.data.photoUrl)
         setId(decoded.data.id)
-        setEmail(decoded.data.email)
 
       }
 
@@ -110,10 +107,8 @@ function ChangeProfilePicturePage({ route }) {
       imageRef
         .getDownloadURL()
         .then((url) => {
-          //from url you can fetched the uploaded image easily
-          console.log("link", url);
+
           firebasePhotoLink = url
-          console.log("url", firebasePhotoLink);
 
           fetch(`https://startdoing.herokuapp.com/updatephoto/${id}`, {
             method: 'PUT',
@@ -135,7 +130,6 @@ function ChangeProfilePicturePage({ route }) {
         .catch((e) => console.log('getting downloadURL of image error => ', e));
 
 
-
     } catch (e) {
       console.error(e);
     }
@@ -144,14 +138,10 @@ function ChangeProfilePicturePage({ route }) {
       'Photo uploaded!',
       'Your photo has been uploaded to Firebase Cloud Storage!'
     );
-
-
-
-
-
-
+    setUploadSucessMensage(true)
 
   }
+
   useEffect(() => {
     getToken()
 
@@ -178,7 +168,11 @@ function ChangeProfilePicturePage({ route }) {
               </View>
             </View>
           </TouchableWithoutFeedback>
-
+         
+            {uploadSuccessMensage ? (
+              <Text style={styles.textSuccess}>Profile Image Changed! Next Time You Login Into App You Will See The New Photo!</Text>
+            ) : null}
+      
           <TouchableHighlight
             style={styles.saveBtn}
             underlayColor="#F27A2999"
@@ -186,9 +180,7 @@ function ChangeProfilePicturePage({ route }) {
           >
             <Text style={styles.saveText}>SAVE CHANGES</Text>
           </TouchableHighlight>
-
-
-
+          
         </View>
       </ScrollView>
     </>
@@ -279,10 +271,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textShadowRadius: 6,
   },
-  textError: {
+  textSuccess: {
     fontFamily: 'OpenSans-Regular',
     fontSize: 12,
-    color: 'red',
+    color: 'green',
     marginTop: 10,
   },
 });
