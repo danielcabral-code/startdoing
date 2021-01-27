@@ -24,6 +24,7 @@ import SuggestedPlanScreen from '../Pages/SuggestedPlan';
 import SuggestedPlanScreenGuest from '../Pages/SuggestedPlanGuest';
 import SuggestedExercisesScreen from '../Pages/SuggestedPlanExercises';
 import SuggestedExercisesScreenGuest from '../Pages/SuggestedPlanGuestExercises';
+import ChangeProfilePicture from '../Pages/ChangeProfilePicture';
 
 const Stack = createStackNavigator();
 const LoginPage = () => {
@@ -111,6 +112,12 @@ const LoginPage = () => {
           options={{headerShown: false}}
           name="SuggestedExercisesScreenGuest"
           component={SuggestedExercisesScreenGuest}
+        />
+
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="ChangeProfilePicture"
+          component={ChangeProfilePicture}
         />
       </Stack.Navigator>
     </NavigationContainer>

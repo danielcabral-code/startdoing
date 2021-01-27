@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   StyleSheet,
@@ -9,11 +9,9 @@ import {
   TouchableHighlight,
 } from 'react-native';
 
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
-
-
 
 const Settings = () => {
 
@@ -22,8 +20,7 @@ const Settings = () => {
   const [token, setToken] = useState('');
   const [id, setId] = useState('');
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [photoUrl, setPhotoUrl] = useState('https://firebasestorage.googleapis.com/v0/b/startdoing-bd1bc.appspot.com/o/person.jpg?alt=media&token=d201079f-9035-4f11-9421-58d1e9293359')
+  const [photoUrl, setPhotoUrl] = useState()
   let decoded = ''
 
 
@@ -37,7 +34,6 @@ const Settings = () => {
         setId(decoded.data.id)
         setName(decoded.data.name)
         setPhotoUrl(decoded.data.photoUrl)
-        setEmail(decoded.data.email)
       
       }
     }
@@ -50,9 +46,10 @@ const Settings = () => {
     getToken()
   })
 
-  function onPressButton() {
-    alert('You Pressed Me!');
-  }
+  useEffect(() => {
+    getToken()
+
+  }, [token])
 
 
   return (
@@ -67,7 +64,7 @@ const Settings = () => {
             </View>
           </View>
 
-          <Text style={styles.userName}>HI, {name.toUpperCase()}!</Text>
+          <Text style={styles.userName}>HI, {name}!</Text>
 
           <TouchableHighlight
             style={styles.planBtn}
@@ -81,7 +78,7 @@ const Settings = () => {
 
           <TouchableHighlight
             style={styles.planBtn}
-            onPress={onPressButton}
+            onPress={() => navigation.navigate('ChangeProfilePicture')}
             underlayColor="#F27A2999">
             <Text style={styles.planText}>CHANGE PROFILE PICTURE</Text>
           </TouchableHighlight>

@@ -23,7 +23,7 @@ const Home = ({ navigate }) => {
   const [name, setName] = useState('');
   const [birth, setBirth] = useState('');
   const [id, setId] = useState('');
-  const [photoUrl, setPhotoUrl] = useState('https://firebasestorage.googleapis.com/v0/b/startdoing-bd1bc.appspot.com/o/person.jpg?alt=media&token=d201079f-9035-4f11-9421-58d1e9293359')
+  const [photoUrl, setPhotoUrl] = useState()
   const [planOneName, setPlanOneName] = useState('');
   const [planTwoName, setPlanTwoName] = useState('');
   const [stylePlanTwoNonExistent, setStylePlanTwoNonExistent] = useState(true)
