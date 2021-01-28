@@ -1,55 +1,35 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Image, Text } from 'react-native';
+import {StyleSheet, View, ScrollView, Image, Text} from 'react-native';
 
-import { LoginForm } from '../Components/Login/LoginForm';
-import RegisterScreen from '../Pages/Register';
+import {LoginForm} from '../Components/Login/LoginForm';
 import {
   ButtonForgotPassword,
   ButtonNoAccount,
   ButtonGuest,
 } from '../Components/Login/Buttons';
-import ResetPasswordScreen from '../Pages/ResetPassword';
-import BottomNavigation from '../Pages/BottomNavigation/BottomNavigation'
-
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {createStackNavigator} from '@react-navigation/stack';
 
 const Stack = createStackNavigator();
-const LoginPage = () => {
+const Login = () => {
+  //Navigation routes
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen
-          options={{ headerShown: false }}
-          name="Login"
-          component={LoginScreen}
-        />
-        <Stack.Screen
-          options={{ headerShown: false }}
-          name="RegisterScreen"
-          component={RegisterScreen}
-        />
-        <Stack.Screen
-          options={{ headerShown: false }}
-          name="ResetPassword"
-          component={ResetPasswordScreen}
-        />
-        <Stack.Screen
-          options={{ headerShown: false }}
-          name="BottomNavigation"
-          component={BottomNavigation}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Stack.Navigator initialRouteName="Login">
+      <Stack.Screen
+        options={{headerShown: false}}
+        name="Login"
+        component={LoginScreen}
+      />
+    </Stack.Navigator>
   );
 };
 
-function LoginScreen({ navigation }) {
+//Login screen
+function LoginScreen({navigation}) {
   return (
     <ScrollView style={styles.background}>
       <View style={styles.bg2}>
         <Image
-          source={require('../Images/LogoStartDoing.png')}
+          source={require('../Images/gifLogo.gif')}
           style={styles.logo}></Image>
         <Text style={styles.logoName}>StartDoing</Text>
 
@@ -94,4 +74,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginPage;
+export default Login;

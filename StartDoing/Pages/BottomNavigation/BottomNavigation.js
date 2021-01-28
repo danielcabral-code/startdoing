@@ -1,113 +1,156 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 
-import { StyleSheet, Text } from 'react-native';
+import {StyleSheet, Text, BackHandler} from 'react-native';
 
-import { createStackNavigator } from '@react-navigation/stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {createStackNavigator} from '@react-navigation/stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import jwt_decode from "jwt-decode";
+import jwt_decode from 'jwt-decode';
 import HomeNoPlans from './HomeNoPlans';
 import HomeWithPlans from './HomeWithPlans';
-import Plans from './Plans';
+import PlansNoPlans from './PlansNoPlans';
+import PlansWithPlans from './PlansWithPlans';
 import Settings from './Settings';
 
 const Stack = createStackNavigator();
 const BottomNavigation = () => {
-
-
   return (
     <>
-
       <Stack.Navigator initialRouteName="BottomNavigation">
         <Stack.Screen
-          options={{ headerShown: false }}
+          options={{headerShown: false}}
           name="BottomNavigation"
           component={BottomNav}
         />
       </Stack.Navigator>
-
     </>
   );
 };
 
-function BottomNav({ navigation }) {
+function BottomNav({navigation}) {
   const Tab = createBottomTabNavigator();
 
+  //home screen
   function HomeScreen() {
+    //state variables
     const [token, setToken] = useState('');
     const [id, setId] = useState('');
     const [plansExist, setPlansExist] = useState(false);
-    let decoded = ''
 
+    //deactivate android back button
+    useEffect(() => {
+      const backAction = () => {
+        return true;
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        backAction,
+      );
+
+      return () => backHandler.remove();
+    }, []);
+
+    //variable that will receive token decoded
+    let decoded = '';
 
     const getToken = async () => {
-
       try {
-
-        setToken(await AsyncStorage.getItem('@token'))
+        //get token from storage
+        setToken(await AsyncStorage.getItem('@token'));
         if (token !== null) {
+          //decode token and set id
+          decoded = jwt_decode(token);
+          setId(decoded.data.id);
+        }
 
+        //get user plans from user id
+        fetch(`https://startdoing.herokuapp.com/user_plans/${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.length == 0) {
+              setPlansExist(false);
+            } else setPlansExist(true);
+          })
+
+          .catch((error) => console.log('error', error));
+      } catch (e) {}
+    };
+
+    useEffect(() => {
+      getToken();
+    });
+
+    //check if plans exist and return the appropriate home screen
+    if (plansExist === true) {
+      return <HomeWithPlans />;
+    } else return <HomeNoPlans />;
+  }
+
+  function PlansScreen() {
+    const [token, setToken] = useState('');
+    const [id, setId] = useState('');
+    const [plansExist, setPlansExist] = useState(false);
+
+    let decoded = '';
+
+    const getToken = async () => {
+      try {
+        setToken(await AsyncStorage.getItem('@token'));
+        if (token !== null) {
           decoded = jwt_decode(token);
 
-          setId(decoded.data.id)
-  
+          setId(decoded.data.id);
         }
 
         fetch(`https://startdoing.herokuapp.com/user_plans/${id}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            Authorization:
-              `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
-
         })
           .then((response) => response.json())
           .then((result) => {
-            console.log(result.length)
-            if (result.length == 0) {
-              setPlansExist(false)
+            if (result.length === 0) {
+              setPlansExist(false);
+            } else {
+              setPlansExist(true);
             }
-            else setPlansExist(true)
-
           })
 
           .catch((error) => console.log('error', error));
-
-
-      } catch (e) {
-
-      }
-
-    }
+      } catch (e) {}
+    };
 
     useEffect(() => {
-      getToken()
+      getToken();
+    });
 
-    })
-
+    //check if plans exist and return the appropriate customize plans screen
     if (plansExist === true) {
-      return <HomeWithPlans />;
-    }
-    else return <HomeNoPlans />;
-  
+      return <PlansWithPlans />;
+    } else return <PlansNoPlans />;
   }
 
-  function PlansScreen() {
-  
-    return <Plans />;
-  }
-
+  //settings screen
   function SettingsScreen() {
     return <Settings />;
   }
   return (
     <>
+      {/* TabBotom navigation */}
       <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
+        screenOptions={({route}) => ({
+          tabBarIcon: ({focused, color, size}) => {
             let iconName;
             let iconNameHome;
 
@@ -119,7 +162,6 @@ function BottomNav({ navigation }) {
               iconName = focused ? 'settings' : 'settings';
             }
 
-            // You can return any component that you like here!
             return (
               <>
                 <Text>
@@ -133,6 +175,7 @@ function BottomNav({ navigation }) {
         tabBarOptions={{
           activeTintColor: '#F27A29',
           inactiveTintColor: '#F27A2940',
+          labelPosition: 'below-icon',
           labelStyle: {
             fontFamily: 'OpenSans-SemiBold',
             fontSize: 10,
@@ -144,7 +187,8 @@ function BottomNav({ navigation }) {
             paddingTop: 0,
             paddingBottom: 10,
             borderTopWidth: 0,
-            elevation: 20,
+            elevation: 0,
+            position: 'absolute',
           },
         }}>
         <Tab.Screen name="HOME" component={HomeScreen} />

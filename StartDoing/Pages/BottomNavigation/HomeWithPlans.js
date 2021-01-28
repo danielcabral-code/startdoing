@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   StyleSheet,
@@ -7,100 +7,88 @@ import {
   Text,
   Image,
   TouchableHighlight,
-  TouchableWithoutFeedback,
 } from 'react-native';
 
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import jwt_decode from "jwt-decode";
+import jwt_decode from 'jwt-decode';
+import {useNavigation} from '@react-navigation/native';
 
-const Home = () => {
+const Home = ({navigate}) => {
+  //navigation variable
+  const navigation = useNavigation();
 
+  //state variables
   const [token, setToken] = useState('');
-  const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [birth, setBirth] = useState('');
   const [id, setId] = useState('');
-  const [photoUrl, setPhotoUrl] = useState('https://firebasestorage.googleapis.com/v0/b/startdoing-bd1bc.appspot.com/o/person.jpg?alt=media&token=d201079f-9035-4f11-9421-58d1e9293359')
-  const [planOne, setPlanOne] = useState('');
-  const [planTwo, setPlanTwo] = useState('');
-  const [stylePlanTwoNonExistent, setStylePlanTwoNonExistent] = useState(true)
-  const [stylePlanTwoExistent, setStylePlanTwoExistent] = useState(false)
+  const [photoUrl, setPhotoUrl] = useState();
+  const [planOneName, setPlanOneName] = useState('');
+  const [planTwoName, setPlanTwoName] = useState('');
+  const [stylePlanTwoNonExistent, setStylePlanTwoNonExistent] = useState(true);
+  const [stylePlanTwoExistent, setStylePlanTwoExistent] = useState(false);
+  const [idPlanOne, setIdPlanOne] = useState('');
+  const [idPlanTwo, setIdPlanTwo] = useState('');
 
-  let decoded = ''
-
+  //variable that will receive token decoded
+  let decoded = '';
 
   const getToken = async () => {
-
+    let save = [];
     try {
-
-      setToken(await AsyncStorage.getItem('@token'))
+      //get token from storage
+      setToken(await AsyncStorage.getItem('@token'));
       if (token !== null) {
-
+        //decode token and set variables
         decoded = jwt_decode(token);
-        console.log(decoded);
 
-        setEmail(decoded.data.email)
-        setName(decoded.data.name)
-        setId(decoded.data.id)
-        setBirth(decoded.data.birth)
-        setPhotoUrl(decoded.data.photoUrl)
-        console.log(email, name, id, birth,photoUrl);
-
+        setName(decoded.data.name);
+        setId(decoded.data.id);
+        setBirth(decoded.data.birth);
+        setPhotoUrl(decoded.data.photoUrl);
       }
 
+      //API request user plans by user id
       fetch(`https://startdoing.herokuapp.com/user_plans/${id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization:
-            `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
-
       })
         .then((response) => response.json())
         .then((result) => {
-          console.log(result.length)
-          console.log(result[0].plan_name)
-          
-        
-           
-    
-          if (result.length == 2) {
-            setStylePlanTwoNonExistent(false)
-            setStylePlanTwoExistent(true)
-            setPlanOne(result[0].plan_name)
-            setPlanTwo(result[1].plan_name)
-
-          }
-          else {
-            setStylePlanTwoNonExistent(true)
-            setStylePlanTwoExistent(false)
-            setPlanOne(result[0].plan_name)
-         
+          save = result;
+          try {
+            //save request result and store in phone that will be read in customize tab
+            const jsonValue = JSON.stringify(save);
+            AsyncStorage.setItem('@plans', jsonValue);
+          } catch (e) {
+            console.log(e);
           }
 
+          //check the number of plans existent and set variables
+          if (result.length >= 2) {
+            setStylePlanTwoNonExistent(false);
+            setStylePlanTwoExistent(true);
+            setPlanOneName(result[0].plan_name);
+            setIdPlanOne(result[0]._id);
+            setPlanTwoName(result[1].plan_name);
+            setIdPlanTwo(result[1]._id);
+          } else {
+            setStylePlanTwoNonExistent(true);
+            setStylePlanTwoExistent(false);
+            setPlanOneName(result[0].plan_name);
+            setIdPlanOne(result[0]._id);
+          }
         })
-
-
-
-
         .catch((error) => console.log('error', error));
-
-
-    } catch (e) {
-
-    }
-
-  }
+    } catch (e) {}
+  };
 
   useEffect(() => {
-    getToken()
-
-  })
-  function onPressButton() {
-    alert('You Pressed Me!');
-  }
+    getToken();
+  });
 
   return (
     <>
@@ -110,17 +98,22 @@ const Home = () => {
             <View style={styles.profileImageBackground2}>
               <Image
                 style={styles.profileImage}
-                source={{uri:photoUrl}}></Image>
+                source={{uri: photoUrl}}></Image>
             </View>
           </View>
 
-          <Text style={styles.userName}>HI, {name} { }!</Text>
+          <Text style={styles.userName}>HI, {name}!</Text>
 
           <TouchableHighlight
             style={styles.planBtn}
-            onPress={onPressButton}
+            onPress={() =>
+              navigation.navigate('UserPlan', {
+                screen: 'UserPlan',
+                params: {id: idPlanOne, token: token, planName: planOneName},
+              })
+            }
             underlayColor="#F27A2999">
-            <Text style={styles.planText}>{planOne}</Text>
+            <Text style={styles.planText}>{planOneName}</Text>
           </TouchableHighlight>
 
           {stylePlanTwoNonExistent ? (
@@ -134,16 +127,25 @@ const Home = () => {
           {stylePlanTwoExistent ? (
             <TouchableHighlight
               style={styles.planBtn}
-              onPress={onPressButton}
+              onPress={() =>
+                navigation.navigate('UserPlan', {
+                  screen: 'UserPlan',
+                  params: {id: idPlanTwo, token: token, planName: planTwoName},
+                })
+              }
               underlayColor="#F27A2999">
-              <Text style={styles.planText}>{planTwo}</Text>
+              <Text style={styles.planText}>{planTwoName}</Text>
             </TouchableHighlight>
           ) : null}
 
-
           <TouchableHighlight
             style={styles.suggestedBtn}
-            onPress={onPressButton}
+            onPress={() =>
+              navigation.navigate('SuggestedPlanScreen', {
+                screen: 'SuggestedPlanScreen',
+                params: {birth: birth, token: token},
+              })
+            }
             underlayColor="#006DA899">
             <Text style={styles.suggestedText}>SUGGESTED TRAINING</Text>
           </TouchableHighlight>
@@ -162,6 +164,7 @@ const styles = StyleSheet.create({
   bg2: {
     width: '100%',
     alignItems: 'center',
+    paddingBottom: 72,
   },
   profileImageBackground1: {
     width: 84,
@@ -212,7 +215,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     color: 'white',
     fontFamily: 'OpenSans-Bold',
-    fontSize: 18,
+    fontSize: 20,
     textShadowRadius: 6,
   },
   suggestedBtn: {
@@ -251,7 +254,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     color: '#FFFFFF40',
     fontFamily: 'OpenSans-Bold',
-    fontSize: 14,
+    fontSize: 20,
   },
 });
 

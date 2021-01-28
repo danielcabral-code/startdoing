@@ -14,7 +14,6 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {useNavigation} from '@react-navigation/native';
 import 'react-native-gesture-handler';
 import {} from '../Components/Login/LoginForm';
-
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Moment from 'moment';
 
@@ -37,6 +36,7 @@ const Register = () => {
 };
 
 function RegisterScreen({navigation}) {
+  //state variables
   const [email, setEmail] = React.useState('');
   const [name, setName] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -45,19 +45,21 @@ function RegisterScreen({navigation}) {
   const [emailErrorShow, setEmailErrorShow] = useState(false);
   const [invalidEmailErrorShow, setInvalidEmailErrorShow] = useState(false);
   const [passwordErrorShow, setPasswordErrorShow] = useState(false);
-  const [confirmPasswordErrorShow, setConfirmpasswordErrorShow] = useState(
-    false,
-  );
+  const [confirmPasswordErrorShow, setConfirmpasswordErrorShow] = useState(false);
   const [emailInUse, setEmailInUse] = useState(false);
+  const [passwordLengthError, setPasswordLengthError] = useState(false);
 
+  //function to validade email
   validateEmail = (email) => {
     let regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return regex.test(email);
   };
 
+  //check if inputs are empty and show error messages
   function checkRegisterInputs() {
     let code = 0;
 
+    //check if name is empty
     if (!name || name.trim() === '') {
       setNameErrorShow(true);
       return;
@@ -65,6 +67,7 @@ function RegisterScreen({navigation}) {
       setNameErrorShow(false);
     }
 
+    //check if email is empty
     if (!email || email.trim() === '') {
       setEmailErrorShow(true);
       return;
@@ -72,6 +75,7 @@ function RegisterScreen({navigation}) {
       setEmailErrorShow(false);
     }
 
+    //validate email
     if (!validateEmail(email)) {
       setInvalidEmailErrorShow(true);
       return;
@@ -79,13 +83,19 @@ function RegisterScreen({navigation}) {
       setInvalidEmailErrorShow(false);
     }
 
+    //check if password is empty and check lenght
     if (!password || password.trim() === '') {
       setPasswordErrorShow(true);
       return;
+    } else if (password.length < 6) {
+      setPasswordLengthError(true);
+      return;
     } else {
+      setPasswordLengthError(false);
       setPasswordErrorShow(false);
     }
 
+    //check if repeat password is not empty
     if (!repeatPassword || repeatPassword.trim() === '') {
       setConfirmpasswordErrorShow(true);
       return;
@@ -93,11 +103,13 @@ function RegisterScreen({navigation}) {
       setConfirmpasswordErrorShow(false);
     }
 
+    //check if password match
     if (password !== repeatPassword) {
       setConfirmpasswordErrorShow(true);
       return;
     }
 
+    //API request to check if email is already in use
     fetch('https://startdoing.herokuapp.com/users', {
       method: 'POST',
       headers: {
@@ -128,9 +140,10 @@ function RegisterScreen({navigation}) {
     <ScrollView style={styles.background}>
       <View style={styles.bg2}>
         <Image
-          source={require('../Images/LogoStartDoing.png')}
+          source={require('../Images/gifLogo.gif')}
           style={styles.logo}></Image>
         <Text style={styles.logoName}>StartDoing</Text>
+
         <View style={styles.inputView}>
           <Text style={styles.inputText}>NAME</Text>
           <TextInput
@@ -142,6 +155,7 @@ function RegisterScreen({navigation}) {
             <Text style={styles.textError}>Please Enter Your Name.</Text>
           ) : null}
         </View>
+
         <View style={styles.inputView}>
           <Text style={styles.inputText}>EMAIL</Text>
           <TextInput
@@ -160,6 +174,7 @@ function RegisterScreen({navigation}) {
             <Text style={styles.textError}>Email Already in Use.</Text>
           ) : null}
         </View>
+
         <View style={styles.inputView}>
           <Text style={styles.inputText}>PASSWORD</Text>
           <TextInput
@@ -171,7 +186,13 @@ function RegisterScreen({navigation}) {
           {passwordErrorShow ? (
             <Text style={styles.textError}>Please Enter a Password.</Text>
           ) : null}
+          {passwordLengthError ? (
+            <Text style={styles.textError}>
+              Password Must Have at Least 6 Characters.
+            </Text>
+          ) : null}
         </View>
+
         <View style={styles.inputView}>
           <Text style={styles.inputText}>REPEAT PASSWORD</Text>
           <TextInput
@@ -184,6 +205,7 @@ function RegisterScreen({navigation}) {
             <Text style={styles.textError}>Passwords Must Match.</Text>
           ) : null}
         </View>
+
         <TouchableHighlight
           style={styles.nextBtn}
           onPress={checkRegisterInputs}
@@ -196,35 +218,34 @@ function RegisterScreen({navigation}) {
 }
 
 function MoreInfo({route}) {
+  //navigation variable
   const navigation = useNavigation();
 
+  //state variables
   const [height, setHeight] = useState('');
   const [birth, setBirth] = useState('');
   const [weight, setWeight] = useState('');
   const [showDate, setShowDate] = useState('');
-
   const [birthErrorShow, setBirthErrorShow] = useState(false);
   const [heightErrorShow, setHeigthErrorShow] = useState(false);
   const [weightErrorShow, setWeightErrorShow] = useState(false);
-  const [onlyNumbersHeightErrorShow, setOnlyNumbersHeightErrorShow] = useState(
-    false,
-  );
-  const [onlyNumbersWeightErrorShow, setOnlyNumbersWeightErrorShow] = useState(
-    false,
-  );
-
+  const [onlyNumbersHeightErrorShow, setOnlyNumbersHeightErrorShow] = useState(false);
+  const [onlyNumbersWeightErrorShow, setOnlyNumbersWeightErrorShow] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
+  //validate height values
   function validateHeight(height) {
     let numreg = /^[0-9]+$/;
     return numreg.test(height);
   }
 
+  //validate weight values
   function validateWeight(weight) {
     let numreg = /^[0-9]+$/;
     return numreg.test(weight);
   }
 
+  //check if inputs are empty
   const checkMoreInfoInputs = () => {
     if (!birth) {
       setBirthErrorShow(true);
@@ -262,21 +283,26 @@ function MoreInfo({route}) {
     }
   };
 
+  //show date picker
   const showDatePicker = () => {
     setDatePickerVisibility(true);
   };
 
+  //hide date picker
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
   };
 
+  //select date and format it
   const handleConfirm = (date) => {
     setBirth(date);
     setShowDate(Moment(date).format('DD/MM/YYYY'));
     hideDatePicker();
   };
 
+  //create user function
   async function createUser() {
+    //API request do create new user
     try {
       await fetch('https://startdoing.herokuapp.com/register', {
         method: 'POST',
@@ -284,7 +310,7 @@ function MoreInfo({route}) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: route.params.name,
+          name: route.params.name.toUpperCase(),
           email: route.params.email,
           password: route.params.password,
           height: height,
@@ -306,7 +332,6 @@ function MoreInfo({route}) {
     <>
       <ScrollView style={styles.background}>
         <View style={styles.bg2}>
-
           <Text style={styles.indicateValue}>INDICATE YOUR DATE OF BIRTH</Text>
           <TouchableHighlight
             style={styles.selectBtn}
@@ -318,6 +343,7 @@ function MoreInfo({route}) {
           <DateTimePickerModal
             isVisible={isDatePickerVisible}
             mode="date"
+            maximumDate={new Date()}
             onConfirm={handleConfirm}
             onCancel={hideDatePicker}
           />
@@ -364,7 +390,6 @@ function MoreInfo({route}) {
             underlayColor="#F27A2999">
             <Text style={styles.createText}>CREATE ACCOUNT</Text>
           </TouchableHighlight>
-          
         </View>
       </ScrollView>
     </>

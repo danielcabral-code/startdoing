@@ -7,7 +7,7 @@ import {
   ScrollView,
   Text,
   TouchableHighlight,
-  Image
+  Image,
 } from 'react-native';
 
 import {createStackNavigator} from '@react-navigation/stack';
@@ -27,6 +27,7 @@ const ResetPassword = () => {
 };
 
 function ResetPasswordScreen({navigation}) {
+  //state variables
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
@@ -34,18 +35,20 @@ function ResetPasswordScreen({navigation}) {
   const [invalidEmailErrorShow, setInvalidEmailErrorShow] = useState(false);
   const [unknownEmail, setUnknownEmail] = useState(false);
   const [passwordErrorShow, setPasswordErrorShow] = useState(false);
-  const [confirmPasswordErrorShow, setConfirmpasswordErrorShow] = useState(
-    false,
-  );
+  const [confirmPasswordErrorShow, setConfirmpasswordErrorShow] = useState(false);
+  const [passwordLengthError, setPasswordLengthError] = useState(false);
 
+  //function to validate email
   validateEmail = (email) => {
     let regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return regex.test(email);
   };
 
+  //check if inputs are empty
   function checkRegisterInputs() {
     let code = 0;
 
+    //check if email is empty
     if (!email || email.trim() === '') {
       setEmailErrorShow(true);
       return;
@@ -53,6 +56,7 @@ function ResetPasswordScreen({navigation}) {
       setEmailErrorShow(false);
     }
 
+    //validate email value
     if (!validateEmail(email)) {
       setInvalidEmailErrorShow(true);
       return;
@@ -60,13 +64,19 @@ function ResetPasswordScreen({navigation}) {
       setInvalidEmailErrorShow(false);
     }
 
+    //check if password is empty
     if (!password || password.trim() === '') {
       setPasswordErrorShow(true);
       return;
+    } else if (password.length < 6) {
+      setPasswordLengthError(true);
+      return;
     } else {
+      setPasswordLengthError(false);
       setPasswordErrorShow(false);
     }
 
+    //check if repeat password is empty
     if (!repeatPassword || repeatPassword.trim() === '') {
       setConfirmpasswordErrorShow(true);
       return;
@@ -74,11 +84,13 @@ function ResetPasswordScreen({navigation}) {
       setConfirmpasswordErrorShow(false);
     }
 
+    //check if password match
     if (password !== repeatPassword) {
       setConfirmpasswordErrorShow(true);
       return;
     }
 
+    //API request to change password
     fetch('https://startdoing.herokuapp.com/users', {
       method: 'POST',
       headers: {
@@ -91,13 +103,12 @@ function ResetPasswordScreen({navigation}) {
       .then((response) => {
         code = JSON.stringify(response.status);
 
+        //check if email exist
         if (code == 406) {
-          fetch(`https://startdoing.herokuapp.com/${email}`, {
+          fetch(`https://startdoing.herokuapp.com/recoverpassword/${email}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
-              Authorization:
-                'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImVtYWlsIjoidGVzdGluZ0BlbWFpbC5jb20iLCJpZCI6IjVmZGQzYzZkOGE2YWNlMjg2MDE0MGUwYSIsIm5hbWUiOiJ0ZXN0aW5nIn0sImlhdCI6MTYwODU2MTUxMiwiZXhwIjoxNjE1NzYxNTEyfQ.6LFbFI4QXw7jZfy4INAloW_CAXijqZ2nKdhClUlpM9M',
             },
             body: JSON.stringify({
               password: password,
@@ -120,7 +131,7 @@ function ResetPasswordScreen({navigation}) {
     <ScrollView style={styles.background}>
       <View style={styles.bg2}>
         <Image
-          source={require('../Images/LogoStartDoing.png')}
+          source={require('../Images/gifLogo.gif')}
           style={styles.logo}></Image>
         <Text style={styles.logoName}>StartDoing</Text>
 
@@ -153,6 +164,11 @@ function ResetPasswordScreen({navigation}) {
           />
           {passwordErrorShow ? (
             <Text style={styles.textError}>Please Enter a Password.</Text>
+          ) : null}
+          {passwordLengthError ? (
+            <Text style={styles.textError}>
+              Password Must Have at Least 6 Characters.
+            </Text>
           ) : null}
         </View>
 
