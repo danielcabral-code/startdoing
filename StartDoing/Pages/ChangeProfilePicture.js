@@ -41,6 +41,7 @@ function ChangeProfilePicturePage({route}) {
   const [photoUrl, setPhotoUrl] = useState();
   const [id, setId] = useState('');
   const [uploadSuccessMessage, setUploadSucessMessage] = useState(false);
+  const [backButtonEnabler, setBackButtonEnabler] = useState(false);
   const [saveBtnEnabler, setSaveBtnEnabler] = useState(true);
   const [showSaveBtn, setShowSaveBtn] = useState(true);
 
@@ -127,7 +128,8 @@ function ChangeProfilePicturePage({route}) {
     //show upload success message and navigate to settings in 3 seconds
     setUploadSucessMessage(true);
     setShowSaveBtn(false);
-    setInterval(() => {
+    setBackButtonEnabler(true)
+    setTimeout(() => {
       navigation.navigate('SETTINGS');
     }, 3000);
   };
@@ -142,6 +144,7 @@ function ChangeProfilePicturePage({route}) {
         <View style={styles.topBarInfoView}>
           <MaterialIcons
             onPress={() => navigation.goBack()}
+            disabled={backButtonEnabler}
             name="keyboard-arrow-left"
             style={styles.arrowLeft}
           />

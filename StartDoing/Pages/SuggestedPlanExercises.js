@@ -58,7 +58,7 @@ function SuggestedExercisesScreen({route}) {
       setIndex(activeIndex);
       setExerciseNumber(activeExerciseNumber);
       setShowGoButton(true);
-      setShowNextButton(true);
+      setShowNextButton(false);
     }
   }
 
