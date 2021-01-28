@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 
 import {
   TextInput,
@@ -7,7 +7,6 @@ import {
   View,
   Text,
   TouchableHighlight,
-  Image,
 } from 'react-native';
 
 import {createStackNavigator} from '@react-navigation/stack';
@@ -39,7 +38,7 @@ function ChangePasswordPage({route}) {
   const [invalidEmailErrorShow, setInvalidEmailErrorShow] = useState(false);
   const [unknownEmail, setUnknownEmail] = useState(false);
   const [passwordErrorShow, setPasswordErrorShow] = useState(false);
-  const [confirmPasswordErrorShow, setConfirmpasswordErrorShow] = useState(false);
+  const [confirmPasswordErrorShow, setConfirmpasswordErrorShow] = useState(false)
   const [passwordLengthError, setPasswordLengthError] = useState(false);
 
   //receive param
@@ -53,12 +52,10 @@ function ChangePasswordPage({route}) {
       setPasswordErrorShow(true);
       return;
     } else if (password.length < 6) {
-
-      setPasswordLengthError(true)
-      return
-    }
-    else {
-      setPasswordLengthError(false)
+      setPasswordLengthError(true);
+      return;
+    } else {
+      setPasswordLengthError(false);
       setPasswordErrorShow(false);
     }
 
@@ -115,9 +112,11 @@ function ChangePasswordPage({route}) {
     <>
       <View style={styles.topSectionView}>
         <View style={styles.topBarInfoView}>
-          <MaterialIcons name="keyboard-arrow-left"
-           onPress={() => navigation.goBack()} 
-          style={styles.arrowLeft} />
+          <MaterialIcons
+            name="keyboard-arrow-left"
+            onPress={() => navigation.goBack()}
+            style={styles.arrowLeft}
+          />
           <Text style={styles.planNameText}>CHANGE PASSWORD</Text>
         </View>
       </View>

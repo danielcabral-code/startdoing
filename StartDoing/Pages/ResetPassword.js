@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 
 import {
   TextInput,
@@ -9,7 +9,8 @@ import {
   TouchableHighlight,
   Image,
 } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
+
+import {createStackNavigator} from '@react-navigation/stack';
 import 'react-native-gesture-handler';
 
 const Stack = createStackNavigator();
@@ -17,7 +18,7 @@ const ResetPassword = () => {
   return (
     <Stack.Navigator initialRouteName="ResetPassword">
       <Stack.Screen
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
         name="ResetPassword"
         component={ResetPasswordScreen}
       />
@@ -25,7 +26,7 @@ const ResetPassword = () => {
   );
 };
 
-function ResetPasswordScreen({ navigation }) {
+function ResetPasswordScreen({navigation}) {
   //state variables
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component } from 'react';
+import React, {useState, useEffect, Component} from 'react';
 
 import {
   StyleSheet,
@@ -7,18 +7,19 @@ import {
   Text,
   TouchableHighlight,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+
+import {useNavigation} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { MaskImageView } from 'react-native-mask-image';
-import { createStyles, minWidth, maxWidth } from 'react-native-media-queries';
+import {MaskImageView} from 'react-native-mask-image';
+import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
 
 const Stack = createStackNavigator();
 const SuggestedPlanExercises = () => {
   return (
     <Stack.Navigator initialRouteName="SuggestedExercisesScreen">
       <Stack.Screen
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
         name="SuggestedExercisesScreen"
         component={SuggestedExercisesScreen}
       />
@@ -26,7 +27,7 @@ const SuggestedPlanExercises = () => {
   );
 };
 
-function SuggestedExercisesScreen({ route }) {
+function SuggestedExercisesScreen({route}) {
   //navigation variable
   const navigation = useNavigation();
 
@@ -69,7 +70,7 @@ function SuggestedExercisesScreen({ route }) {
     setDisableNextButton(true);
   }
 
-  //countdown exercise duration 
+  //countdown exercise duration
   useEffect(() => {
     if (seconds > 0) {
       setTimeout(() => setSeconds(seconds - 1), 1000);
@@ -108,6 +109,7 @@ function SuggestedExercisesScreen({ route }) {
               {exercisesList[index].exerciseName}
             </Text>
           </View>
+              
           <Text style={styles.durationText}>
             {'DURATION: ' + exercisesList[index].duration + ' ' + 'SECONDS'}
           </Text>

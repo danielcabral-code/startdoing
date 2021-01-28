@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 
 import {
   TextInput,
@@ -10,10 +10,10 @@ import {
   Image,
 } from 'react-native';
 
-import { createStackNavigator } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {useNavigation} from '@react-navigation/native';
 import 'react-native-gesture-handler';
-import { } from '../Components/Login/LoginForm';
+import {} from '../Components/Login/LoginForm';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Moment from 'moment';
 
@@ -22,12 +22,12 @@ const Register = () => {
   return (
     <Stack.Navigator initialRouteName="RegisterScreen">
       <Stack.Screen
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
         name="RegisterScreen"
         component={RegisterScreen}
       />
       <Stack.Screen
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
         name="MoreInfo"
         component={MoreInfo}
       />
@@ -35,8 +35,7 @@ const Register = () => {
   );
 };
 
-function RegisterScreen({ navigation }) {
-
+function RegisterScreen({navigation}) {
   //state variables
   const [email, setEmail] = React.useState('');
   const [name, setName] = React.useState('');
@@ -96,7 +95,7 @@ function RegisterScreen({ navigation }) {
       setPasswordErrorShow(false);
     }
 
-    //check if repeat password is not empty 
+    //check if repeat password is not empty
     if (!repeatPassword || repeatPassword.trim() === '') {
       setConfirmpasswordErrorShow(true);
       return;
@@ -144,6 +143,7 @@ function RegisterScreen({ navigation }) {
           source={require('../Images/gifLogo.gif')}
           style={styles.logo}></Image>
         <Text style={styles.logoName}>StartDoing</Text>
+
         <View style={styles.inputView}>
           <Text style={styles.inputText}>NAME</Text>
           <TextInput
@@ -155,6 +155,7 @@ function RegisterScreen({ navigation }) {
             <Text style={styles.textError}>Please Enter Your Name.</Text>
           ) : null}
         </View>
+
         <View style={styles.inputView}>
           <Text style={styles.inputText}>EMAIL</Text>
           <TextInput
@@ -173,6 +174,7 @@ function RegisterScreen({ navigation }) {
             <Text style={styles.textError}>Email Already in Use.</Text>
           ) : null}
         </View>
+
         <View style={styles.inputView}>
           <Text style={styles.inputText}>PASSWORD</Text>
           <TextInput
@@ -190,6 +192,7 @@ function RegisterScreen({ navigation }) {
             </Text>
           ) : null}
         </View>
+
         <View style={styles.inputView}>
           <Text style={styles.inputText}>REPEAT PASSWORD</Text>
           <TextInput
@@ -202,6 +205,7 @@ function RegisterScreen({ navigation }) {
             <Text style={styles.textError}>Passwords Must Match.</Text>
           ) : null}
         </View>
+
         <TouchableHighlight
           style={styles.nextBtn}
           onPress={checkRegisterInputs}
@@ -213,7 +217,7 @@ function RegisterScreen({ navigation }) {
   );
 }
 
-function MoreInfo({ route }) {
+function MoreInfo({route}) {
   //navigation variable
   const navigation = useNavigation();
 

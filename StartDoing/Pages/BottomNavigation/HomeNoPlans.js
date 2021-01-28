@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
   bg2: {
     width: '100%',
     alignItems: 'center',
+    paddingBottom: 72,
   },
   profileImageBackground1: {
     width: 84,

@@ -1,27 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   StyleSheet,
   View,
-  ScrollView,
   Text,
-  Image,
   TouchableHighlight,
-  TouchableWithoutFeedback,
   FlatList,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+
+import {useNavigation} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { MaskImageView } from 'react-native-mask-image';
-import { createStyles, minWidth, maxWidth } from 'react-native-media-queries';
+import {MaskImageView} from 'react-native-mask-image';
+import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
 
 const Stack = createStackNavigator();
 const SuggestedPlanScreenGuest = () => {
   return (
     <Stack.Navigator initialRouteName="SuggestedPlanScreenGuest">
       <Stack.Screen
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
         name="SuggestedPlanScreenGuest"
         component={SuggestedPlanScreen}
       />
@@ -29,7 +27,7 @@ const SuggestedPlanScreenGuest = () => {
   );
 };
 
-function SuggestedPlanScreen({ route }) {
+function SuggestedPlanScreen({route}) {
   //navigation variable
   const navigation = useNavigation();
 
@@ -57,9 +55,7 @@ function SuggestedPlanScreen({ route }) {
       .then((response) => response.json())
       .then((result) => {
         result.map((data) => {
-
           data.exercises.map((exerc) => {
-
             //API request of suggested plan exercises
             fetch(
               `https://startdoing.herokuapp.com/exercises/${exerc.exercise_id}`,
@@ -72,25 +68,19 @@ function SuggestedPlanScreen({ route }) {
             )
               .then((response) => response.json())
               .then((result) => {
-
                 myData.push(result);
                 setMyExcerciseData(...myExcerciseData, myData);
               })
-
               .catch((error) => console.log('error', error));
           });
         });
       })
-
       .catch((error) => console.log('error', error));
   }
 
   useEffect(() => {
     calculateAge();
   }, []);
-
-  useEffect(() => {
-  }, [myExcerciseData]);
 
   return (
     <>
@@ -110,7 +100,7 @@ function SuggestedPlanScreen({ route }) {
         style={styles.background}
         keyExtractor={(item) => item.exerciseName}
         data={myExcerciseData}
-        renderItem={({ item }) => (
+        renderItem={({item}) => (
           <View style={stylesMediaQueries.maskView}>
             <MaskImageView
               urlImage={item.videoUrl}
@@ -133,7 +123,7 @@ function SuggestedPlanScreen({ route }) {
           onPress={() =>
             navigation.navigate('SuggestedExercisesScreenGuest', {
               screen: 'SuggestedExercisesScreenGuest',
-              params: { exercises: myExcerciseData },
+              params: {exercises: myExcerciseData},
             })
           }>
           <Text style={styles.startText}>START</Text>

@@ -5,7 +5,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import LoginScreen from '../StartDoing/Pages/Login';
-import RegisterScreen from '../StartDoing/Pages/Register'
+import RegisterScreen from '../StartDoing/Pages/Register';
 import ResetPasswordScreen from '../StartDoing/Pages/ResetPassword';
 import GuestHome from '../StartDoing/Pages/GuestHome';
 import BottomNavigation from '../StartDoing/Pages/BottomNavigation/BottomNavigation';

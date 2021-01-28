@@ -1,27 +1,25 @@
-import React, { useState, useEffect, Component } from 'react';
+import React, {useState, useEffect, Component} from 'react';
 
 import {
   StyleSheet,
   View,
-  ScrollView,
   Text,
-  Image,
   TouchableHighlight,
-  TouchableWithoutFeedback,
   FlatList,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+
+import {useNavigation} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { MaskImageView } from 'react-native-mask-image';
-import { createStyles, minWidth, maxWidth } from 'react-native-media-queries';
+import {MaskImageView} from 'react-native-mask-image';
+import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
 
 const Stack = createStackNavigator();
 const SuggestedPlan = () => {
   return (
     <Stack.Navigator initialRouteName="SuggestedPlanScreen">
       <Stack.Screen
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
         name="SuggestedPlanScreen"
         component={SuggestedPlanScreen}
       />
@@ -29,7 +27,7 @@ const SuggestedPlan = () => {
   );
 };
 
-function SuggestedPlanScreen({ route }) {
+function SuggestedPlanScreen({route}) {
   //navigation variable
   const navigation = useNavigation();
 
@@ -55,13 +53,10 @@ function SuggestedPlanScreen({ route }) {
     let ageParam = 0;
     if (age >= 0 && age <= 30) {
       ageParam = 30;
-
     } else if (age > 30 && age <= 40) {
       ageParam = 40;
-
     } else if (age > 40 && age <= 50) {
       ageParam = 50;
-
     } else ageParam = 60;
 
     //API to request plan suggested with the age parameter of user
@@ -77,9 +72,7 @@ function SuggestedPlanScreen({ route }) {
       .then((response) => response.json())
       .then((result) => {
         result.map((data) => {
-
           data.exercises.map((exerc) => {
-
             //API request of suggested plan exercises
             fetch(
               `https://startdoing.herokuapp.com/exercises/${exerc.exercise_id}`,
@@ -93,25 +86,19 @@ function SuggestedPlanScreen({ route }) {
             )
               .then((response) => response.json())
               .then((result) => {
-
                 myData.push(result);
                 setMyExcerciseData(...myExcerciseData, myData);
               })
-
               .catch((error) => console.log('error', error));
           });
         });
       })
-
       .catch((error) => console.log('error', error));
   }
 
   useEffect(() => {
     calculateAge();
   }, []);
-
-  useEffect(() => {
-  }, [myExcerciseData]);
 
   return (
     <>
@@ -131,7 +118,7 @@ function SuggestedPlanScreen({ route }) {
         style={styles.background}
         keyExtractor={(item) => item.exerciseName}
         data={myExcerciseData}
-        renderItem={({ item }) => (
+        renderItem={({item}) => (
           <View style={stylesMediaQueries.maskView}>
             <MaskImageView
               urlImage={item.videoUrl}
@@ -155,7 +142,7 @@ function SuggestedPlanScreen({ route }) {
             //navigate to screen to start exercises
             navigation.navigate('SuggestedExercisesScreen', {
               screen: 'SuggestedExercisesScreen',
-              params: { exercises: myExcerciseData, token: token },
+              params: {exercises: myExcerciseData, token: token},
             })
           }>
           <Text style={styles.startText}>START</Text>

@@ -24,7 +24,6 @@ export const LoginForm = () => {
 
   //function to login into App
   async function appLogin() {
-
     //check if email is not empty
     if (!email || email.trim() === '') {
       setEmailErrorShow(true);
@@ -56,7 +55,6 @@ export const LoginForm = () => {
         .then((response) => response.json())
         .then((result) => {
           try {
-
             //save token in phone storage
             AsyncStorage.setItem('@token', result.token);
 
@@ -71,13 +69,11 @@ export const LoginForm = () => {
     } catch (error) {
       setInvalidCredentials(true);
     }
-   
   }
 
   return (
     <>
       <View style={styles.inputView}>
-        
         <Text style={styles.inputText}>EMAIL</Text>
         <TextInput
           style={styles.inputLine}
@@ -85,7 +81,7 @@ export const LoginForm = () => {
           onChangeText={(text) => setEmail(text)}
           value={email}
         />
-          {/*if email is empty will show a error message */}
+        {/*if email is empty will show a error message */}
         {emailErrorShow ? (
           <Text style={styles.textError}>Please Enter Your Email.</Text>
         ) : null}
@@ -103,7 +99,7 @@ export const LoginForm = () => {
         {passwordErrorShow ? (
           <Text style={styles.textError}>Please Enter a Password.</Text>
         ) : null}
-          {/*if email and password doesn't match or not exist will show a error message */}
+        {/*if email and password doesn't match or not exist will show a error message */}
         {invalidCredentials ? (
           <Text style={styles.textError}>Wrong Email or Password.</Text>
         ) : null}

@@ -39,9 +39,7 @@ function BottomNav({navigation}) {
     const [id, setId] = useState('');
     const [plansExist, setPlansExist] = useState(false);
 
-    //variable that will receive token decoded
-    let decoded = '';
-
+    //deactivate android back button
     useEffect(() => {
       const backAction = () => {
         return true;
@@ -54,6 +52,9 @@ function BottomNav({navigation}) {
 
       return () => backHandler.remove();
     }, []);
+
+    //variable that will receive token decoded
+    let decoded = '';
 
     const getToken = async () => {
       try {

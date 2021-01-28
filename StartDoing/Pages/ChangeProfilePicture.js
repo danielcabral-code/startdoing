@@ -73,7 +73,7 @@ function ChangeProfilePicturePage({route}) {
   const openPicker = () => {
     ImagePicker.launchImageLibrary(options, (response) => {
       if (response.didCancel) {
-        console.log('User cancelled image picker');
+        console.log('Cancelled');
       } else if (response.error) {
         console.log('ImagePicker Error: ', response.error);
       } else if (response.customButton) {

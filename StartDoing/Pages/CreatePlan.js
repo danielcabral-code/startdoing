@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component } from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   StyleSheet,
@@ -12,11 +12,11 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {useNavigation} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { MaskImageView } from 'react-native-mask-image';
-import { createStyles, minWidth, maxWidth } from 'react-native-media-queries';
+import {MaskImageView} from 'react-native-mask-image';
+import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Modal from 'react-native-modal';
 import jwt_decode from 'jwt-decode';
@@ -26,7 +26,7 @@ const CreatePlans = () => {
   return (
     <Stack.Navigator initialRouteName="CreatePlan">
       <Stack.Screen
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
         name="CreatePlan"
         component={CreatePlan}
       />
@@ -57,6 +57,7 @@ function CreatePlan() {
   const [editPlanName, setEditPlanName] = useState('');
   const [id, setId] = useState('');
   const [planNameErrorShow, setPlanNameErrorShow] = useState(false);
+  const [invalidDurationErrorShow, setInvalidDurationErrorShow] = useState(false);
 
   //variables that are used to show exercises by category
   const chest = 'CHEST';
@@ -84,8 +85,7 @@ function CreatePlan() {
       setToken(await AsyncStorage.getItem('@token'));
       decoded = jwt_decode(token);
       setId(decoded.data.id);
-
-    } catch (e) { }
+    } catch (e) {}
   }
 
   //fucntion to request API exercises by category
@@ -103,7 +103,8 @@ function CreatePlan() {
         .then((response) => response.json())
         .then((result) => {
           myData = result;
-          setExercises(...exercises, myData)
+
+          setExercises(...exercises, myData);
           setModalGroupVisibility(!modalGroupVisibility);
         })
         .catch((error) => console.log('error', error));
@@ -114,8 +115,7 @@ function CreatePlan() {
     getToken();
   });
 
-  useEffect(() => {
-  }, [exercises]);
+  useEffect(() => {}, [exercises]);
 
   //function to select exercises and fill the array
   const selectExercise = (id, duration, exerciseName, videoUrl) => {
@@ -145,7 +145,6 @@ function CreatePlan() {
       ...planBeingCreatedFlatlist,
       exercisesArrFlatlist,
     ]);
-
   };
 
   useEffect(() => {
@@ -164,14 +163,12 @@ function CreatePlan() {
 
   //open edit duration modal
   function editDurationModal(id) {
-    console.log(id);
     setExerciseID(id);
     setModalChangeDurationVisibility(!modalChangeDurationVisibility);
   }
 
   //delete selected exercise from plan
   const deleteExercise = (exerc, exercName) => {
-
     let arrayToRemoveFlatList = [...planBeingCreatedFlatlist];
     let arrayToRemovePlan = [...planBeingCreatedExercises];
 
@@ -190,32 +187,44 @@ function CreatePlan() {
 
   //edit duration from exercise
   const editExerciseDuration = (exerc, value) => {
+    //check if duration is a valid number
+    function validateDuration(time) {
+      let numreg = /^[0-9]+$/;
+      return numreg.test(time);
+    }
 
-    let arrayToEditDuration = [...planBeingCreatedFlatlist];
-    let arrayToEditDurationPlan = [...planBeingCreatedExercises];
+    if (value <= 0) {
+      setInvalidDurationErrorShow(true);
+    } else if (!validateDuration(value)) {
+      setInvalidDurationErrorShow(true);
+    } else {
+      setInvalidDurationErrorShow(false);
 
-    const elementsIndex = planBeingCreatedFlatlist.findIndex(
-      (element) => element.exercise_name === exerc,
-    );
+      let arrayToEditDuration = [...planBeingCreatedFlatlist];
+      let arrayToEditDurationPlan = [...planBeingCreatedExercises];
 
-    arrayToEditDuration[elementsIndex] = {
-      ...arrayToEditDuration[elementsIndex],
-      exercise_duration: value,
-    };
+      const elementsIndex = planBeingCreatedFlatlist.findIndex(
+        (element) => element.exercise_name === exerc,
+      );
 
-    arrayToEditDurationPlan[elementsIndex] = {
-      ...arrayToEditDurationPlan[elementsIndex],
-      exercise_duration: value,
-    };
+      arrayToEditDuration[elementsIndex] = {
+        ...arrayToEditDuration[elementsIndex],
+        exercise_duration: value,
+      };
 
-    setPlanBeingCreatedFlatlist(arrayToEditDuration);
-    setPlanBeingCreatedExercises(arrayToEditDurationPlan);
-    setModalChangeDurationVisibility(false);
+      arrayToEditDurationPlan[elementsIndex] = {
+        ...arrayToEditDurationPlan[elementsIndex],
+        exercise_duration: value,
+      };
+
+      setPlanBeingCreatedFlatlist(arrayToEditDuration);
+      setPlanBeingCreatedExercises(arrayToEditDurationPlan);
+      setModalChangeDurationVisibility(false);
+    }
   };
 
   //function to save new plan
   function savePlanModal() {
-
     let planNameEdited = '';
 
     if (!editPlanName || editPlanName.trim() === '') {
@@ -254,9 +263,6 @@ function CreatePlan() {
   useEffect(() => {
     getToken();
   }, []);
-
-  useEffect(() => {
-  }, [exercises]);
 
   return (
     <>
@@ -371,7 +377,7 @@ function CreatePlan() {
           ]}
           keyExtractor={(item) => item.exercise_name}
           data={planBeingCreatedFlatlist}
-          renderItem={({ item, index }) => (
+          renderItem={({item, index}) => (
             <View style={stylesMediaQueries.maskView}>
               <MaskImageView
                 urlImage={planBeingCreatedFlatlist[index].exercise_videoUrl}
@@ -442,12 +448,11 @@ function CreatePlan() {
             style={styles.backgroundFlatlist}
             keyExtractor={(item) => item.exerciseName}
             data={exercises}
-            renderItem={({ item }) => (
+            renderItem={({item}) => (
               <TouchableOpacity
                 onPress={() => {
                   setModalGroupVisibility(false);
                   setExercises([]);
-
                   setExerciseDuration(item.duration);
                   selectExercise(
                     item._id,
@@ -512,6 +517,11 @@ function CreatePlan() {
             keyboardType="numeric"
             value={editDuration}
           />
+          {invalidDurationErrorShow ? (
+            <Text style={styles.modalTextErrorDuration}>
+              Exercise Duration is too Short.
+            </Text>
+          ) : null}
 
           <View style={styles.modalButtonsView}>
             <TouchableWithoutFeedback
@@ -960,6 +970,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: 'red',
     marginTop: 10,
+  },
+  modalTextErrorDuration: {
+    color: 'red',
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 12,
+    marginTop: 4,
+    marginBottom: -16,
+    alignSelf: 'center',
   },
 });
 

@@ -1,25 +1,22 @@
-import React, { useState, useEffect, Component } from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   StyleSheet,
   View,
-  ScrollView,
   Text,
-  Image,
   TouchableHighlight,
   TouchableWithoutFeedback,
   FlatList,
   TextInput,
 } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {useNavigation} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { MaskImageView } from 'react-native-mask-image';
-import { createStyles, minWidth, maxWidth } from 'react-native-media-queries';
+import {MaskImageView} from 'react-native-mask-image';
+import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Modal from 'react-native-modal';
-import jwt_decode from 'jwt-decode';
 
 const Stack = createStackNavigator();
 
@@ -27,7 +24,7 @@ const CustomizeUserPlan = () => {
   return (
     <Stack.Navigator initialRouteName="CustomizeUserPlanScreen">
       <Stack.Screen
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
         name="CustomizeUserPlanScreen"
         component={CustomizeUserPlanScreen}
       />
@@ -35,7 +32,7 @@ const CustomizeUserPlan = () => {
   );
 };
 
-function CustomizeUserPlanScreen({ route }) {
+function CustomizeUserPlanScreen({route}) {
   //navigation variable
   const navigation = useNavigation();
 
@@ -104,7 +101,7 @@ function CustomizeUserPlanScreen({ route }) {
 
           .catch((error) => console.log('error', error));
       }
-    } catch (e) { }
+    } catch (e) {}
   };
 
   //show remove exercise modal
@@ -144,7 +141,6 @@ function CustomizeUserPlanScreen({ route }) {
 
   //function to delete exercise from user plan
   const deleteExercise = (exerc) => {
-
     //check exercises length, if exist only one, user can't remove
     if (exerciseDuration.length <= 1) {
       setRemoveExerciseErrorShow(true);
@@ -171,7 +167,6 @@ function CustomizeUserPlanScreen({ route }) {
 
   //function to edit user plan exercises duration
   const editExerciseDuration = (exerc, value) => {
-
     //check if duration is a valid number
     function validateDuration(time) {
       let numreg = /^[0-9]+$/;
@@ -180,10 +175,8 @@ function CustomizeUserPlanScreen({ route }) {
 
     if (value <= 0) {
       setInvalidDurationErrorShow(true);
-
     } else if (!validateDuration(value)) {
       setInvalidDurationErrorShow(true);
-
     } else {
       setInvalidDurationErrorShow(false);
       let arrayToEditDuration = [...exerciseDuration];
@@ -192,7 +185,10 @@ function CustomizeUserPlanScreen({ route }) {
         (element) => element.exercise_id === exerc,
       );
 
-      arrayToEditDuration[elementsIndex] = { ...arrayToEditDuration[elementsIndex], exercise_duration: value };
+      arrayToEditDuration[elementsIndex] = {
+        ...arrayToEditDuration[elementsIndex],
+        exercise_duration: value,
+      };
       setExerciseDuration(arrayToEditDuration);
       setModalChangeDurationVisibility(false);
     }
@@ -222,12 +218,10 @@ function CustomizeUserPlanScreen({ route }) {
         }),
       })
         .then((response) => {
-          console.log(response.status);
           navigation.navigate('HOME');
         })
         .catch((error) => console.log('error', error));
-    }
-    else {
+    } else {
       //request API to save changes
       fetch(`https://startdoing.herokuapp.com/user_plans/${planID}`, {
         method: 'PUT',
@@ -242,7 +236,6 @@ function CustomizeUserPlanScreen({ route }) {
         }),
       })
         .then((response) => {
-          console.log(response.status);
           navigation.navigate('HOME');
         })
         .catch((error) => console.log('error', error));
@@ -253,8 +246,7 @@ function CustomizeUserPlanScreen({ route }) {
     getToken();
   }, [token]);
 
-  useEffect(() => {
-  }, [myExcerciseData, exerciseDuration]);
+  useEffect(() => {}, [myExcerciseData, exerciseDuration]);
 
   return (
     <>
@@ -280,10 +272,10 @@ function CustomizeUserPlanScreen({ route }) {
         </View>
 
         <FlatList
-          style={styles.background}
+          style={styles.flatlistBackground}
           keyExtractor={(item) => item.exerciseName}
           data={myExcerciseData}
-          renderItem={({ item, index }) => (
+          renderItem={({item, index}) => (
             <View style={stylesMediaQueries.maskView}>
               <MaskImageView
                 urlImage={item.videoUrl}
@@ -453,6 +445,12 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
   },
+  flatlistBackground: {
+    flex: 1,
+    width: '100%',
+    marginTop: 20,
+    backgroundColor: '#26282B',
+  },
   topSectionView: {
     height: 70,
     width: '100%',
@@ -462,8 +460,7 @@ const styles = StyleSheet.create({
   },
   inputView: {
     alignSelf: 'center',
-    marginTop: 16,
-    marginBottom: 20,
+    marginTop: 30,
     width: '85%',
   },
   inputText: {
@@ -719,7 +716,6 @@ const styles = StyleSheet.create({
   modalInputLine: {
     width: '30%',
     height: 40,
-    marginTop: -10,
     alignSelf: 'center',
     borderColor: 'white',
     borderBottomWidth: 1,

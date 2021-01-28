@@ -1,28 +1,25 @@
-import React, { useState, useEffect, Component } from 'react';
+import React, {useState, useEffect, Component} from 'react';
 
 import {
   StyleSheet,
   View,
-  ScrollView,
   Text,
-  Image,
   TouchableHighlight,
-  TouchableWithoutFeedback,
   FlatList,
 } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {useNavigation} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { MaskImageView } from 'react-native-mask-image';
-import { createStyles, minWidth, maxWidth } from 'react-native-media-queries';
+import {MaskImageView} from 'react-native-mask-image';
+import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
 
 const Stack = createStackNavigator();
 const UserPlans = () => {
   return (
     <Stack.Navigator initialRouteName="UserPlan">
       <Stack.Screen
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
         name="UserPlan"
         component={UserPlan}
       />
@@ -30,7 +27,7 @@ const UserPlans = () => {
   );
 };
 
-function UserPlan({ route }) {
+function UserPlan({route}) {
   //navigation variable
   const navigation = useNavigation();
 
@@ -58,7 +55,7 @@ function UserPlan({ route }) {
       .then((result) => {
         result.map((result) => {
           result.exercises.map((data) => {
-            //API request of exercises 
+            //API request of exercises
             fetch(
               `https://startdoing.herokuapp.com/exercises/${data.exercise_id}`,
               {
@@ -71,25 +68,19 @@ function UserPlan({ route }) {
             )
               .then((response) => response.json())
               .then((result) => {
-
                 myData.push(result);
                 setMyExcerciseData(...myExcerciseData, myData);
               })
-
               .catch((error) => console.log('error', error));
           });
         });
       })
-
       .catch((error) => console.log('error', error));
   }
 
   useEffect(() => {
     getExercises();
   }, []);
-
-  useEffect(() => {
-  }, [myExcerciseData]);
 
   return (
     <>
@@ -109,7 +100,7 @@ function UserPlan({ route }) {
         style={styles.background}
         keyExtractor={(item) => item.exerciseName}
         data={myExcerciseData}
-        renderItem={({ item }) => (
+        renderItem={({item}) => (
           <View style={stylesMediaQueries.maskView}>
             <MaskImageView
               urlImage={item.videoUrl}
@@ -132,7 +123,7 @@ function UserPlan({ route }) {
           onPress={() =>
             navigation.navigate('UserPlanExercises', {
               screen: 'UserPlanExercises',
-              params: { exercises: myExcerciseData, id: id, token: token },
+              params: {exercises: myExcerciseData, id: id, token: token},
             })
           }>
           <Text style={styles.startText}>START</Text>

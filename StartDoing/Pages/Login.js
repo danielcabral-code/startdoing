@@ -1,13 +1,12 @@
 import React from 'react';
 import {StyleSheet, View, ScrollView, Image, Text} from 'react-native';
-import {LoginForm} from '../Components/Login/LoginForm';
 
+import {LoginForm} from '../Components/Login/LoginForm';
 import {
   ButtonForgotPassword,
   ButtonNoAccount,
   ButtonGuest,
 } from '../Components/Login/Buttons';
-
 import {createStackNavigator} from '@react-navigation/stack';
 
 const Stack = createStackNavigator();

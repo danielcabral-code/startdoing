@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   StyleSheet,
@@ -7,10 +7,10 @@ import {
   Text,
   Image,
   TouchableHighlight,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
 } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from 'jwt-decode';
 
@@ -39,7 +39,7 @@ const Settings = () => {
         setEmail(decoded.data.email);
         setPhotoUrl(decoded.data.photoUrl);
       }
-    } catch (e) { }
+    } catch (e) {}
   };
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const Settings = () => {
             <View style={styles.profileImageBackground2}>
               <Image
                 style={styles.profileImage}
-                source={{ uri: photoUrl }}></Image>
+                source={{uri: photoUrl}}></Image>
             </View>
           </View>
 
@@ -69,7 +69,7 @@ const Settings = () => {
             onPress={() =>
               navigation.navigate('EditDetails', {
                 screen: 'EditDetails',
-                params: { id: id, token: token },
+                params: {id: id, token: token},
               })
             }
             underlayColor="#F27A2999">
@@ -88,7 +88,7 @@ const Settings = () => {
             onPress={() =>
               navigation.navigate('ChangePassword', {
                 screen: 'ChangePassword',
-                params: { email: email },
+                params: {email: email},
               })
             }
             underlayColor="#F27A2999">
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   bg2: {
     width: '100%',
     alignItems: 'center',
-    paddingBottom: 70
+    paddingBottom: 72,
   },
   profileImageBackground1: {
     width: 84,

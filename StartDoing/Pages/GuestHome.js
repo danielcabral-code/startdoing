@@ -9,6 +9,7 @@ import {
   TouchableHighlight,
   TouchableWithoutFeedback,
 } from 'react-native';
+
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {createStackNavigator} from '@react-navigation/stack';
 import {useNavigation} from '@react-navigation/native';
@@ -177,8 +178,9 @@ const styles = StyleSheet.create({
   guestMessage: {
     color: 'white',
     fontFamily: 'OpenSans-Bold',
-    fontSize: 14,
+    fontSize: 12,
     marginTop: 20,
+    marginBottom: 20,
     alignSelf: 'center',
   },
 });

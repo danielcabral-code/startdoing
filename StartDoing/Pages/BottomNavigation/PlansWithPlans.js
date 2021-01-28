@@ -66,11 +66,13 @@ const Plans = () => {
 
       {/* FlatList to set plans */}
       <FlatList
-        style={styles.background}
+        style={styles.flatlistBackground}
         keyExtractor={(item) => item._id}
         data={planName}
         renderItem={({item}) => {
-           {/* check plans name array length */}
+          {
+            /* check plans name array length */
+          }
           if (planName.length >= 2) {
             setPlanCreateEnabler(true);
 
@@ -137,6 +139,11 @@ const styles = StyleSheet.create({
   bg3: {
     width: '100%',
     alignItems: 'center',
+  },
+  flatlistBackground: {
+    width: '100%',
+    backgroundColor: '#26282B',
+    paddingBottom: 72,
   },
   createBtn: {
     marginTop: 38,

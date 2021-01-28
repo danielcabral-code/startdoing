@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   TextInput,
   StyleSheet,
@@ -6,10 +6,10 @@ import {
   View,
   Text,
   TouchableHighlight,
-  Image,
 } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
+
+import {createStackNavigator} from '@react-navigation/stack';
+import {useNavigation} from '@react-navigation/native';
 import 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
@@ -18,7 +18,7 @@ const EditDetails = () => {
   return (
     <Stack.Navigator initialRouteName="EditDetailsPage">
       <Stack.Screen
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
         name="EditDetails"
         component={EditDetailsPage}
       />
@@ -26,8 +26,8 @@ const EditDetails = () => {
   );
 };
 
-function EditDetailsPage({ route }) {
-  //navigation variable 
+function EditDetailsPage({route}) {
+  //navigation variable
   const navigation = useNavigation();
 
   //state variables
@@ -118,7 +118,6 @@ function EditDetailsPage({ route }) {
       }),
     })
       .then((response) => {
-        console.log(response.status);
         navigation.navigate('SETTINGS');
       })
       .catch((error) => console.log('error', error));
