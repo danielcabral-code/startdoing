@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 
 import {
   StyleSheet,
@@ -9,11 +9,8 @@ import {
   TouchableHighlight,
   TouchableWithoutFeedback,
 } from 'react-native';
-
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {createStackNavigator} from '@react-navigation/stack';
-import jwt_decode from 'jwt-decode';
 import {useNavigation} from '@react-navigation/native';
 
 const Stack = createStackNavigator();
@@ -30,6 +27,7 @@ const GuestHome = () => {
 };
 
 function GuestPage({route}) {
+  //navigation variable
   const navigation = useNavigation();
 
   return (

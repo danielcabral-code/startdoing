@@ -30,12 +30,17 @@ const SuggestedPlan = () => {
 };
 
 function SuggestedPlanScreen({route}) {
+  //navigation variable
   const navigation = useNavigation();
 
+  //state variable
   const [myExcerciseData, setMyExcerciseData] = useState([]);
+
+  //variable to receive values from params
   let birth = route.params.birth;
   let token = route.params.token;
 
+  //function to calculate the age of user
   function calculateAge() {
     let myData = [];
     let today = new Date();

@@ -1,4 +1,4 @@
-import React, {useState, useEffect, Component} from 'react';
+import React, { useState, useEffect, Component } from 'react';
 
 import {
   StyleSheet,
@@ -12,11 +12,11 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import {useNavigation} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {MaskImageView} from 'react-native-mask-image';
-import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
+import { MaskImageView } from 'react-native-mask-image';
+import { createStyles, minWidth, maxWidth } from 'react-native-media-queries';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Modal from 'react-native-modal';
 import jwt_decode from 'jwt-decode';
@@ -26,7 +26,7 @@ const CreatePlans = () => {
   return (
     <Stack.Navigator initialRouteName="CreatePlan">
       <Stack.Screen
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
         name="CreatePlan"
         component={CreatePlan}
       />
@@ -35,22 +35,20 @@ const CreatePlans = () => {
 };
 
 function CreatePlan() {
+  //navigation variable
   const navigation = useNavigation();
+
+  //state variables
   const [token, setToken] = useState('');
   const [displayExerGroups, setDisplayExerGroups] = useState(false);
   const [numberForGroups, setNumberForGroups] = useState(1);
   const [exercises, setExercises] = useState([]);
   const [modalGroupVisibility, setModalGroupVisibility] = useState(false);
-  const [planBeingCreatedExercises, setPlanBeingCreatedExercises] = useState(
-    [],
-  );
+  const [planBeingCreatedExercises, setPlanBeingCreatedExercises] = useState([]);
   const [planBeingCreatedFlatlist, setPlanBeingCreatedFlatlist] = useState([]);
   const [exerciseID, setExerciseID] = useState('');
   const [modalRemoveVisibility, setModalRemoveVisibility] = useState(false);
-  const [
-    modalChangeDurationVisibility,
-    setModalChangeDurationVisibility,
-  ] = useState(false);
+  const [modalChangeDurationVisibility, setModalChangeDurationVisibility] = useState(false);
   const [exerciseDuration, setExerciseDuration] = useState();
   const [exerciseName, setExerciseName] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
@@ -60,13 +58,16 @@ function CreatePlan() {
   const [id, setId] = useState('');
   const [planNameErrorShow, setPlanNameErrorShow] = useState(false);
 
+  //variables that are used to show exercises by category
   const chest = 'CHEST';
   const core = 'CORE';
   const back = 'BACK';
   const legs = 'LEGS';
 
+  //variable to receive code decoded
   let decoded = '';
 
+  //function to display exercises that are in groups
   function displayExerciseGroups() {
     if (numberForGroups === 1) {
       setDisplayExerGroups(true);
@@ -77,15 +78,17 @@ function CreatePlan() {
     }
   }
 
+  //get token stored
   async function getToken() {
     try {
       setToken(await AsyncStorage.getItem('@token'));
       decoded = jwt_decode(token);
       setId(decoded.data.id);
-      console.log('dawd', id);
-    } catch (e) {}
+
+    } catch (e) { }
   }
 
+  //fucntion to request API exercises by category
   function displayExercises(category) {
     let myData = [];
 
@@ -100,9 +103,7 @@ function CreatePlan() {
         .then((response) => response.json())
         .then((result) => {
           myData = result;
-
-          setExercises(...exercises, myData);
-
+          setExercises(...exercises, myData)
           setModalGroupVisibility(!modalGroupVisibility);
         })
         .catch((error) => console.log('error', error));
@@ -114,16 +115,12 @@ function CreatePlan() {
   });
 
   useEffect(() => {
-    /* console.log('updated data');
-
-    console.log('meus', exercises); */
   }, [exercises]);
 
+  //function to select exercises and fill the array
   const selectExercise = (id, duration, exerciseName, videoUrl) => {
     setExerciseID(id);
-    console.log('dwa', id);
     setExerciseDuration(duration);
-
     setExerciseName(exerciseName);
     setVideoUrl(videoUrl);
 
@@ -139,8 +136,6 @@ function CreatePlan() {
       exercise_videoUrl: videoUrl,
     };
 
-    /* console.log(exercisesArr); */
-
     setPlanBeingCreatedExercises((planBeingCreatedExercises) => [
       ...planBeingCreatedExercises,
       exercisesArr,
@@ -151,14 +146,9 @@ function CreatePlan() {
       exercisesArrFlatlist,
     ]);
 
-    /* console.log(planBeingCreatedExercises); */
   };
 
   useEffect(() => {
-    /* console.log('updated data');
-
-    console.log(planBeingCreatedExercises); */
-
     if (planBeingCreatedFlatlist.length >= 1) {
       setSaveEnabler(false);
     } else if (planBeingCreatedFlatlist.length < 1) {
@@ -166,20 +156,21 @@ function CreatePlan() {
     }
   }, [planBeingCreatedExercises]);
 
+  //open remove exercise modal
   function removeExerciseModal(id) {
-    /* console.log('vvv', id); */
     setExerciseID(id);
     setModalRemoveVisibility(!modalRemoveVisibility);
   }
 
+  //open edit duration modal
   function editDurationModal(id) {
     console.log(id);
     setExerciseID(id);
     setModalChangeDurationVisibility(!modalChangeDurationVisibility);
   }
 
+  //delete selected exercise from plan
   const deleteExercise = (exerc, exercName) => {
-    console.log('teste ', exerc);
 
     let arrayToRemoveFlatList = [...planBeingCreatedFlatlist];
     let arrayToRemovePlan = [...planBeingCreatedExercises];
@@ -192,27 +183,20 @@ function CreatePlan() {
       (task) => task.exercise_id !== exerc,
     );
 
-    /* console.log('removido', removeExerciseFL); */
-
     setPlanBeingCreatedFlatlist(removeExerciseFL);
     setPlanBeingCreatedExercises(removeExercisePlan);
     setModalRemoveVisibility(false);
   };
 
+  //edit duration from exercise
   const editExerciseDuration = (exerc, value) => {
-    /* console.log('teste ', exerc, value); */
+
     let arrayToEditDuration = [...planBeingCreatedFlatlist];
     let arrayToEditDurationPlan = [...planBeingCreatedExercises];
-    /* console.log(arrayToEditDuration); */
-
-    /*   const editDuration = arrayToEditDuration.filter((task) => task.exercise_id === exerc);
-    console.log(editDuration); */
 
     const elementsIndex = planBeingCreatedFlatlist.findIndex(
       (element) => element.exercise_name === exerc,
     );
-
-    /* console.log(elementsIndex); */
 
     arrayToEditDuration[elementsIndex] = {
       ...arrayToEditDuration[elementsIndex],
@@ -226,14 +210,12 @@ function CreatePlan() {
 
     setPlanBeingCreatedFlatlist(arrayToEditDuration);
     setPlanBeingCreatedExercises(arrayToEditDurationPlan);
-    /* console.log('mudado: ', planBeingCreatedFlatlist); */
     setModalChangeDurationVisibility(false);
   };
 
+  //function to save new plan
   function savePlanModal() {
-    /* console.log(planBeingCreatedFlatlist.length); */
 
-    console.log(editPlanName.length);
     let planNameEdited = '';
 
     if (!editPlanName || editPlanName.trim() === '') {
@@ -247,6 +229,7 @@ function CreatePlan() {
       planNameEdited = editPlanName;
       setEditPlanName('');
 
+      //request API to post new plan
       fetch(`https://startdoing.herokuapp.com/user_plans/`, {
         method: 'POST',
         headers: {
@@ -273,9 +256,6 @@ function CreatePlan() {
   }, []);
 
   useEffect(() => {
-    console.log('updated data');
-
-    console.log('meus', exercises);
   }, [exercises]);
 
   return (
@@ -384,13 +364,14 @@ function CreatePlan() {
           </TouchableHighlight>
         </View>
 
+        {/* FlatList of exercises selected by user */}
         <FlatList
           style={[
             displayExerGroups ? styles.backgroundOpacity : styles.background,
           ]}
           keyExtractor={(item) => item.exercise_name}
           data={planBeingCreatedFlatlist}
-          renderItem={({item, index}) => (
+          renderItem={({ item, index }) => (
             <View style={stylesMediaQueries.maskView}>
               <MaskImageView
                 urlImage={planBeingCreatedFlatlist[index].exercise_videoUrl}
@@ -456,11 +437,12 @@ function CreatePlan() {
           setExercises([]);
         }}>
         <View style={styles.modalViewExercises}>
+          {/* FlatList of available exercises */}
           <FlatList
             style={styles.backgroundFlatlist}
             keyExtractor={(item) => item.exerciseName}
             data={exercises}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => {
                   setModalGroupVisibility(false);

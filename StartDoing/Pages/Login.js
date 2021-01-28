@@ -1,6 +1,5 @@
 import React from 'react';
 import {StyleSheet, View, ScrollView, Image, Text} from 'react-native';
-
 import {LoginForm} from '../Components/Login/LoginForm';
 import RegisterScreen from '../Pages/Register';
 import {
@@ -8,7 +7,6 @@ import {
   ButtonNoAccount,
   ButtonGuest,
 } from '../Components/Login/Buttons';
-
 import ResetPasswordScreen from '../Pages/ResetPassword';
 import GuestHome from '../Pages/GuestHome';
 import BottomNavigation from '../Pages/BottomNavigation/BottomNavigation';
@@ -28,6 +26,7 @@ import ChangeProfilePicture from '../Pages/ChangeProfilePicture';
 
 const Stack = createStackNavigator();
 const LoginPage = () => {
+  //Navigation routes
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
@@ -124,6 +123,7 @@ const LoginPage = () => {
   );
 };
 
+//Login screen
 function LoginScreen({navigation}) {
   return (
     <ScrollView style={styles.background}>
