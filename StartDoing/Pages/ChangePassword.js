@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
 import {
   TextInput,
@@ -53,10 +53,12 @@ function ChangePasswordPage({route}) {
       setPasswordErrorShow(true);
       return;
     } else if (password.length < 6) {
-      setPasswordLengthError(true);
-      return;
-    } else {
-      setPasswordLengthError(false);
+
+      setPasswordLengthError(true)
+      return
+    }
+    else {
+      setPasswordLengthError(false)
       setPasswordErrorShow(false);
     }
 
@@ -113,7 +115,9 @@ function ChangePasswordPage({route}) {
     <>
       <View style={styles.topSectionView}>
         <View style={styles.topBarInfoView}>
-          <MaterialIcons name="keyboard-arrow-left" style={styles.arrowLeft} />
+          <MaterialIcons name="keyboard-arrow-left"
+           onPress={() => navigation.goBack()} 
+          style={styles.arrowLeft} />
           <Text style={styles.planNameText}>CHANGE PASSWORD</Text>
         </View>
       </View>
