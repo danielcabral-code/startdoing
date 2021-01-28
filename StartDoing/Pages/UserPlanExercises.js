@@ -60,7 +60,7 @@ function UserPlanExercisesScreen({route}) {
       setIndex(activeIndex);
       setExerciseNumber(activeExerciseNumber);
       setShowGoButton(true);
-      setShowNextButton(true);
+      setShowNextButton(false);
     }
   }
 
