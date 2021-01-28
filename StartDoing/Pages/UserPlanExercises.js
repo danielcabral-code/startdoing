@@ -1,29 +1,24 @@
-import React, {useState, useEffect, Component} from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   StyleSheet,
   View,
   ScrollView,
   Text,
-  Image,
   TouchableHighlight,
-  TouchableWithoutFeedback,
-  FlatList,
-  Button,
 } from 'react-native';
-
-import {useNavigation} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {MaskImageView} from 'react-native-mask-image';
-import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
+import { MaskImageView } from 'react-native-mask-image';
+import { createStyles, minWidth, maxWidth } from 'react-native-media-queries';
 
 const Stack = createStackNavigator();
 const UserPlanExercises = () => {
   return (
     <Stack.Navigator initialRouteName="UserPlanExercises">
       <Stack.Screen
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
         name="UserPlanExercises"
         component={UserPlanExercisesScreen}
       />
@@ -31,14 +26,16 @@ const UserPlanExercises = () => {
   );
 };
 
-function UserPlanExercisesScreen({route}) {
+function UserPlanExercisesScreen({ route }) {
+  //navigation variable
   const navigation = useNavigation();
 
+  //variables to receive params values
   const exercisesList = route.params.exercises;
   const id = route.params.id;
   const token = route.params.token;
-  console.log(id);
 
+  //state variables
   const [seconds, setSeconds] = useState(0);
   const [index, setIndex] = useState(0);
   const [showGoButton, setShowGoButton] = useState(true);
@@ -48,6 +45,7 @@ function UserPlanExercisesScreen({route}) {
   const [exerciseNumber, setExerciseNumber] = useState('1');
   const [exerciseDuration, setExerciseDuration] = useState('');
 
+  //function to go to next exercise
   function nextExercise() {
     let activeIndex = index;
     let activeExerciseNumber = exerciseNumber;
@@ -65,6 +63,7 @@ function UserPlanExercisesScreen({route}) {
     }
   }
 
+  //function to start exercise
   function startExercise() {
     setSeconds(exerciseDuration);
     setShowGoButton(false);
@@ -73,6 +72,7 @@ function UserPlanExercisesScreen({route}) {
   }
 
   useEffect(() => {
+    //API request to get plan by plan id
     fetch(`https://startdoing.herokuapp.com/user_plans/plan/${id}`, {
       method: 'GET',
       headers: {
@@ -83,7 +83,6 @@ function UserPlanExercisesScreen({route}) {
       .then((response) => response.json())
       .then((result) => {
         result.map((data) => {
-          console.log(data.exercises[index].exercise_duration);
           setExerciseDuration(data.exercises[index].exercise_duration);
         });
       })

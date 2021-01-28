@@ -1,4 +1,4 @@
-import React, {useState, useEffect, Component} from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   StyleSheet,
@@ -10,18 +10,18 @@ import {
   TouchableWithoutFeedback,
   FlatList,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {MaskImageView} from 'react-native-mask-image';
-import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
+import { MaskImageView } from 'react-native-mask-image';
+import { createStyles, minWidth, maxWidth } from 'react-native-media-queries';
 
 const Stack = createStackNavigator();
 const SuggestedPlanScreenGuest = () => {
   return (
     <Stack.Navigator initialRouteName="SuggestedPlanScreenGuest">
       <Stack.Screen
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
         name="SuggestedPlanScreenGuest"
         component={SuggestedPlanScreen}
       />
@@ -29,11 +29,14 @@ const SuggestedPlanScreenGuest = () => {
   );
 };
 
-function SuggestedPlanScreen({route}) {
+function SuggestedPlanScreen({ route }) {
+  //navigation variable
   const navigation = useNavigation();
 
+  //state variable
   const [myExcerciseData, setMyExcerciseData] = useState([]);
 
+  //function to randomly select an suggested plan to guest
   function calculateAge() {
     let myData = [];
 
@@ -41,8 +44,7 @@ function SuggestedPlanScreen({route}) {
 
     let ageParam = ages[Math.floor(Math.random() * ages.length)];
 
-    console.log(ageParam);
-
+    //API request to get suggested plan
     fetch(
       `https://startdoing.herokuapp.com/default_plans/getdefault/${ageParam}`,
       {
@@ -54,13 +56,11 @@ function SuggestedPlanScreen({route}) {
     )
       .then((response) => response.json())
       .then((result) => {
-        console.log(result);
         result.map((data) => {
-          console.log(data.exercises);
 
           data.exercises.map((exerc) => {
-            console.log(exerc);
 
+            //API request of suggested plan exercises
             fetch(
               `https://startdoing.herokuapp.com/exercises/${exerc.exercise_id}`,
               {
@@ -72,8 +72,8 @@ function SuggestedPlanScreen({route}) {
             )
               .then((response) => response.json())
               .then((result) => {
-                myData.push(result);
 
+                myData.push(result);
                 setMyExcerciseData(...myExcerciseData, myData);
               })
 
@@ -90,7 +90,6 @@ function SuggestedPlanScreen({route}) {
   }, []);
 
   useEffect(() => {
-    console.log('updated ', myExcerciseData);
   }, [myExcerciseData]);
 
   return (
@@ -106,11 +105,12 @@ function SuggestedPlanScreen({route}) {
         </View>
       </View>
 
+      {/* FlatList of suggested plan exercises */}
       <FlatList
         style={styles.background}
         keyExtractor={(item) => item.exerciseName}
         data={myExcerciseData}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <View style={stylesMediaQueries.maskView}>
             <MaskImageView
               urlImage={item.videoUrl}
@@ -133,7 +133,7 @@ function SuggestedPlanScreen({route}) {
           onPress={() =>
             navigation.navigate('SuggestedExercisesScreenGuest', {
               screen: 'SuggestedExercisesScreenGuest',
-              params: {exercises: myExcerciseData},
+              params: { exercises: myExcerciseData },
             })
           }>
           <Text style={styles.startText}>START</Text>

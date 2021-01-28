@@ -1,29 +1,24 @@
-import React, {useState, useEffect, Component} from 'react';
+import React, { useState, useEffect, Component } from 'react';
 
 import {
   StyleSheet,
   View,
   ScrollView,
   Text,
-  Image,
   TouchableHighlight,
-  TouchableWithoutFeedback,
-  FlatList,
-  Button,
 } from 'react-native';
-
-import {useNavigation} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {MaskImageView} from 'react-native-mask-image';
-import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
+import { MaskImageView } from 'react-native-mask-image';
+import { createStyles, minWidth, maxWidth } from 'react-native-media-queries';
 
 const Stack = createStackNavigator();
 const SuggestedPlanExercises = () => {
   return (
     <Stack.Navigator initialRouteName="SuggestedExercisesScreen">
       <Stack.Screen
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
         name="SuggestedExercisesScreen"
         component={SuggestedExercisesScreen}
       />
@@ -31,15 +26,15 @@ const SuggestedPlanExercises = () => {
   );
 };
 
-function SuggestedExercisesScreen({route}) {
+function SuggestedExercisesScreen({ route }) {
+  //navigation variable
   const navigation = useNavigation();
 
+  //variables to receive params values
   const exercisesList = route.params.exercises;
-  console.log('list', exercisesList);
-
   const token = route.params.token;
-  console.log(token);
 
+  //state variables
   const [seconds, setSeconds] = useState(0);
   const [index, setIndex] = useState(0);
   const [showGoButton, setShowGoButton] = useState(true);
@@ -47,8 +42,8 @@ function SuggestedExercisesScreen({route}) {
   const [disableNextButton, setDisableNextButton] = useState(true);
   const [showHomeButton, setShowHomeButton] = useState(false);
   const [exerciseNumber, setExerciseNumber] = useState('1');
-  const [exerciseDuration, setExerciseDuration] = useState('');
 
+  //function to go to next exercise
   function nextExercise() {
     let activeIndex = index;
     let activeExerciseNumber = exerciseNumber;
@@ -66,6 +61,7 @@ function SuggestedExercisesScreen({route}) {
     }
   }
 
+  //start exercise function
   function startExercise() {
     setSeconds(exercisesList[index].duration);
     setShowGoButton(false);
@@ -73,6 +69,7 @@ function SuggestedExercisesScreen({route}) {
     setDisableNextButton(true);
   }
 
+  //countdown exercise duration 
   useEffect(() => {
     if (seconds > 0) {
       setTimeout(() => setSeconds(seconds - 1), 1000);
