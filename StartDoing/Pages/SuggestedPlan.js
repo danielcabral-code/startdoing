@@ -1,4 +1,4 @@
-import React, {useState, useEffect, Component} from 'react';
+import React, { useState, useEffect, Component } from 'react';
 
 import {
   StyleSheet,
@@ -10,18 +10,18 @@ import {
   TouchableWithoutFeedback,
   FlatList,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {MaskImageView} from 'react-native-mask-image';
-import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
+import { MaskImageView } from 'react-native-mask-image';
+import { createStyles, minWidth, maxWidth } from 'react-native-media-queries';
 
 const Stack = createStackNavigator();
 const SuggestedPlan = () => {
   return (
     <Stack.Navigator initialRouteName="SuggestedPlanScreen">
       <Stack.Screen
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
         name="SuggestedPlanScreen"
         component={SuggestedPlanScreen}
       />
@@ -29,7 +29,7 @@ const SuggestedPlan = () => {
   );
 };
 
-function SuggestedPlanScreen({route}) {
+function SuggestedPlanScreen({ route }) {
   //navigation variable
   const navigation = useNavigation();
 
@@ -40,7 +40,7 @@ function SuggestedPlanScreen({route}) {
   let birth = route.params.birth;
   let token = route.params.token;
 
-  //function to calculate the age of user
+  //function to calculate the age of user to give an age parameter
   function calculateAge() {
     let myData = [];
     let today = new Date();
@@ -51,20 +51,20 @@ function SuggestedPlanScreen({route}) {
     if (months < 0 || (months === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
-    console.log('idade', age);
 
     let ageParam = 0;
     if (age >= 0 && age <= 30) {
       ageParam = 30;
-      console.log(ageParam);
+
     } else if (age > 30 && age <= 40) {
       ageParam = 40;
-      console.log(ageParam);
+
     } else if (age > 40 && age <= 50) {
       ageParam = 50;
-      console.log(ageParam);
+
     } else ageParam = 60;
 
+    //API to request plan suggested with the age parameter of user
     fetch(
       `https://startdoing.herokuapp.com/default_plans/getdefault/${ageParam}`,
       {
@@ -76,13 +76,11 @@ function SuggestedPlanScreen({route}) {
     )
       .then((response) => response.json())
       .then((result) => {
-        console.log(result);
         result.map((data) => {
-          console.log(data.exercises);
 
           data.exercises.map((exerc) => {
-            console.log(exerc);
 
+            //API request of suggested plan exercises
             fetch(
               `https://startdoing.herokuapp.com/exercises/${exerc.exercise_id}`,
               {
@@ -95,8 +93,8 @@ function SuggestedPlanScreen({route}) {
             )
               .then((response) => response.json())
               .then((result) => {
-                myData.push(result);
 
+                myData.push(result);
                 setMyExcerciseData(...myExcerciseData, myData);
               })
 
@@ -113,7 +111,6 @@ function SuggestedPlanScreen({route}) {
   }, []);
 
   useEffect(() => {
-    console.log('updated ', myExcerciseData);
   }, [myExcerciseData]);
 
   return (
@@ -129,11 +126,12 @@ function SuggestedPlanScreen({route}) {
         </View>
       </View>
 
+      {/* FlatList of suggested plan exercises */}
       <FlatList
         style={styles.background}
         keyExtractor={(item) => item.exerciseName}
         data={myExcerciseData}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <View style={stylesMediaQueries.maskView}>
             <MaskImageView
               urlImage={item.videoUrl}
@@ -154,9 +152,10 @@ function SuggestedPlanScreen({route}) {
           style={styles.startBtn}
           underlayColor="#F27A2999"
           onPress={() =>
+            //navigate to screen to start exercises
             navigation.navigate('SuggestedExercisesScreen', {
               screen: 'SuggestedExercisesScreen',
-              params: {exercises: myExcerciseData, token: token},
+              params: { exercises: myExcerciseData, token: token },
             })
           }>
           <Text style={styles.startText}>START</Text>

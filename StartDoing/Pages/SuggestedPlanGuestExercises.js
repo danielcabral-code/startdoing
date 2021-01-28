@@ -1,4 +1,4 @@
-import React, {useState, useEffect, Component} from 'react';
+import React, { useState, useEffect, Component } from 'react';
 
 import {
   StyleSheet,
@@ -12,18 +12,18 @@ import {
   Button,
 } from 'react-native';
 
-import {useNavigation} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {MaskImageView} from 'react-native-mask-image';
-import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
+import { MaskImageView } from 'react-native-mask-image';
+import { createStyles, minWidth, maxWidth } from 'react-native-media-queries';
 
 const Stack = createStackNavigator();
 const SuggestedPlanGuestExercises = () => {
   return (
     <Stack.Navigator initialRouteName="SuggestedExercisesScreenGuest">
       <Stack.Screen
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
         name="SuggestedExercisesScreenGuest"
         component={SuggestedExercisesScreenGuest}
       />
@@ -31,12 +31,14 @@ const SuggestedPlanGuestExercises = () => {
   );
 };
 
-function SuggestedExercisesScreenGuest({route}) {
+function SuggestedExercisesScreenGuest({ route }) {
+  //navigation variable
   const navigation = useNavigation();
 
+  //variable to get param value
   const exercisesList = route.params.exercises;
-  console.log('list', exercisesList);
 
+  //state variables
   const [seconds, setSeconds] = useState(0);
   const [index, setIndex] = useState(0);
   const [showGoButton, setShowGoButton] = useState(true);
@@ -46,6 +48,7 @@ function SuggestedExercisesScreenGuest({route}) {
   const [exerciseNumber, setExerciseNumber] = useState('1');
   const [exerciseDuration, setExerciseDuration] = useState('');
 
+  //function to go to next exercise
   function nextExercise() {
     let activeIndex = index;
     let activeExerciseNumber = exerciseNumber;
@@ -63,6 +66,7 @@ function SuggestedExercisesScreenGuest({route}) {
     }
   }
 
+  //function to start exercise
   function startExercise() {
     setSeconds(exercisesList[index].duration);
     setShowGoButton(false);
@@ -70,6 +74,7 @@ function SuggestedExercisesScreenGuest({route}) {
     setDisableNextButton(true);
   }
 
+  //countdown exercises duration
   useEffect(() => {
     if (seconds > 0) {
       setTimeout(() => setSeconds(seconds - 1), 1000);
