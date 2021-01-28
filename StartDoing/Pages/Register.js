@@ -9,6 +9,7 @@ import {
   TouchableHighlight,
   Image,
 } from 'react-native';
+
 import { createStackNavigator } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import 'react-native-gesture-handler';
