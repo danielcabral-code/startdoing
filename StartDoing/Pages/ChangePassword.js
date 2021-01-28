@@ -10,18 +10,17 @@ import {
   Image,
 } from 'react-native';
 
-import { createStackNavigator } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {useNavigation} from '@react-navigation/native';
 import 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
 
 const Stack = createStackNavigator();
 const ChangePassword = () => {
   return (
     <Stack.Navigator initialRouteName="ChangePasswordPage">
       <Stack.Screen
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
         name="ChangePassword"
         component={ChangePasswordPage}
       />
@@ -29,7 +28,7 @@ const ChangePassword = () => {
   );
 };
 
-function ChangePasswordPage({ route }) {
+function ChangePasswordPage({route}) {
   //navigation variable
   const navigation = useNavigation();
 
@@ -44,7 +43,7 @@ function ChangePasswordPage({ route }) {
   const [passwordLengthError, setPasswordLengthError] = useState(false);
 
   //receive param
-  let email = route.params.email
+  let email = route.params.email;
 
   //function to check if inputs are empty and do API request
   function checkRegisterInputs() {
@@ -53,13 +52,11 @@ function ChangePasswordPage({ route }) {
     if (!password || password.trim() === '') {
       setPasswordErrorShow(true);
       return;
-    }else if (password.length<6) {
- 
-      setPasswordLengthError(true)
-      return
-    }
-    else {
-      setPasswordLengthError(false)
+    } else if (password.length < 6) {
+      setPasswordLengthError(true);
+      return;
+    } else {
+      setPasswordLengthError(false);
       setPasswordErrorShow(false);
     }
 
@@ -74,7 +71,6 @@ function ChangePasswordPage({ route }) {
       setConfirmpasswordErrorShow(true);
       return;
     }
-
 
     //check if email exists
     fetch('https://startdoing.herokuapp.com/users', {
@@ -106,7 +102,6 @@ function ChangePasswordPage({ route }) {
             .catch((error) => console.log('error', error));
 
           navigation.navigate('Login');
-
         } else {
           setUnknownEmail(true);
         }
@@ -129,7 +124,7 @@ function ChangePasswordPage({ route }) {
             <Text style={styles.inputText}>EMAIL</Text>
             <TextInput
               style={styles.inputLine}
-              placeholderTextColor='gray'
+              placeholderTextColor="gray"
               editable={false}
               keyboardType="email-address"
               onChangeText={(text) => setEmail(text)}

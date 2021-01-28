@@ -5,8 +5,8 @@ import {
   Text,
   TouchableHighlight,
   TouchableWithoutFeedback,
-  SafeAreaView,
 } from 'react-native';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {FlatList} from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/native';

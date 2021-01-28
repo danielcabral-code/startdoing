@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   StyleSheet,
@@ -7,15 +7,13 @@ import {
   Text,
   Image,
   TouchableHighlight,
-  TouchableWithoutFeedback,
 } from 'react-native';
 
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import jwt_decode from "jwt-decode";
-import { useNavigation } from '@react-navigation/native';
+import jwt_decode from 'jwt-decode';
+import {useNavigation} from '@react-navigation/native';
 
-const Home = ({ navigate }) => {
+const Home = ({navigate}) => {
   //navigation variable
   const navigation = useNavigation();
 
@@ -24,33 +22,30 @@ const Home = ({ navigate }) => {
   const [name, setName] = useState('');
   const [birth, setBirth] = useState('');
   const [id, setId] = useState('');
-  const [photoUrl, setPhotoUrl] = useState()
+  const [photoUrl, setPhotoUrl] = useState();
   const [planOneName, setPlanOneName] = useState('');
   const [planTwoName, setPlanTwoName] = useState('');
-  const [stylePlanTwoNonExistent, setStylePlanTwoNonExistent] = useState(true)
-  const [stylePlanTwoExistent, setStylePlanTwoExistent] = useState(false)
-  const [idPlanOne, setIdPlanOne] = useState('')
-  const [idPlanTwo, setIdPlanTwo] = useState('')
+  const [stylePlanTwoNonExistent, setStylePlanTwoNonExistent] = useState(true);
+  const [stylePlanTwoExistent, setStylePlanTwoExistent] = useState(false);
+  const [idPlanOne, setIdPlanOne] = useState('');
+  const [idPlanTwo, setIdPlanTwo] = useState('');
 
   //variable that will receive token decoded
-  let decoded = ''
-
+  let decoded = '';
 
   const getToken = async () => {
-    let save = []
+    let save = [];
     try {
-
       //get token from storage
-      setToken(await AsyncStorage.getItem('@token'))
+      setToken(await AsyncStorage.getItem('@token'));
       if (token !== null) {
         //decode token and set variables
         decoded = jwt_decode(token);
-     
-        setName(decoded.data.name)
-        setId(decoded.data.id)
-        setBirth(decoded.data.birth)
-        setPhotoUrl(decoded.data.photoUrl)
-        
+
+        setName(decoded.data.name);
+        setId(decoded.data.id);
+        setBirth(decoded.data.birth);
+        setPhotoUrl(decoded.data.photoUrl);
       }
 
       //API request user plans by user id
@@ -58,55 +53,43 @@ const Home = ({ navigate }) => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization:
-            `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
-
       })
         .then((response) => response.json())
         .then((result) => {
-          console.log(result)
-          save = result
+          console.log(result);
+          save = result;
           try {
             //save request result and store in phone that will be read in customize tab
-            const jsonValue = JSON.stringify(save)
+            const jsonValue = JSON.stringify(save);
             AsyncStorage.setItem('@plans', jsonValue);
-
           } catch (e) {
             console.log(e);
           }
 
           //check the number of plans existent and set variables
           if (result.length >= 2) {
-            setStylePlanTwoNonExistent(false)
-            setStylePlanTwoExistent(true)
-            setPlanOneName(result[0].plan_name)
-            setIdPlanOne(result[0]._id)
-            setPlanTwoName(result[1].plan_name)
-            setIdPlanTwo(result[1]._id)
-
+            setStylePlanTwoNonExistent(false);
+            setStylePlanTwoExistent(true);
+            setPlanOneName(result[0].plan_name);
+            setIdPlanOne(result[0]._id);
+            setPlanTwoName(result[1].plan_name);
+            setIdPlanTwo(result[1]._id);
+          } else {
+            setStylePlanTwoNonExistent(true);
+            setStylePlanTwoExistent(false);
+            setPlanOneName(result[0].plan_name);
+            setIdPlanOne(result[0]._id);
           }
-          else {
-            setStylePlanTwoNonExistent(true)
-            setStylePlanTwoExistent(false)
-            setPlanOneName(result[0].plan_name)
-            setIdPlanOne(result[0]._id)
-
-          }
-
         })
         .catch((error) => console.log('error', error));
-
-    } catch (e) {
-
-    }
-
-  }
+    } catch (e) {}
+  };
 
   useEffect(() => {
-    getToken()
-
-  })
+    getToken();
+  });
 
   return (
     <>
@@ -116,7 +99,7 @@ const Home = ({ navigate }) => {
             <View style={styles.profileImageBackground2}>
               <Image
                 style={styles.profileImage}
-                source={{ uri: photoUrl }}></Image>
+                source={{uri: photoUrl}}></Image>
             </View>
           </View>
 
@@ -124,10 +107,12 @@ const Home = ({ navigate }) => {
 
           <TouchableHighlight
             style={styles.planBtn}
-            onPress={() => navigation.navigate('UserPlan', {
-              screen: 'UserPlan',
-              params: { id: idPlanOne, token: token, planName: planOneName }
-            })}
+            onPress={() =>
+              navigation.navigate('UserPlan', {
+                screen: 'UserPlan',
+                params: {id: idPlanOne, token: token, planName: planOneName},
+              })
+            }
             underlayColor="#F27A2999">
             <Text style={styles.planText}>{planOneName}</Text>
           </TouchableHighlight>
@@ -143,25 +128,28 @@ const Home = ({ navigate }) => {
           {stylePlanTwoExistent ? (
             <TouchableHighlight
               style={styles.planBtn}
-              onPress={() => navigation.navigate('UserPlan', {
-                screen: 'UserPlan',
-                params: { id: idPlanTwo, token: token, planName: planTwoName }
-              })}
+              onPress={() =>
+                navigation.navigate('UserPlan', {
+                  screen: 'UserPlan',
+                  params: {id: idPlanTwo, token: token, planName: planTwoName},
+                })
+              }
               underlayColor="#F27A2999">
               <Text style={styles.planText}>{planTwoName}</Text>
             </TouchableHighlight>
           ) : null}
 
-
           <TouchableHighlight
-          style={styles.suggestedBtn}
-          onPress={() => navigation.navigate('SuggestedPlanScreen',{
-            screen: 'SuggestedPlanScreen',
-            params: { birth: birth, token: token}
-          })}
-          underlayColor="#006DA899">
-          <Text style={styles.suggestedText}>SUGGESTED TRAINING</Text>
-        </TouchableHighlight>
+            style={styles.suggestedBtn}
+            onPress={() =>
+              navigation.navigate('SuggestedPlanScreen', {
+                screen: 'SuggestedPlanScreen',
+                params: {birth: birth, token: token},
+              })
+            }
+            underlayColor="#006DA899">
+            <Text style={styles.suggestedText}>SUGGESTED TRAINING</Text>
+          </TouchableHighlight>
         </View>
       </ScrollView>
     </>

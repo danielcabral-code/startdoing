@@ -123,7 +123,7 @@ function ResetPasswordScreen({navigation}) {
     <ScrollView style={styles.background}>
       <View style={styles.bg2}>
         <Image
-          source={require('../Images/LogoStartDoing.png')}
+          source={require('../Images/gifLogo.gif')}
           style={styles.logo}></Image>
         <Text style={styles.logoName}>StartDoing</Text>
 

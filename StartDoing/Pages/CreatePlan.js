@@ -5,7 +5,6 @@ import {
   View,
   ScrollView,
   Text,
-  Image,
   TextInput,
   TouchableHighlight,
   TouchableWithoutFeedback,
@@ -37,43 +36,28 @@ const CreatePlans = () => {
 
 function CreatePlan() {
   const navigation = useNavigation();
-
   const [token, setToken] = useState('');
-
   const [displayExerGroups, setDisplayExerGroups] = useState(false);
   const [numberForGroups, setNumberForGroups] = useState(1);
-
   const [exercises, setExercises] = useState([]);
-  const [numberForExercises, setNumberForExercises] = useState(1);
-
-  const [currentExerciseCategory, setCurrentExerciseCategory] = useState('');
-
   const [modalGroupVisibility, setModalGroupVisibility] = useState(false);
-
   const [planBeingCreatedExercises, setPlanBeingCreatedExercises] = useState(
     [],
   );
-
   const [planBeingCreatedFlatlist, setPlanBeingCreatedFlatlist] = useState([]);
-
   const [exerciseID, setExerciseID] = useState('');
-  const [exerciseDuration, setExerciseDuration] = useState();
-  const [exerciseName, setExerciseName] = useState('');
-  const [videoUrl, setVideoUrl] = useState('');
-
-  const [planName, setPlanName] = useState('');
-
   const [modalRemoveVisibility, setModalRemoveVisibility] = useState(false);
   const [
     modalChangeDurationVisibility,
     setModalChangeDurationVisibility,
   ] = useState(false);
+  const [exerciseDuration, setExerciseDuration] = useState();
+  const [exerciseName, setExerciseName] = useState('');
+  const [videoUrl, setVideoUrl] = useState('');
   const [editDuration, setEditDuration] = useState('');
   const [saveEnabler, setSaveEnabler] = useState(true);
-
   const [editPlanName, setEditPlanName] = useState('');
   const [id, setId] = useState('');
-
   const [planNameErrorShow, setPlanNameErrorShow] = useState(false);
 
   const chest = 'CHEST';
@@ -137,6 +121,7 @@ function CreatePlan() {
 
   const selectExercise = (id, duration, exerciseName, videoUrl) => {
     setExerciseID(id);
+    console.log('dwa', id);
     setExerciseDuration(duration);
 
     setExerciseName(exerciseName);
@@ -148,6 +133,7 @@ function CreatePlan() {
     };
 
     let exercisesArrFlatlist = {
+      exercise_id: id,
       exercise_name: exerciseName,
       exercise_duration: duration,
       exercise_videoUrl: videoUrl,
@@ -192,18 +178,24 @@ function CreatePlan() {
     setModalChangeDurationVisibility(!modalChangeDurationVisibility);
   }
 
-  const deleteExercise = (exerc) => {
-    /* console.log('teste ', exerc); */
+  const deleteExercise = (exerc, exercName) => {
+    console.log('teste ', exerc);
 
     let arrayToRemoveFlatList = [...planBeingCreatedFlatlist];
+    let arrayToRemovePlan = [...planBeingCreatedExercises];
 
     const removeExerciseFL = arrayToRemoveFlatList.filter(
-      (task) => task.exercise_name !== exerc,
+      (task) => task.exercise_id !== exerc,
+    );
+
+    const removeExercisePlan = arrayToRemovePlan.filter(
+      (task) => task.exercise_id !== exerc,
     );
 
     /* console.log('removido', removeExerciseFL); */
 
     setPlanBeingCreatedFlatlist(removeExerciseFL);
+    setPlanBeingCreatedExercises(removeExercisePlan);
     setModalRemoveVisibility(false);
   };
 
@@ -422,7 +414,7 @@ function CreatePlan() {
               <View style={styles.editButtonsView}>
                 <TouchableHighlight
                   style={styles.removeBtn}
-                  onPress={() => removeExerciseModal(item.exercise_name)}
+                  onPress={() => removeExerciseModal(item.exercise_id)}
                   underlayColor="#FF000099">
                   <Text style={styles.removeText}>REMOVE EX.</Text>
                 </TouchableHighlight>

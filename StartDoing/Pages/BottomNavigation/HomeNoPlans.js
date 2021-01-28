@@ -18,7 +18,7 @@ import {useNavigation} from '@react-navigation/native';
 const Home = ({navigate}) => {
   //navigation variable
   const navigation = useNavigation();
-  
+
   //state variables
   const [token, setToken] = useState('');
   const [name, setName] = useState('');
@@ -28,7 +28,6 @@ const Home = ({navigate}) => {
   //variable that will receive token decoded
   let decoded = '';
 
- 
   //get token from storage and set state variables
   const getToken = async () => {
     try {
@@ -58,9 +57,7 @@ const Home = ({navigate}) => {
             </View>
           </View>
 
-          <Text style={styles.userName}>
-            HI, {name}!
-          </Text>
+          <Text style={styles.userName}>HI, {name}!</Text>
 
           <TouchableWithoutFeedback>
             <View style={styles.unactiveBtn}>

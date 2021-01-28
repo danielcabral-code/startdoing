@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+
 import {
   StyleSheet,
   ScrollView,
@@ -8,6 +9,7 @@ import {
   TouchableWithoutFeedback,
   Image,
 } from 'react-native';
+
 import {createStackNavigator} from '@react-navigation/stack';
 import {useNavigation} from '@react-navigation/native';
 import 'react-native-gesture-handler';
@@ -58,7 +60,7 @@ function ChangeProfilePicturePage({route}) {
       }
     } catch (e) {}
   };
-  
+
   //image picker options
   const options = {
     title: 'Select your photo',
@@ -103,7 +105,7 @@ function ChangeProfilePicturePage({route}) {
           //save photo url from firebase
           firebasePhotoLink = url;
 
-          //save url in database 
+          //save url in database
           fetch(`https://startdoing.herokuapp.com/updatephoto/${id}`, {
             method: 'PUT',
             headers: {
@@ -114,8 +116,7 @@ function ChangeProfilePicturePage({route}) {
               photoUrl: firebasePhotoLink,
             }),
           })
-            .then((response) => {
-            })
+            .then((response) => {})
             .catch((error) => console.log('error', error));
         })
         .catch((e) => console.log('getting downloadURL of image error => ', e));

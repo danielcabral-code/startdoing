@@ -10,10 +10,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from 'jwt-decode';
 import HomeNoPlans from './HomeNoPlans';
 import HomeWithPlans from './HomeWithPlans';
-
 import PlansNoPlans from './PlansNoPlans';
 import PlansWithPlans from './PlansWithPlans';
-
 import Settings from './Settings';
 
 const Stack = createStackNavigator();
@@ -34,9 +32,8 @@ const BottomNavigation = () => {
 function BottomNav({navigation}) {
   const Tab = createBottomTabNavigator();
 
-  //Home screen
+  //home screen
   function HomeScreen() {
-
     //state variables
     const [token, setToken] = useState('');
     const [id, setId] = useState('');
@@ -137,19 +134,19 @@ function BottomNav({navigation}) {
       getToken();
     });
 
-      //check if plans exist and return the appropriate customize plans screen
+    //check if plans exist and return the appropriate customize plans screen
     if (plansExist === true) {
       return <PlansWithPlans />;
     } else return <PlansNoPlans />;
   }
 
-  //setttings screen
+  //settings screen
   function SettingsScreen() {
     return <Settings />;
   }
   return (
     <>
-    {/* TabBotom navigation */}
+      {/* TabBotom navigation */}
       <Tab.Navigator
         screenOptions={({route}) => ({
           tabBarIcon: ({focused, color, size}) => {
