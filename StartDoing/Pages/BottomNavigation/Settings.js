@@ -118,6 +118,7 @@ const styles = StyleSheet.create({
   bg2: {
     width: '100%',
     alignItems: 'center',
+    paddingBottom: 70
   },
   profileImageBackground1: {
     width: 84,
@@ -149,7 +150,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   planBtn: {
-    marginTop: 25,
+    marginTop: 34,
     width: '85%',
     height: 90.9,
     borderRadius: 10,
@@ -172,13 +173,13 @@ const styles = StyleSheet.create({
     textShadowRadius: 6,
   },
   logoutBtn: {
-    marginTop: 5,
+    marginTop: 12,
     alignSelf: 'flex-end',
   },
   logoutText: {
     color: 'white',
     fontFamily: 'OpenSans-SemiBold',
-    fontSize: 14,
+    fontSize: 16,
   },
   logoutView: {
     width: '85%',
