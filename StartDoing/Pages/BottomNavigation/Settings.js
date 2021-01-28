@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   StyleSheet,
@@ -7,9 +7,10 @@ import {
   Text,
   Image,
   TouchableHighlight,
+  TouchableWithoutFeedback
 } from 'react-native';
 
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from 'jwt-decode';
 
@@ -38,7 +39,7 @@ const Settings = () => {
         setEmail(decoded.data.email);
         setPhotoUrl(decoded.data.photoUrl);
       }
-    } catch (e) {}
+    } catch (e) { }
   };
 
   useEffect(() => {
@@ -57,7 +58,7 @@ const Settings = () => {
             <View style={styles.profileImageBackground2}>
               <Image
                 style={styles.profileImage}
-                source={{uri: photoUrl}}></Image>
+                source={{ uri: photoUrl }}></Image>
             </View>
           </View>
 
@@ -68,7 +69,7 @@ const Settings = () => {
             onPress={() =>
               navigation.navigate('EditDetails', {
                 screen: 'EditDetails',
-                params: {id: id, token: token},
+                params: { id: id, token: token },
               })
             }
             underlayColor="#F27A2999">
@@ -87,12 +88,21 @@ const Settings = () => {
             onPress={() =>
               navigation.navigate('ChangePassword', {
                 screen: 'ChangePassword',
-                params: {email: email},
+                params: { email: email },
               })
             }
             underlayColor="#F27A2999">
             <Text style={styles.planText}>CHANGE PASSWORD</Text>
           </TouchableHighlight>
+
+          <View style={styles.logoutView}>
+            <TouchableWithoutFeedback
+              onPress={() => navigation.navigate('Login')}>
+              <View style={styles.logoutBtn}>
+                <Text style={styles.logoutText}>LOGOUT</Text>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
         </View>
       </ScrollView>
     </>
@@ -139,7 +149,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   planBtn: {
-    marginTop: 38,
+    marginTop: 25,
     width: '85%',
     height: 90.9,
     borderRadius: 10,
@@ -160,6 +170,18 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-Bold',
     fontSize: 18,
     textShadowRadius: 6,
+  },
+  logoutBtn: {
+    marginTop: 5,
+    alignSelf: 'flex-end',
+  },
+  logoutText: {
+    color: 'white',
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 14,
+  },
+  logoutView: {
+    width: '85%',
   },
 });
 
