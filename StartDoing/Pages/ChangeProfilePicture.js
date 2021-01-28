@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react';
-
 import {
   StyleSheet,
   ScrollView,
@@ -9,7 +8,6 @@ import {
   TouchableWithoutFeedback,
   Image,
 } from 'react-native';
-
 import {createStackNavigator} from '@react-navigation/stack';
 import {useNavigation} from '@react-navigation/native';
 import 'react-native-gesture-handler';
@@ -33,29 +31,35 @@ const ChangeProfilePicture = () => {
 };
 
 function ChangeProfilePicturePage({route}) {
+  //navigation variable
   const navigation = useNavigation();
 
+  //state variables
   const [token, setToken] = useState('');
   const [photoUrl, setPhotoUrl] = useState();
   const [id, setId] = useState('');
-  const [uploadSuccessMensage, setUploadSucessMensage] = useState(false);
+  const [uploadSuccessMessage, setUploadSucessMessage] = useState(false);
   const [saveBtnEnabler, setSaveBtnEnabler] = useState(true);
   const [showSaveBtn, setShowSaveBtn] = useState(true);
 
+  //variable to receive token decoded
   let decoded = '';
+  //variable to receive firebase uploaded photo url
   let firebasePhotoLink = '';
 
+  //get stored token
   const getToken = async () => {
     try {
       setToken(await AsyncStorage.getItem('@token'));
       if (token !== null) {
         decoded = jwt_decode(token);
-        console.log(decoded);
         setPhotoUrl(decoded.data.photoUrl);
         setId(decoded.data.id);
       }
     } catch (e) {}
   };
+  
+  //image picker options
   const options = {
     title: 'Select your photo',
     storageOptions: {
@@ -73,21 +77,21 @@ function ChangeProfilePicturePage({route}) {
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
+        //set url from phone
         const source = response.uri;
-        console.log(source);
         setPhotoUrl(source);
         setSaveBtnEnabler(false);
       }
     });
   };
 
+  //upload photo to firebase storage and save photo url in database
   const savePhoto = async () => {
     const uri = photoUrl;
-    console.log(uri);
     const filename = uri.substring(uri.lastIndexOf('/') + 1);
     const uploadUri =
       Platform.OS === 'ios' ? uri.replace('content://', '') : uri;
-
+    //save in firebase
     const task = storage().ref(filename).putFile(uploadUri);
 
     try {
@@ -96,8 +100,10 @@ function ChangeProfilePicturePage({route}) {
       imageRef
         .getDownloadURL()
         .then((url) => {
+          //save photo url from firebase
           firebasePhotoLink = url;
 
+          //save url in database 
           fetch(`https://startdoing.herokuapp.com/updatephoto/${id}`, {
             method: 'PUT',
             headers: {
@@ -109,7 +115,6 @@ function ChangeProfilePicturePage({route}) {
             }),
           })
             .then((response) => {
-              console.log(response.status);
             })
             .catch((error) => console.log('error', error));
         })
@@ -118,13 +123,9 @@ function ChangeProfilePicturePage({route}) {
       console.error(e);
     }
 
-    console.log(
-      'Photo uploaded!',
-      'Your photo has been uploaded to Firebase Cloud Storage!',
-    );
-    setUploadSucessMensage(true);
+    //show upload success message and navigate to settings in 3 seconds
+    setUploadSucessMessage(true);
     setShowSaveBtn(false);
-
     setInterval(() => {
       navigation.navigate('SETTINGS');
     }, 3000);
@@ -159,7 +160,7 @@ function ChangeProfilePicturePage({route}) {
             </View>
           </TouchableWithoutFeedback>
 
-          {uploadSuccessMensage ? (
+          {uploadSuccessMessage ? (
             <View>
               <Text style={styles.textSuccess}>
                 SUCCESS! NEXT TIME YOU LOGIN,

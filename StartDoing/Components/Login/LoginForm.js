@@ -12,15 +12,20 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 
 export const LoginForm = () => {
+  //navigation variable
   const navigation = useNavigation();
 
+  //state variables
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailErrorShow, setEmailErrorShow] = useState(false);
   const [passwordErrorShow, setPasswordErrorShow] = useState(false);
   const [invalidCredentials, setInvalidCredentials] = useState(false);
 
+  //function to login into App
   async function appLogin() {
+
+    //check if email is not empty
     if (!email || email.trim() === '') {
       setEmailErrorShow(true);
       return;
@@ -28,6 +33,7 @@ export const LoginForm = () => {
       setEmailErrorShow(false);
     }
 
+    //check if password is not empty
     if (!password || password.trim() === '') {
       setPasswordErrorShow(true);
       return;
@@ -35,6 +41,7 @@ export const LoginForm = () => {
       setPasswordErrorShow(false);
     }
 
+    //API request to login
     try {
       await fetch('https://startdoing.herokuapp.com/login', {
         method: 'POST',
@@ -49,9 +56,13 @@ export const LoginForm = () => {
         .then((response) => response.json())
         .then((result) => {
           try {
+
+            //save token in phone storage
             AsyncStorage.setItem('@token', result.token);
-            console.log(result.token);
+
             setInvalidCredentials(false);
+
+            //navigate to Home that is the predefined in bottom navigation
             navigation.navigate('BottomNavigation');
           } catch (e) {
             console.log(e);
@@ -74,6 +85,7 @@ export const LoginForm = () => {
           onChangeText={(text) => setEmail(text)}
           value={email}
         />
+          {/*if email is empty will show a error message */}
         {emailErrorShow ? (
           <Text style={styles.textError}>Please Enter Your Email.</Text>
         ) : null}
@@ -87,9 +99,11 @@ export const LoginForm = () => {
           secureTextEntry={true}
           value={password}
         />
+        {/*if password is empty will show a error message */}
         {passwordErrorShow ? (
           <Text style={styles.textError}>Please Enter a Password.</Text>
         ) : null}
+          {/*if email and password doesn't match or not exist will show a error message */}
         {invalidCredentials ? (
           <Text style={styles.textError}>Wrong Email or Password.</Text>
         ) : null}

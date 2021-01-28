@@ -1,4 +1,4 @@
-import React, {useState, useEffect, Component} from 'react';
+import React, { useState, useEffect, Component } from 'react';
 
 import {
   StyleSheet,
@@ -12,11 +12,11 @@ import {
   TextInput,
 } from 'react-native';
 
-import {useNavigation} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {MaskImageView} from 'react-native-mask-image';
-import {createStyles, minWidth, maxWidth} from 'react-native-media-queries';
+import { MaskImageView } from 'react-native-mask-image';
+import { createStyles, minWidth, maxWidth } from 'react-native-media-queries';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Modal from 'react-native-modal';
 import jwt_decode from 'jwt-decode';
@@ -27,7 +27,7 @@ const CustomizeUserPlan = () => {
   return (
     <Stack.Navigator initialRouteName="CustomizeUserPlanScreen">
       <Stack.Screen
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
         name="CustomizeUserPlanScreen"
         component={CustomizeUserPlanScreen}
       />
@@ -35,40 +35,35 @@ const CustomizeUserPlan = () => {
   );
 };
 
-function CustomizeUserPlanScreen({route}) {
+function CustomizeUserPlanScreen({ route }) {
+  //navigation variable
   const navigation = useNavigation();
 
+  //state variables
   const [token, setToken] = useState('');
   const [myExcerciseData, setMyExcerciseData] = useState([]);
   const [planName, setPlanName] = useState();
   const [exerciseID, setExerciseID] = useState('');
   const [modalRemoveVisibility, setModalRemoveVisibility] = useState(false);
-  const [
-    modalChangeDurationVisibility,
-    setModalChangeDurationVisibility,
-  ] = useState(false);
-  const [modalDeletePlanVisibility, setModalDeletePlanVisibility] = useState(
-    false,
-  );
+  const [modalChangeDurationVisibility, setModalChangeDurationVisibility] = useState(false);
+  const [modalDeletePlanVisibility, setModalDeletePlanVisibility] = useState(false);
   const [exerciseDuration, setExerciseDuration] = useState([]);
   const [editDuration, setEditDuration] = useState('');
   const [editPlanName, setEditPlanName] = useState('');
-  const [invalidDurationErrorShow, setInvalidDurationErrorShow] = useState(
-    false,
-  );
-  const [removerExerciseErrorShow, setRemoveExerciseErrorShow] = useState(
-    false,
-  );
+  const [invalidDurationErrorShow, setInvalidDurationErrorShow] = useState(false);
+  const [removerExerciseErrorShow, setRemoveExerciseErrorShow] = useState(false);
 
+  //receive plan id via param
   const planID = route.params.planID;
 
+  //get stored token
   const getToken = async () => {
     try {
       setToken(await AsyncStorage.getItem('@token'));
-      console.log('TOKEN ', token);
+
       if (token !== null) {
         let myData = [];
-        let myDuration = [];
+        //request plan by plan id
         fetch(`https://startdoing.herokuapp.com/user_plans/plan/${planID}`, {
           method: 'GET',
           headers: {
@@ -79,11 +74,12 @@ function CustomizeUserPlanScreen({route}) {
           .then((response) => response.json())
           .then((result) => {
             result.map((result, index) => {
-              console.log('resultado', result);
+              //set variables with plan name and exercises durations
               setPlanName(result.plan_name);
               setExerciseDuration(result.exercises);
 
               result.exercises.map((data) => {
+                //request exercises that plan contains by id
                 fetch(
                   `https://startdoing.herokuapp.com/exercises/${data.exercise_id}`,
                   {
@@ -96,6 +92,7 @@ function CustomizeUserPlanScreen({route}) {
                 )
                   .then((response) => response.json())
                   .then((result) => {
+                    //set the exercises array that will be used in FlatList
                     myData.push(result);
                     setMyExcerciseData(...myExcerciseData, myData);
                   })
@@ -107,26 +104,29 @@ function CustomizeUserPlanScreen({route}) {
 
           .catch((error) => console.log('error', error));
       }
-    } catch (e) {}
+    } catch (e) { }
   };
 
+  //show remove exercise modal
   function removeExerciseModal(id) {
-    console.log(id);
     setExerciseID(id);
     setModalRemoveVisibility(!modalRemoveVisibility);
   }
 
+  //show edit duration modal
   function editDurationModal(id) {
-    console.log(id);
     setExerciseID(id);
     setModalChangeDurationVisibility(!modalChangeDurationVisibility);
   }
 
+  //show delete plan modal
   const deletePlanModal = () => {
     setModalDeletePlanVisibility(!modalDeletePlanVisibility);
   };
 
+  //function to delete plan
   const deletePlan = () => {
+    //delete plan using the value received from param
     fetch(`https://startdoing.herokuapp.com/user_plans/${planID}`, {
       method: 'DELETE',
       headers: {
@@ -136,17 +136,16 @@ function CustomizeUserPlanScreen({route}) {
     })
       .then((response) => response.json())
       .then((result) => {
-        console.log(result);
-
         navigation.navigate('HOME');
       })
 
       .catch((error) => console.log('error', error));
   };
 
+  //function to delete exercise from user plan
   const deleteExercise = (exerc) => {
-    console.log('teste ', exerciseDuration.length);
 
+    //check exercises length, if exist only one, user can't remove
     if (exerciseDuration.length <= 1) {
       setRemoveExerciseErrorShow(true);
     } else {
@@ -154,16 +153,15 @@ function CustomizeUserPlanScreen({route}) {
       let arrayToRemoveDB = [...exerciseDuration];
       let arrayToRemoveFlatList = [...myExcerciseData];
 
+      //array to remove from database
       const removeExerciseDB = arrayToRemoveDB.filter(
         (task) => task.exercise_id !== exerc,
       );
 
+      //array to remove from FlatList
       const removeExerciseFL = arrayToRemoveFlatList.filter(
         (task) => task._id !== exerc,
       );
-
-      console.log('removido', removeExerciseFL);
-      console.log('vai para o put ', removeExerciseDB);
 
       setExerciseDuration(removeExerciseDB);
       setMyExcerciseData(removeExerciseFL);
@@ -171,49 +169,46 @@ function CustomizeUserPlanScreen({route}) {
     }
   };
 
+  //function to edit user plan exercises duration
   const editExerciseDuration = (exerc, value) => {
-    console.log('teste ', exerc, value);
 
+    //check if duration is a valid number
     function validateDuration(time) {
       let numreg = /^[0-9]+$/;
       return numreg.test(time);
     }
 
     if (value <= 0) {
-      console.log('erro');
       setInvalidDurationErrorShow(true);
+
     } else if (!validateDuration(value)) {
-      console.log('erro');
       setInvalidDurationErrorShow(true);
+
     } else {
       setInvalidDurationErrorShow(false);
       let arrayToEditDuration = [...exerciseDuration];
-      console.log(arrayToEditDuration);
 
       const elementsIndex = exerciseDuration.findIndex(
         (element) => element.exercise_id === exerc,
       );
-      console.log(elementsIndex);
 
-      arrayToEditDuration[elementsIndex] = {
-        ...arrayToEditDuration[elementsIndex],
-        exercise_duration: value,
-      };
+      arrayToEditDuration[elementsIndex] = { ...arrayToEditDuration[elementsIndex], exercise_duration: value };
       setExerciseDuration(arrayToEditDuration);
-      console.log('mudado: ', exerciseDuration);
       setModalChangeDurationVisibility(false);
     }
   };
 
+  //function to save plan changes
   function savePlanModal() {
-    console.log(exerciseDuration.length);
-    console.log(editPlanName.length);
+    //variable to receive the new plan name if user change it
     let planNameEdited = '';
 
+    //check if user changed the plan name
     if (editPlanName.length > 0) {
       planNameEdited = editPlanName;
       setEditPlanName('');
 
+      //request API to save changes
       fetch(`https://startdoing.herokuapp.com/user_plans/${planID}`, {
         method: 'PUT',
         headers: {
@@ -231,7 +226,9 @@ function CustomizeUserPlanScreen({route}) {
           navigation.navigate('HOME');
         })
         .catch((error) => console.log('error', error));
-    } else {
+    }
+    else {
+      //request API to save changes
       fetch(`https://startdoing.herokuapp.com/user_plans/${planID}`, {
         method: 'PUT',
         headers: {
@@ -257,9 +254,6 @@ function CustomizeUserPlanScreen({route}) {
   }, [token]);
 
   useEffect(() => {
-    console.log('updated data');
-    console.log(myExcerciseData);
-    console.log('duracao', exerciseDuration);
   }, [myExcerciseData, exerciseDuration]);
 
   return (
@@ -289,7 +283,7 @@ function CustomizeUserPlanScreen({route}) {
           style={styles.background}
           keyExtractor={(item) => item.exerciseName}
           data={myExcerciseData}
-          renderItem={({item, index}) => (
+          renderItem={({ item, index }) => (
             <View style={stylesMediaQueries.maskView}>
               <MaskImageView
                 urlImage={item.videoUrl}

@@ -14,15 +14,20 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from 'jwt-decode';
 
 const Settings = () => {
+  //navigation variable
   const navigation = useNavigation();
 
+  //state variables
   const [token, setToken] = useState('');
   const [id, setId] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [photoUrl, setPhotoUrl] = useState();
+
+  //variable that will receive token decoded
   let decoded = '';
 
+  //get token stored and set variables
   const getToken = async () => {
     try {
       setToken(await AsyncStorage.getItem('@token'));

@@ -16,20 +16,20 @@ import jwt_decode from 'jwt-decode';
 import {useNavigation} from '@react-navigation/native';
 
 const Home = ({navigate}) => {
+  //navigation variable
   const navigation = useNavigation();
+  
+  //state variables
   const [token, setToken] = useState('');
   const [name, setName] = useState('');
-  const [photoUrl, setPhotoUrl] = useState(
-    'https://firebasestorage.googleapis.com/v0/b/startdoing-bd1bc.appspot.com/o/person.jpg?alt=media&token=d201079f-9035-4f11-9421-58d1e9293359',
-  );
-
+  const [photoUrl, setPhotoUrl] = useState();
   const [birth, setBirth] = useState('');
+
+  //variable that will receive token decoded
   let decoded = '';
 
-  function onPressButton() {
-    alert('You Pressed Me!');
-  }
-
+ 
+  //get token from storage and set state variables
   const getToken = async () => {
     try {
       setToken(await AsyncStorage.getItem('@token'));
@@ -59,7 +59,7 @@ const Home = ({navigate}) => {
           </View>
 
           <Text style={styles.userName}>
-            HI, {name.toUpperCase()}!
+            HI, {name}!
           </Text>
 
           <TouchableWithoutFeedback>

@@ -12,11 +12,8 @@ import {
 import {useNavigation} from '@react-navigation/native';
 
 const Plans = () => {
+  //navigation variable
   const navigation = useNavigation();
-
-  function onPressButton() {
-    alert('You Pressed Me!');
-  }
 
   return (
     <>

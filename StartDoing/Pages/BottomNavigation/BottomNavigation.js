@@ -34,10 +34,15 @@ const BottomNavigation = () => {
 function BottomNav({navigation}) {
   const Tab = createBottomTabNavigator();
 
+  //Home screen
   function HomeScreen() {
+
+    //state variables
     const [token, setToken] = useState('');
     const [id, setId] = useState('');
     const [plansExist, setPlansExist] = useState(false);
+
+    //variable that will receive token decoded
     let decoded = '';
 
     useEffect(() => {
@@ -55,13 +60,15 @@ function BottomNav({navigation}) {
 
     const getToken = async () => {
       try {
+        //get token from storage
         setToken(await AsyncStorage.getItem('@token'));
         if (token !== null) {
+          //decode token and set id
           decoded = jwt_decode(token);
-
           setId(decoded.data.id);
         }
 
+        //get user plans from user id
         fetch(`https://startdoing.herokuapp.com/user_plans/${id}`, {
           method: 'GET',
           headers: {
@@ -84,6 +91,7 @@ function BottomNav({navigation}) {
       getToken();
     });
 
+    //check if plans exist and return the appropriate home screen
     if (plansExist === true) {
       return <HomeWithPlans />;
     } else return <HomeNoPlans />;
@@ -129,16 +137,19 @@ function BottomNav({navigation}) {
       getToken();
     });
 
+      //check if plans exist and return the appropriate customize plans screen
     if (plansExist === true) {
       return <PlansWithPlans />;
     } else return <PlansNoPlans />;
   }
 
+  //setttings screen
   function SettingsScreen() {
     return <Settings />;
   }
   return (
     <>
+    {/* TabBotom navigation */}
       <Tab.Navigator
         screenOptions={({route}) => ({
           tabBarIcon: ({focused, color, size}) => {
@@ -153,7 +164,6 @@ function BottomNav({navigation}) {
               iconName = focused ? 'settings' : 'settings';
             }
 
-            // You can return any component that you like here!
             return (
               <>
                 <Text>

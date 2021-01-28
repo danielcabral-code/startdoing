@@ -1,32 +1,30 @@
 import React, {useEffect, useState} from 'react';
-
 import {
   StyleSheet,
   View,
-  ScrollView,
   Text,
   TouchableHighlight,
   TouchableWithoutFeedback,
   SafeAreaView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import jwt_decode from 'jwt-decode';
 import {FlatList} from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/native';
 
 const Plans = () => {
+  //navigation variable
   const navigation = useNavigation();
 
+  //state variables
   const [planName, setPlanName] = useState([]);
   const [planCreateEnabler, setPlanCreateEnabler] = useState(false);
 
+  //get plan name from token stored
   const getPlanName = async () => {
     let newData = [];
-
     const newPlan = await AsyncStorage.getItem('@plans');
     if (newPlan !== null) {
       newData = JSON.parse(newPlan);
-      console.log('newdata ', newData);
       setPlanName(...planName, newData);
     }
   };
@@ -66,11 +64,13 @@ const Plans = () => {
         </View>
       </View>
 
+      {/* FlatList to set plans */}
       <FlatList
         style={styles.background}
         keyExtractor={(item) => item._id}
         data={planName}
         renderItem={({item}) => {
+           {/* check plans name array length */}
           if (planName.length >= 2) {
             setPlanCreateEnabler(true);
 

@@ -30,8 +30,10 @@ const ChangePassword = () => {
 };
 
 function ChangePasswordPage({ route }) {
+  //navigation variable
   const navigation = useNavigation();
 
+  //state variables
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
   const [emailErrorShow, setEmailErrorShow] = useState(false);
@@ -41,14 +43,12 @@ function ChangePasswordPage({ route }) {
   const [confirmPasswordErrorShow, setConfirmpasswordErrorShow] = useState(false);
   const [passwordLengthError, setPasswordLengthError] = useState(false);
 
+  //receive param
   let email = route.params.email
-  console.log(email);
 
-
-
+  //function to check if inputs are empty and do API request
   function checkRegisterInputs() {
     let code = 0;
-
 
     if (!password || password.trim() === '') {
       setPasswordErrorShow(true);
@@ -75,6 +75,8 @@ function ChangePasswordPage({ route }) {
       return;
     }
 
+
+    //check if email exists
     fetch('https://startdoing.herokuapp.com/users', {
       method: 'POST',
       headers: {
@@ -87,6 +89,7 @@ function ChangePasswordPage({ route }) {
       .then((response) => {
         code = JSON.stringify(response.status);
 
+        //if email exists reset password, if not show error message
         if (code == 406) {
           fetch(`https://startdoing.herokuapp.com/recoverpassword/${email}`, {
             method: 'PUT',
@@ -103,6 +106,7 @@ function ChangePasswordPage({ route }) {
             .catch((error) => console.log('error', error));
 
           navigation.navigate('Login');
+
         } else {
           setUnknownEmail(true);
         }

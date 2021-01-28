@@ -1,5 +1,4 @@
-import React, {useState, useEffect} from 'react';
-
+import React, { useState, useEffect } from 'react';
 import {
   TextInput,
   StyleSheet,
@@ -9,9 +8,8 @@ import {
   TouchableHighlight,
   Image,
 } from 'react-native';
-
-import {createStackNavigator} from '@react-navigation/stack';
-import {useNavigation} from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
 import 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
@@ -20,7 +18,7 @@ const EditDetails = () => {
   return (
     <Stack.Navigator initialRouteName="EditDetailsPage">
       <Stack.Screen
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
         name="EditDetails"
         component={EditDetailsPage}
       />
@@ -28,23 +26,23 @@ const EditDetails = () => {
   );
 };
 
-function EditDetailsPage({route}) {
+function EditDetailsPage({ route }) {
+  //navigation variable 
   const navigation = useNavigation();
 
+  //state variables
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
   const [editHeight, setEditHeight] = useState('');
   const [editWeight, setEditWeight] = useState('');
-  const [onlyNumbersHeightErrorShow, setOnlyNumbersHeightErrorShow] = useState(
-    false,
-  );
-  const [onlyNumbersWeightErrorShow, setOnlyNumbersWeightErrorShow] = useState(
-    false,
-  );
+  const [onlyNumbersHeightErrorShow, setOnlyNumbersHeightErrorShow] = useState(false);
+  const [onlyNumbersWeightErrorShow, setOnlyNumbersWeightErrorShow] = useState(false);
 
+  //variables to receive values from params
   let id = route.params.id;
   let token = route.params.token;
 
+  //get user by id
   function getUser() {
     fetch(`https://startdoing.herokuapp.com/getuser/${id}`, {
       method: 'GET',
@@ -63,23 +61,26 @@ function EditDetailsPage({route}) {
       .catch((error) => console.log('error', error));
   }
 
+  //function to validate height values
   function validateHeight(height) {
     let numreg = /^[0-9]+$/;
     return numreg.test(height);
   }
 
+  //function to validate weight values
   function validateWeight(weight) {
     let numreg = /^[0-9]+$/;
     return numreg.test(weight);
   }
 
+  //function to edit details
   function editDetails() {
+    //variables to save values changed by user
     let saveHeight = '';
     let saveWeight = '';
 
+    //check if weight was changed
     if (editWeight.length === 0) {
-      console.log(editWeight.length);
-      console.log(weight);
       saveWeight = weight;
     } else {
       if (!validateWeight(editWeight)) {
@@ -91,9 +92,8 @@ function EditDetailsPage({route}) {
       saveWeight = editWeight;
     }
 
+    //check if height was changed
     if (editHeight.length === 0) {
-      console.log(editHeight.length);
-      console.log(height);
       saveHeight = height;
     } else {
       if (!validateHeight(editHeight)) {
@@ -105,6 +105,7 @@ function EditDetailsPage({route}) {
       saveHeight = editHeight;
     }
 
+    //request API to change values
     fetch(`https://startdoing.herokuapp.com/update/${id}`, {
       method: 'PUT',
       headers: {

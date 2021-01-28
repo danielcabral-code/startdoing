@@ -10,16 +10,17 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
 import { useNavigation } from '@react-navigation/native';
 
 const Home = ({ navigate }) => {
+  //navigation variable
   const navigation = useNavigation();
 
+  //state variables
   const [token, setToken] = useState('');
-  const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [birth, setBirth] = useState('');
   const [id, setId] = useState('');
@@ -31,6 +32,7 @@ const Home = ({ navigate }) => {
   const [idPlanOne, setIdPlanOne] = useState('')
   const [idPlanTwo, setIdPlanTwo] = useState('')
 
+  //variable that will receive token decoded
   let decoded = ''
 
 
@@ -38,21 +40,20 @@ const Home = ({ navigate }) => {
     let save = []
     try {
 
+      //get token from storage
       setToken(await AsyncStorage.getItem('@token'))
       if (token !== null) {
-
+        //decode token and set variables
         decoded = jwt_decode(token);
-        console.log(decoded);
-
-        setEmail(decoded.data.email)
+     
         setName(decoded.data.name)
         setId(decoded.data.id)
         setBirth(decoded.data.birth)
         setPhotoUrl(decoded.data.photoUrl)
-        console.log(email, name, id, birth, photoUrl);
-
+        
       }
 
+      //API request user plans by user id
       fetch(`https://startdoing.herokuapp.com/user_plans/${id}`, {
         method: 'GET',
         headers: {
@@ -67,15 +68,15 @@ const Home = ({ navigate }) => {
           console.log(result)
           save = result
           try {
+            //save request result and store in phone that will be read in customize tab
             const jsonValue = JSON.stringify(save)
-
             AsyncStorage.setItem('@plans', jsonValue);
-            console.log("guardou: ", jsonValue);
 
           } catch (e) {
             console.log(e);
           }
 
+          //check the number of plans existent and set variables
           if (result.length >= 2) {
             setStylePlanTwoNonExistent(false)
             setStylePlanTwoExistent(true)
@@ -94,12 +95,7 @@ const Home = ({ navigate }) => {
           }
 
         })
-
-
-
-
         .catch((error) => console.log('error', error));
-
 
     } catch (e) {
 
@@ -111,9 +107,6 @@ const Home = ({ navigate }) => {
     getToken()
 
   })
-  function onPressButton() {
-    alert('You Pressed Me!');
-  }
 
   return (
     <>
@@ -127,7 +120,7 @@ const Home = ({ navigate }) => {
             </View>
           </View>
 
-          <Text style={styles.userName}>HI, {name.toUpperCase()}!</Text>
+          <Text style={styles.userName}>HI, {name}!</Text>
 
           <TouchableHighlight
             style={styles.planBtn}
