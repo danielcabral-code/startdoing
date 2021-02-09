@@ -2,8 +2,6 @@
 
 Projeto Interdisciplinar
 
-Daniel Cabral <br/>
-
 O presente projeto foi elaborado no âmbito do Curso Técnico Superior de Design e Tecnologias para Aplicações Móveis, 2º ano, 1º semestre, na Escola Superior de Media Artes e Design, do Instituto Politécnico do Porto.
 Numa fase de risco aumentado, devido à pandemia do Covid-19, é mais importante do que nunca que as pessoas façam todos os possíveis para que estejam nas melhores condições de saúde que consigam.
 O objetivo do presente projeto é incentivar pessoas a praticar exercício físico, que nunca ou raramente o fazem. 
