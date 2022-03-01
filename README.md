@@ -1,3 +1,3 @@
-# startdoing
+# StartDoing
 
-Covid-19 fitness app w/ ReactNative.
+Covid-19 Fitness App w/ ReactNative.
